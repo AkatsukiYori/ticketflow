@@ -1,0 +1,18 @@
+.text-input {
+    height: 3em;
+    width: 20em;
+    background-color: transparent;
+    border: 1px solid #374151;
+    color: #374151;
+    text-indent: 10px;
+    border-radius: 6px;
+}
+
+.select-options {
+    height: 3.3em;
+    width: 20em;
+    background-color: transparent;
+    border: 1px solid #374151;
+    color: #374151;
+    border-radius: 6px;
+}

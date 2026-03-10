@@ -1,0 +1,64 @@
+.btn_add {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #1B499D;
+}
+
+.btn_edit {
+    color: #f59e0b;
+    background-color: transparent;
+    transition: 0.3s;
+}
+
+.btn_delete {
+    color: #ef4444;
+    background-color: transparent;
+    transition: 0.3s;
+}
+
+.btn_edit:hover {
+    background-color: #f59e0b30;
+    transition: 0.3s;
+}
+
+.btn_delete:hover {
+    background-color: #ef444430;
+    transition: 0.3s;
+}
+
+.btn-refresh {
+    background-color: transparent;
+    color: #374151;
+    border: 1px solid #374151;
+    display: flex;
+    align-items: center;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: #374151;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #f1f1f1;
+    border: none;
+    color: #374151;
+    transition: 0.3s;
+}
+
+.btn-submit {
+    background-color: #eef2ff;
+    color: #2563eb;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    transition: 0.3s;
+}

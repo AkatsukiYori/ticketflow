@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id         Int       @id @default(autoincrement())
+  username   String    @db.VarChar(150)
+  password   String    @db.VarChar(100)
+  location   Location  @default(pontianak)
+  isActive   Boolean
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  tickets    Tickets[]
+
+  @@map("users")
+}
+
+model Categories {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(100)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  documentation Documentation[]
+  tickets       Tickets[]
+
+  @@map("categories")
+}
+
+model Tickets {
+  id             Int          @id @default(autoincrement())
+  assign_to      Int?
+  category_id    Int
+  ticket_no      String       @db.VarChar(100)
+  ticket_title   String       @db.VarChar(100)
+  problem        String
+  report_date    DateTime     @default(now())
+  department     String       @db.VarChar(100)
+  location       String       @db.VarChar(50)
+  priority       Priority     @default(low)
+  note           String?
+  status         TicketStatus @default(pending)
+  status_reason  String?      @db.VarChar(100)
+  closed_at      DateTime?
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  images         Images[]
+  log            Log[]
+  fk_users_id    Users?       @relation(fields: [assign_to], references: [id])
+  fk_category_id Categories   @relation(fields: [category_id], references: [id])
+
+  @@map("tickets")
+}
+
+model Images {
+  id           Int      @id @default(autoincrement())
+  ticket_id    Int      
+  filename     String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  file_path    String
+  mimetypes    String
+  size         BigInt
+  fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
+
+  @@map("images")
+}
+
+model Log {
+  id           Int      @id @default(autoincrement())
+  ticket_id    Int      
+  status       String   @db.VarChar(100)
+  action_type  String   @db.VarChar(100)
+  log_date     DateTime @default(now())
+  description  String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
+
+  @@map("log")
+}
+
+model Documentation {
+  id                  Int                  @id @default(autoincrement())
+  category_id         Int                  
+  title               String               @db.VarChar(100)
+  description         String?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+  fk_category_id      Categories           @relation(fields: [category_id], references: [id])
+  documentation_files Documentation_files[]
+
+  @@map("documentation")
+}
+
+model Documentation_files {
+  id             Int           @id @default(autoincrement())
+  document_id    Int           
+  filename       String
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  file_path      String
+  mimetypes      String
+  size           BigInt
+  fk_document_id Documentation @relation(fields: [document_id], references: [id])
+
+  @@map("documentation_files")
+}
+
+enum Location {
+  pontianak
+  jakarta
+}
+
+enum Priority {
+  high
+  low
+}
+
+enum TicketStatus {
+  pending
+  on_progress
+  completed
+  reject
+}
