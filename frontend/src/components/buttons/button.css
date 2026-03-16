@@ -2,7 +2,13 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    background-color: #1B499D;
+    background-color: rgba(27, 73, 157, 0.9);
+    border: none;
+}
+
+.btn_add:hover {
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
 }
 
 .btn_edit {
@@ -29,36 +35,102 @@
 
 .btn-refresh {
     background-color: transparent;
-    color: #374151;
-    border: 1px solid #374151;
+    color: #a1a1a1;
+    border: 1px solid #c1c1c1;
     display: flex;
     align-items: center;
 }
 
+.btn-refresh:hover {
+    border: 1px solid #e1e1e1;
+}
+
 .btn-cancel {
-    background-color: transparent;
-    color: #374151;
+    background-color: rgba(239, 68, 68, 0.9);
+    color: white;
     border: none;
     transition: 0.3s;
 }
 
 .btn-cancel:hover {
-    background-color: #f1f1f1;
+    background-color: rgba(239, 68, 68, 1);
     border: none;
-    color: #374151;
     transition: 0.3s;
 }
 
 .btn-submit {
-    background-color: #eef2ff;
-    color: #2563eb;
+    background-color: rgba(27, 73, 157, 0.9);
     border: none;
     transition: 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #2563eb;
-    color: #fff;
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-new-ticket {
+    background-color: rgba(27, 73, 157, 0.9);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-new-ticket:hover {
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-detail {
+    background-color: transparent;
+    color: #a1a1a1;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-detail:hover {
+    background-color: #e1e1e1;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-assign-icon {
+    background-color: transparent;
+    color: rgba(27, 73, 157, 0.8);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-assign-icon:hover {
+    background-color: rgba(27, 73, 157, 0.2);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-assign-label {
+    background-color: rgba(27, 73, 157, 0.9);
+    color: white;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-assign-label:hover {
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-header-close {
+    background-color: #f1f1f1;
+    color: #a1a1a1;
+    border: none;
+    transition: 0.3s;
+    font-size: 18px;
+}
+
+.btn-header-close:hover {
+    background-color: #e1e1e1;
     border: none;
     transition: 0.3s;
 }

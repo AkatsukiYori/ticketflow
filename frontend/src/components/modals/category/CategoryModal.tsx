@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../../components/modals/category/categoryModal.css";
 import { InputText } from "../../inputs/Input";
-import { SubmitButton, CancelButton } from "../../buttons/Button";
+import { SubmitButton, CancelButton, HeaderModalButton } from "../../buttons/Button";
 
 type Props = {
     open: boolean;
@@ -20,15 +20,14 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
         } else {
             setName("");
         }
-    }, [data, mode]);
-
-    // if(!open) return null;
+    }, [data, mode, open]);
 
     function handleSave() {
         if(mode === "create") {
             onSubmit({
                 name: name
-            })
+            });
+            setName("");
         } else {
             onUpdate({
                 id: data?.id,
@@ -44,13 +43,13 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
             <div className={`modal-popup ${open ? "show" : "hide"}`}>
                 <div className="modal-header">
                     <h2>{ mode === "create" ? "New Category" : "Edit Category" }</h2>
-                    <CancelButton onClose={onClose} label="X" />
+                    <HeaderModalButton onClose={onClose} label="X" />
                 </div>
                 <div className="modal-body">
-                    <InputText name="category_name" id="category_name" placeholder="Category Name" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+                    <InputText name="category_name" id="category_name" placeholder="Category Name" value={name} onChangeInput={(e) => setName(e.target.value)} style={{ width: "100%" }} />
                 </div>
                 <div className="modal-footer">
-                    <SubmitButton onClick={handleSave} />
+                    <SubmitButton onClick={handleSave} label="Submit" />
                     <CancelButton onClose={onClose} label="Cancel" />
                 </div>
             </div>

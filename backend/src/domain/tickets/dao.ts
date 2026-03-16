@@ -3,6 +3,17 @@ import prisma from "../../prisma";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 import fs from "fs/promises";
 
+export const GetTicketById = async (id: number) => {
+    try {
+        const data = await prisma.tickets.findUnique({
+            where: {id: id}
+        });
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const GetAllTicketDAO = async () => {
     try {
         const data = await prisma.tickets.findMany();
@@ -18,9 +29,35 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
             Object.entries(data).filter(([_, v]) => v !== undefined)
         ) as unknown as Prisma.TicketsCreateInput;
 
+        const date = new Date();
+        const today = date.toISOString().slice(0, 10).replace(/-/g, '');
+        const lastTicket = await prisma.tickets.findFirst({
+            where: {
+                ticket_no: {
+                    startsWith: `TKT-${today}`
+                }
+            },
+            orderBy: {
+                ticket_no: "desc"
+            }
+        });
+        let counter = 1;
+        if(lastTicket) {
+            const parts = lastTicket.ticket_no.split("-");
+            const lastNumber = parts[2] ? parseInt(parts[2]) : 0;
+            counter = lastNumber + 1;
+        }
+
+        const counterStr = String(counter).padStart(3, "0");
+        const ticketNo = `TKT-${today}-${counterStr}`;
+
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.create({
-                data: filteredData
+                data: {
+                    ...filteredData,
+                    ticket_no: ticketNo,
+                    report_date: date
+                },
             });
     
             if(fileData) {
@@ -35,6 +72,8 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
                 });
             }
         });
+
+        return ticketNo;
     } catch (error: any) {
         throw new Error(error.message);
     }

@@ -3,13 +3,23 @@ import * as TicketServices from "./services";
 import { unlinkFile } from "../../helper/fileHelper";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 
+export const GetTicketByIdController = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    try {
+        const result = await TicketServices.getTicketById(id);
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
+    }
+}
+
 export const GetAllTicketController = async (req: Request, res: Response) => {
     try {
         const result = await TicketServices.GetAllTicketServices();
         
         res.status(201).json(result);
     } catch (error: any) {
-        res.status(500).json({ message: "Terjadi Kesalahan : " +error.message });
+        res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
     }
 }
 

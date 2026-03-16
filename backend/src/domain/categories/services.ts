@@ -6,7 +6,7 @@ export const GetAllCategoriesServices = async () => {
     try {
         const data = await CategoriesDAO.GetAllCategoriesDAO();
 
-        return ({ message: data });
+        return data;
     } catch (error: any) {
         throw new Error(error.message);
     }

@@ -1,4 +1,11 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("/frontend/src/assets/fonts/Poppins-Regular.ttf") format("ttf");
+  font-weight: 400;
+}
+
 :root {
+  --font-main: "Poppins", sans-serif;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -28,6 +35,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-main);
 }
 
 h1 {

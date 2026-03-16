@@ -28,8 +28,8 @@ export const columns = (
 
             return (
                 <div className="table-actions">
-                    <UpdateButton label="category" func="edit" onClick={() => onEdit(data)} />
-                    <DeleteButton label="category" func="delete" onClick={() => onDelete(data.id)} />
+                    <UpdateButton func="edit" onClick={() => onEdit(data)} />
+                    <DeleteButton func="delete" onClick={() => onDelete(data.id)} />
                 </div>
             );
         }

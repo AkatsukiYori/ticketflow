@@ -5,6 +5,11 @@ const CheckID = (id: number) => {
     return Number.isInteger(id) && id > 0;
 }
 
+export const FetchTicketMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    if(!CheckID(Number(req.params.id))) res.status(500).json({ message: "ID tidak valid!" });
+    next();
+}
+
 export const CreateTicketMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const result = TicketDTO.CreateTicketSchema.safeParse(req.body);
     

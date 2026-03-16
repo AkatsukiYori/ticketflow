@@ -1,4 +1,4 @@
-.modal-overlay {
+.modal-overlay.show {
     position: fixed;
     top: 0;
     left: 0;
@@ -16,11 +16,11 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.modal-popup {
+.modal-popup.show {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;
+    width: 500px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
@@ -28,14 +28,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 16px;
 }
 
 .modal-body {
-    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 0;
+    justify-content: center;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+    border-top: 1px solid #f1f1f1;
+    padding-top: 16px;
+}
+
+.modal-body-content {
+    margin-bottom: 16px;
+}
+
+.modal-body-content, table {
+    width: 100%;
+}
+
+.modal-body-content h4 {
+    margin: 0;
+}
+
+table tbody tr td:first-child {
+    width: 30%;
+    vertical-align: top;
+}
+
+table tbody tr td:last-child {
+    width: 70%;
 }

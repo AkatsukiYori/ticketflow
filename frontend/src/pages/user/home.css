@@ -1,0 +1,106 @@
+.actions {
+    display: flex;
+    gap: 16px;
+}
+
+.actions button:last-child {
+    background-color: #f7f7f7;
+    border: none;
+    color: #374151;
+    transition: 0.3s;
+}
+
+.actions button:last-child:hover {
+    background-color: #f1f1f1;
+    color: #374151;
+    transition: 0.3s;
+}
+
+h1 {
+    font-size: 64px;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.content-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.content-sub-body {
+    display: flex;
+    gap: 16px;
+}
+
+.content-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form input {
+    height: 40px;
+    background-color: transparent;
+    color: #374151;
+    border-radius: 6px;
+    border: 1px solid #d1d1d1;
+    text-indent: 8px;
+}
+
+.form select {
+    height: 40px;
+    background-color: transparent;
+    color: #374151;
+    border-radius: 6px;
+    border: 1px solid #d1d1d1;
+}
+
+.form textarea {
+    height: 128px;
+    background-color: transparent;
+    color: #374151;
+    border-radius: 6px;
+    border: 1px solid #d1d1d1;
+    text-indent: 8px;
+}
+
+.form input[type="file"] {
+    height: 200px;
+}
+
+.form input:read-only {
+    background-color: #f1f1f1;
+}
+
+.btn-submit-ticket {
+    background-color: rgba(27, 73, 157, 0.9);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-submit-ticket:hover {
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
+    transition: 0.3s;
+}
+
+.content-header .filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}

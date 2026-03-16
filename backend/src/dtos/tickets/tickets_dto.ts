@@ -4,12 +4,12 @@ import z from "zod";
 export const CreateTicketSchema = z.object({
     assign_to: z.coerce.number().min(1).optional(),
     category_id: z.coerce.number().min(1, "Kategori tidak boleh kosong."),
-    ticket_no: z.string().min(1, "No tiket tidak boleh kosong."),
+    ticket_no: z.string().min(1, "No tiket tidak boleh kosong.").optional(),
     ticket_title: z.string().min(1, "Judul tiket tidak boleh kosong."),
     problem: z.string().min(1, "Kendala tidak boleh kosong."),
     report_date: z.coerce.date({
         error: "Tanggal pelaporan tidak boleh kosong"
-    }),
+    }).optional(),
     department: z.string().min(1, "Departemen tidak boleh kosong."),
     location: z.string().min(1, "Lokasi tidak boleh kosong."),
     priority: z.enum(Priority, {
@@ -19,6 +19,7 @@ export const CreateTicketSchema = z.object({
     status: z.enum(TicketStatus, {
         error: "Status tiket tidak boleh kosong."
     }),
+    user: z.string().min(1, "Nama Pengguna tidak boleh kosong."),
     status_reason: z.string().trim().optional(),
     closed_at: z.coerce.date().optional()
 });
@@ -45,6 +46,7 @@ export const UpdateTicketSchema = z.object({
     status: z.enum(TicketStatus, {
         error: "Status tiket tidak boleh kosong."
     }).optional(),
+    user: z.string().min(1, "Nama Pengguna tidak boleh kosong.").optional(),
     status_reason: z.string().trim().optional(),
     closed_at: z.coerce.date().optional()
 });

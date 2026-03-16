@@ -44,6 +44,7 @@ model Tickets {
   note           String?
   status         TicketStatus @default(pending)
   status_reason  String?      @db.VarChar(100)
+  user           String       @db.VarChar(100)
   closed_at      DateTime?
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
