@@ -14,16 +14,18 @@ model Users {
   isActive   Boolean
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
+  deleted_at DateTime?
   tickets    Tickets[]
 
   @@map("users")
 }
 
 model Categories {
-  id            Int            @id @default(autoincrement())
-  name          String         @db.VarChar(100)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  deleted_at    DateTime?
   documentation Documentation[]
   tickets       Tickets[]
 
@@ -44,10 +46,11 @@ model Tickets {
   note           String?
   status         TicketStatus @default(pending)
   status_reason  String?      @db.VarChar(100)
-  user           String       @db.VarChar(100)
   closed_at      DateTime?
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
+  user           String       @db.VarChar(100)
+  deleted_at     DateTime?
   images         Images[]
   log            Log[]
   fk_users_id    Users?       @relation(fields: [assign_to], references: [id])
@@ -58,7 +61,7 @@ model Tickets {
 
 model Images {
   id           Int      @id @default(autoincrement())
-  ticket_id    Int      
+  ticket_id    Int
   filename     String
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
@@ -72,7 +75,7 @@ model Images {
 
 model Log {
   id           Int      @id @default(autoincrement())
-  ticket_id    Int      
+  ticket_id    Int
   status       String   @db.VarChar(100)
   action_type  String   @db.VarChar(100)
   log_date     DateTime @default(now())
@@ -85,13 +88,13 @@ model Log {
 }
 
 model Documentation {
-  id                  Int                  @id @default(autoincrement())
-  category_id         Int                  
-  title               String               @db.VarChar(100)
+  id                  Int                   @id @default(autoincrement())
+  category_id         Int
+  title               String                @db.VarChar(100)
   description         String?
-  created_at          DateTime             @default(now())
-  updated_at          DateTime             @updatedAt
-  fk_category_id      Categories           @relation(fields: [category_id], references: [id])
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  fk_category_id      Categories            @relation(fields: [category_id], references: [id])
   documentation_files Documentation_files[]
 
   @@map("documentation")
@@ -99,7 +102,7 @@ model Documentation {
 
 model Documentation_files {
   id             Int           @id @default(autoincrement())
-  document_id    Int           
+  document_id    Int
   filename       String
   created_at     DateTime      @default(now())
   updated_at     DateTime      @updatedAt

@@ -15,7 +15,7 @@ export const GetAllCategoriesController = async (req: Request, res: Response) =>
 
 export const CreateCategoriesController = async (req: Request, res: Response) => {
     try {
-        const data = req.body as CategoriesBodyDTO.CreateCategoriesBody;
+        const data = req.body as CategoriesBodyDTO.CreateCategoriesInput;
         const result = await Services.CreateCategoriesServices(data);
 
         res.status(201).json(result);
@@ -30,7 +30,7 @@ export const UpdateCategoriesController = async (req: Request, res: Response) =>
     try {
         const id = Number(req.params.id);
 
-        const data = req.body as CategoriesBodyDTO.UpdateCategoriesBody;
+        const data = req.body as CategoriesBodyDTO.UpdateCategoriesInput;
         const result = await Services.UpdateCategoriesServices(id, data);
 
         res.status(201).json(result);

@@ -7,7 +7,7 @@ export const GetTicketByIdController = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     try {
         const result = await TicketServices.getTicketById(id);
-        res.status(201).json(result);
+        res.status(200).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
     }

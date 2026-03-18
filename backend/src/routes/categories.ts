@@ -7,6 +7,6 @@ const routerCategories: Router = Router();
 routerCategories.get("/get-all-categories", Controller.GetAllCategoriesController);
 routerCategories.post("/new-categories", Middleware.CreateCategoriesMiddleware, Controller.CreateCategoriesController);
 routerCategories.put("/update-categories/:id", Middleware.UpdateCategoriesMiddleware, Controller.UpdateCategoriesController);
-routerCategories.delete("/delete-categories/:id", Middleware.DeleteCategoriesMiddleware, Controller.DeleteCategoriesController);
+routerCategories.put("/delete-categories/:id", Middleware.DeleteCategoriesMiddleware, Controller.DeleteCategoriesController);
 
 export default routerCategories;

@@ -1,12 +1,19 @@
-import { Priority, TicketStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import prisma from "../../prisma";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 import fs from "fs/promises";
 
+function MakeDate() {
+    return new Date();
+}
+
 export const GetTicketById = async (id: number) => {
     try {
         const data = await prisma.tickets.findUnique({
-            where: {id: id}
+            where: {
+                id: id,
+                deleted_at: null
+            }
         });
         return data;
     } catch (error: any) {
@@ -16,7 +23,11 @@ export const GetTicketById = async (id: number) => {
 
 export const GetAllTicketDAO = async () => {
     try {
-        const data = await prisma.tickets.findMany();
+        const data = await prisma.tickets.findMany({
+            where: {
+                deleted_at: null
+            }
+        });
         return data;
     } catch (error: any) {
         throw new Error(error.message);
@@ -29,7 +40,7 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
             Object.entries(data).filter(([_, v]) => v !== undefined)
         ) as unknown as Prisma.TicketsCreateInput;
 
-        const date = new Date();
+        const date = MakeDate();
         const today = date.toISOString().slice(0, 10).replace(/-/g, '');
         const lastTicket = await prisma.tickets.findFirst({
             where: {
@@ -71,6 +82,16 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
                     }
                 });
             }
+
+            await tx.log.create({
+                data: {
+                    ticket_id: ticket.id,
+                    status: ticket.status,
+                    action_type: "create",
+                    log_date: MakeDate(),
+                    description: ticket.status_reason,
+                }
+            });
         });
 
         return ticketNo;
@@ -102,6 +123,16 @@ export const UpdateTicketDAO = async (data: Partial<TicketDTO.UpdateTicketInput>
                     }
                 });
             }
+
+            await tx.log.create({
+                data: {
+                    ticket_id: ticket.id,
+                    status: ticket.status,
+                    action_type: "update",
+                    log_date: MakeDate(),
+                    description: ticket.status_reason,
+                }
+            });
         });
     } catch (error: any) {
         throw new Error(error.message);
@@ -129,8 +160,21 @@ export const DeleteTicketDAO = async (id: number) => {
                 });
             }
 
-            await tx.tickets.delete({
-                where: { id: id }
+            const ticket = await tx.tickets.update({
+                where: { id: id },
+                data: {
+                    deleted_at: MakeDate()
+                }
+            });
+
+            await tx.log.create({   
+                data: {
+                    ticket_id: ticket.id ?? null,
+                    status: ticket.status,
+                    action_type: "delete",
+                    log_date: MakeDate(),
+                    description: ticket.status_reason,
+                }
             });
         });
     } catch (error: any) {

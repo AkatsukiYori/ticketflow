@@ -12,24 +12,18 @@ export const GetAllCategoriesServices = async () => {
     }
 }
 
-export const CreateCategoriesServices = async (data: CategoriesBodyDTO.CreateCategoriesBody) => {
+export const CreateCategoriesServices = async (data: CategoriesBodyDTO.CreateCategoriesInput) => {
     try {
-        await CategoriesDAO.CreateCategoriesDAO({
-            ...data
-        });
-
-        return ({ message: "Kategori berhasil ditambahkan." });
+        await CategoriesDAO.CreateCategoriesDAO(data);
+        return ({ message: "Category successful created." });
     } catch (error: any) {
         throw new Error(error.message);
     }
 }
 
-export const UpdateCategoriesServices = async (id: number, data: CategoriesBodyDTO.UpdateCategoriesBody) => {
+export const UpdateCategoriesServices = async (id: number, data: CategoriesBodyDTO.UpdateCategoriesInput) => {
     try {
-        await CategoriesDAO.UpdateCategoriesDAO({
-            id: id,
-            ...data
-        });
+        await CategoriesDAO.UpdateCategoriesDAO(data, id);
 
         return ({ message: "Kategori berhasil diubah." });
     } catch (error: any) {
