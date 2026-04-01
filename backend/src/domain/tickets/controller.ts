@@ -23,11 +23,15 @@ export const GetAllTicketController = async (req: Request, res: Response) => {
     }
 }
 
-export const CreateTicketController = async (req: Request, res: Response) => {
+export const CreateTicketController = async (req: any, res: Response) => {
     const data = req.body as TicketDTO.CreateTicketInput;
     const file = req.file;
     try {
         const result = await TicketServices.CreateTicketServices(data, file);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -43,12 +47,16 @@ export const CreateTicketController = async (req: Request, res: Response) => {
     }
 }
 
-export const UpdateTicketController = async (req: Request, res: Response) => {
+export const UpdateTicketController = async (req: any, res: Response) => {
     const id = Number(req.params.id);
     const data = req. body as TicketDTO.UpdateTicketInput;
     const file = req.file;
     try {
         const result = await TicketServices.UpdateTicketServices(id, data, file);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -56,13 +64,34 @@ export const UpdateTicketController = async (req: Request, res: Response) => {
     }
 }
 
-export const DeleteTicketController = async (req: Request, res: Response) => {
+export const DeleteTicketController = async (req: any, res: Response) => {
     try {
         const id = Number(req.params.id);
         const result = await TicketServices.DeleteTicketServices(id);
 
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
+    }
+}
+
+export const AssignTicketController = async (req: any, res: Response) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const userId = req.body.user_id;
+
+        const result = await TicketServices.AssignTicketServices(ticketNo, Number(userId));
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Something went wrong : " + error.messaeg });
     }
 }

@@ -8,7 +8,7 @@ datasource db {
 
 model Users {
   id         Int       @id @default(autoincrement())
-  username   String    @db.VarChar(150)
+  username   String    @db.VarChar(150) @unique
   password   String    @db.VarChar(100)
   location   Location  @default(pontianak)
   isActive   Boolean

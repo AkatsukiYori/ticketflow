@@ -1,8 +1,9 @@
 import { Copyright } from "lucide-react";
+import Styles from "../../css/layouts/admin/layouts.module.css";
 
 export default function Footer() {
     return (
-        <footer style={{ height: "40px", borderTop: "1px solid #f1f1f1", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "white", color: "#1b1b1b" }}>
+        <footer className={Styles['footer']}>
             <small><Copyright size={13}></Copyright> 2026 Ticketflow</small>
         </footer>
     );

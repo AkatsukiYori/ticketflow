@@ -1,23 +1,19 @@
 import { Express, NextFunction, Request, Response } from "express";
-import z, { check } from "zod";
-
-const CreateSchema = z.object({
-    name: z.string().min(1, "Nama kategori tidak boleh kosong.")
-});
-
-const UpdateSchema = z.object({
-    name: z.string().optional()
-})
+import * as CategoriesDTO from "../dtos/categories/categories_dto";
 
 const CheckID = (id: number) => {
     return Number.isInteger(id) && id > 0;
 }
 
 export const CreateCategoriesMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const result = CreateSchema.safeParse(req.body);
+    const result = CategoriesDTO.CreateCategoriesSchema.safeParse(req.body);
     if(!result.success) {
-        return res.status(500).json({
-            message: result.error.issues.map(e => e.message),
+        return res.status(400).json({
+            error: result.error.issues.map((e) => ({
+                path: e.path,
+                message: e.message,
+                code: e.code
+            }))
         });
     }
 
@@ -28,14 +24,18 @@ export const CreateCategoriesMiddleware = (req: Request, res: Response, next: Ne
 export const UpdateCategoriesMiddleware = (req: Request, res: Response, next: NextFunction) => {
     if(!CheckID(Number(req.params.id))) {
         return res.status(500).json({
-            message: "ID tidak valid!"
+            message: "Invalid ID."
         });
     }
 
-    const result = UpdateSchema.safeParse(req.body);
+    const result = CategoriesDTO.UpdateCategoriesSchema.safeParse(req.body);
     if(!result.success) {
-        return res.status(500).json({
-            message: result.error.issues.map(e => e.message)
+        return res.status(400).json({
+            error: result.error.issues.map((e) => ({
+                path: e.path,
+                message: e.message,
+                code: e.code
+            }))
         });
     }
     
@@ -46,7 +46,7 @@ export const UpdateCategoriesMiddleware = (req: Request, res: Response, next: Ne
 export const DeleteCategoriesMiddleware = (req: Request, res: Response, next: NextFunction) => {
     if(!CheckID(Number(req.params.id))) {
         return res.status(500).json({
-            message: "ID tidak valid!"
+            message: "Invalid ID."
         });
     }
     next();

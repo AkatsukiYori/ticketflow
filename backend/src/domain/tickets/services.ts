@@ -63,3 +63,13 @@ export const DeleteTicketServices = async (id: number) => {
         throw new Error(error.message);
     }
 }
+
+export const AssignTicketServices = async (ticketNo: string, userId: number) => {
+    try {
+        await TicketDAO.AssignTicketDAO(ticketNo, userId);
+
+        return ({ message: "Ticket Successful Assigned." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}

@@ -1,5 +1,5 @@
 import { CancelButton, HeaderModalButton, TextAssignButton } from "../../buttons/Button";
-import "./ticketDetail.css";
+import Styles from "./ticketDetail.module.css";
 
 type Props = {
     open: boolean;
@@ -9,17 +9,17 @@ type Props = {
 
 export default function TicketDetailModal({ open, data, onClose }: Props) {
     return (
-        <div className={`modal-overlay ${open ? "show" : "hide"}`}>
-            <div className={`modal-popup ${open ? "show" : "hide"}`} style={{ width: "700px" }}>
-                <div className="modal-header">
+        <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
+            <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
+                <div className={Styles['modal-header']}>
                     <div>
                         <h2 style={{ margin: 0 }}>Ticket Detail</h2>
                         <p style={{ margin: 0 }}>#{data.ticket_no}</p>
                     </div>
                     <HeaderModalButton onClose={onClose} label="X" />
                 </div>
-                <div className="modal-body">
-                    <div className="modal-body-content">
+                <div className={Styles['modal-body']}>
+                    <div className={Styles['modal-body-content']}>
                         <h4>Information</h4>
                         <table>
                             <tbody>
@@ -43,8 +43,8 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                         </table>
                     </div>
 
-                    <div className="modal-body-content">
-                        <h4>Reporter</h4>
+                    <div className={Styles['modal-body-content']}>
+                        <h4>Reported By</h4>
                         <table>
                             <tbody>
                                 <tr>
@@ -63,7 +63,7 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                         </table>
                     </div>
 
-                    <div className="modal-body-content">
+                    <div className={Styles['modal-body-content']}>
                         <h4>Additional</h4>
                         <table>
                             <tbody>
@@ -87,7 +87,7 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                         </table>
                     </div>
                 </div>
-                <div className="modal-footer">
+                <div className={Styles['modal-footer']}>
                     <TextAssignButton />
                     <CancelButton onClose={onClose} label="Cancel" />
                 </div>

@@ -10,7 +10,7 @@ type Props = {
 
 export function NewButton({label, func, onClick} : Props) {
     return (
-        <button type="button" className={`btn_${func}`} name={`btn_${func}`} id={`btn_${func}`} onClick={onClick} title="New"><Plus /> New {label}</button>
+        <button type="button" className={`btn_${func}`} name={`btn_${func}`} id={`btn_${func}`} onClick={onClick} title="New"><Plus /> {label}</button>
     );
 }
 

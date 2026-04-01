@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import "../../../components/modals/category/categoryModal.css";
 import { InputText } from "../../inputs/Input";
 import { SubmitButton, CancelButton, HeaderModalButton } from "../../buttons/Button";
+import Styles from "./categoryModal.module.css";
 
 type Props = {
     open: boolean;
@@ -10,15 +10,31 @@ type Props = {
     onClose: () => void;
     onSubmit: (data: any) => void;
     onUpdate: (data: any) => void;
+    validation?: { [key: string]: string };
 }
 
-export default function CategoryModal({ open, mode, data, onClose, onSubmit, onUpdate } : Props) {
+export default function CategoryModal({ open, mode, data, onClose, onSubmit, onUpdate, validation } : Props) {
     const [name, setName] = useState("");
+    const [error, setError] = useState<{[key: string]: string}>({});
+    const clearError = (field: string) => {
+        setError(prev => ({ ...prev, [field]: "" }));
+    };
+
     useEffect(() => {
-        if(mode === "edit" && data) {
-            setName(data.name);
-        } else {
-            setName("");
+        if(!open) {
+            setError({});
+        } else if(validation) {
+            setError(validation);
+        }
+    }, [open, validation]);
+
+    useEffect(() => {
+        if(open) {
+            if(mode === "edit" && data) {
+                setName(data.name);
+            } else {
+                setName("");
+            }
         }
     }, [data, mode, open]);
 
@@ -34,25 +50,37 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
                 name: name
             })
         }
-
-        setName("");
     }
 
     return (
-        <div className={`modal-overlay ${open ? "show" : "hide"}`}>
-            <div className={`modal-popup ${open ? "show" : "hide"}`}>
-                <div className="modal-header">
+        <section className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
+            <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
+                <div className={Styles['modal-header']}>
                     <h2>{ mode === "create" ? "New Category" : "Edit Category" }</h2>
                     <HeaderModalButton onClose={onClose} label="X" />
                 </div>
-                <div className="modal-body">
-                    <InputText name="category_name" id="category_name" placeholder="Category Name" value={name} onChangeInput={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+                <div className={Styles['modal-body']}>
+                    <label htmlFor="">Category Name <span style={{ color: "red" }}>*</span></label>
+                    <InputText
+                        name="category_name"
+                        id="category_name"
+                        placeholder="Category Name"
+                        value={name}
+                        onChangeInput={(e) => {
+                            setName(e.target.value);
+                            clearError("name");
+                        }}
+                        style={{ width: "100%", borderColor: error.name ? "red" : "" }}
+                    />
+                    {error.name && (
+                        <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.name}</span>
+                    )}
                 </div>
-                <div className="modal-footer">
+                <div className={Styles['modal-footer']}>
                     <SubmitButton onClick={handleSave} label="Submit" />
                     <CancelButton onClose={onClose} label="Cancel" />
                 </div>
-            </div>
-        </div>
+            </section>
+        </section>
     );
 }

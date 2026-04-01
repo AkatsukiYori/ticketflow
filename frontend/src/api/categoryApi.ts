@@ -15,5 +15,5 @@ export const updateCategories = (id: number, data: any) => {
 }
 
 export const deleteCategories = (id: number) => {
-    return axios.delete(`${API}/delete-categories/${id}`);
+    return axios.put(`${API}/delete-categories/${id}`);
 }

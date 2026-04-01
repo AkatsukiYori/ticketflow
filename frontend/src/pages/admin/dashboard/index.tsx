@@ -1,10 +1,11 @@
 // import TicketPieChart from "../../../components/charts/StatusChart";
+import Styles from "../../../css/layouts/admin/layouts.module.css";
 
 export default function Dashboard() {
     return (
-        <div>
+        <section className={Styles['main-content']}>
             <p>Dashboard page</p>
             {/* <TicketPieChart /> */}
-        </div>
+        </section>
     );
 }

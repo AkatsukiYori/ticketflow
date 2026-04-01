@@ -3,6 +3,7 @@ import HomePage from "../pages/user";
 import NewTicket from "../pages/user/newTicket";
 import UserLayout from "../layouts/userLayouts/Index";
 import CheckTicketStatus from "../pages/user/checkStatus";
+import Login from "../pages/user/auth/login";
 
 export default function UserRouter() {
     const routes = useRoutes([
@@ -12,9 +13,10 @@ export default function UserRouter() {
             children: [
                 { path: "/", element: <HomePage /> },
                 { path: "/tiket-baru", element: <NewTicket /> },
-                { path: "/cek-status-tiket", element: <CheckTicketStatus /> }
+                { path: "/cek-status-tiket", element: <CheckTicketStatus /> },
             ],
-        }
+        },
+        { path: "/admin-login", element: <Login /> }
     ])
     return routes;
 }

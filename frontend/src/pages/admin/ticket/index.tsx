@@ -1,4 +1,4 @@
-import { use, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshButton } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
@@ -9,6 +9,10 @@ import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
 
+import Styles from "../../../css/layouts/admin/layouts.module.css";
+import { useApi } from "../../../hooks/useApi";
+import { socket } from "../../../api/socket";
+
 export default function Ticket() {
     const [data, setData] = useState<any[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -17,12 +21,30 @@ export default function Ticket() {
     const [ticketDetail, setTicketDetail] = useState<any[]>([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
+    const { callApi } = useApi();
+    const fetchTicket = useCallback(async () => {
+        try {
+            const result = await callApi("get", "/tickets/get-all-ticket");
+            setData(result);
+        } catch (error: any) {
+            ErrorNotification({ message: "Gagal mengambil ticket.", variantType: "error" });
+        }
+    }, [callApi]);
+
     useEffect(() => {
         fetchTicket();
 
+        socket.on("ticket-change", () => {
+            fetchTicket();
+        });
+
         if(!ticketId) return;
         fetchTicketById(ticketId);
-    }, [ticketId]);
+
+        return () => {
+            socket.off("ticket-change");
+        }
+    }, [ticketId, fetchTicket]);
 
     async function fetchTicketById(id: number) {
         try {
@@ -30,15 +52,6 @@ export default function Ticket() {
             setTicketDetail(res.data);
         } catch (error) {
             ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
-        }
-    }
-
-    async function fetchTicket() {
-        try {
-            const res = await getTicket();
-            setData(res.data);
-        } catch (error) {
-            ErrorNotification({ message: "Someting Went Wrong.", variantType: "error" });
         }
     }
 
@@ -68,13 +81,15 @@ export default function Ticket() {
     });
 
     return (
-        <div>
-            <div className="filter" style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
-                <section style={{ display: "flex", gap: "10px" }}>
-                    <InputText name="search" id="search" placeholder="No ticket..." value={( table.getColumn("ticket_no")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value) } />
-                    <InputText name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
+        <section className={Styles['main-content']}>
+            <section className={Styles['top-table']}>
+                <section className={Styles['filter-ticket']}>
+                    <InputText type="text" name="search" id="search" placeholder="No ticket..." value={( table.getColumn("ticket_no")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value) } />
+                    <InputText type="text" name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
                     <SelectOptions
                         label="Filter status"
+                        name="filterInput"
+                        id="filterInput"
                         options={[
                             { label: "Pending", value: "pending" },
                             { label: "On Progress", value: "on_progress" },
@@ -84,15 +99,17 @@ export default function Ticket() {
                         onChangeSelect={(e) => 
                             table.getColumn("status")?.setFilterValue(e.target.value) 
                         } />
-                    <RefreshButton onClick={() => fetchTicket()} />
+                    <section>
+                        <RefreshButton onClick={() => fetchTicket()} />
+                    </section>
                 </section>
-            </div>
+            </section>
             <DataTables
                 table={table}
             />
 
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} />
-            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isDeleted={false} data={ticketDetail} />
-        </div>
+            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} data={ticketDetail} />
+        </section>
     );
 }

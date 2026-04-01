@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as Middleware from "../middleware/documentation";
+import * as Middleware from "../middleware/documentationMiddleware";
 import * as Controller from "../domain/documentation/controller";
 import { createUploader } from "../middleware/uploads";
 

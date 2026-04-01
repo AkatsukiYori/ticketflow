@@ -19,5 +19,5 @@ export const updateTicket = (id: number, data: any) => {
 }
 
 export const deleteCategories = (id: number) => {
-    return axios.delete(`${API}/delete-ticket/${id}`);
+    return axios.put(`${API}/delete-ticket/${id}`);
 }

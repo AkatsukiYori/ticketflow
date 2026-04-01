@@ -9,6 +9,9 @@ export const GetAllCategoriesDAO = async () => {
         const data = await prisma.categories.findMany({
             where: {
                 deleted_at: null
+            },
+            orderBy: {
+                created_at: "desc"
             }
         });
         return data;

@@ -28,7 +28,7 @@ export const CreateDocumentationServices = async (data: DocumentationDTO.CreateD
             file_types: file.mimetype
         } : null;
         await DAO.CreateDocumentationDAO(data, fileData);
-        return ({ message: "Documentation successful created." });
+        return ({ message: "Documentation Successful Created." });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -43,7 +43,7 @@ export const UpdateDocumentationServices = async (id: number, data: Documentatio
             file_types: file.mimetype
         } : null;
         await DAO.UpdateDocumentationDAO(data, id, fileData);
-        return ({ message: "Documentation successful updated." });
+        return ({ message: "Documentation Successful Updated." });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -52,7 +52,7 @@ export const UpdateDocumentationServices = async (id: number, data: Documentatio
 export const DeleteDocumentationServices = async (id: number) => {
     try {
         await DAO.DeleteDocumentationDAO(id);
-        return ({ message: "Documentation successful deleted." });
+        return ({ message: "Documentation Successful Deleted." });
     } catch (error: any) {
         throw new Error(error.message);
     }

@@ -1,24 +1,40 @@
 import SidebarItem from "../../components/sidebar/SidebarItem";
-import "../../components/sidebar/sidebar.css";
-import logo from "../../assets/logo2.png";
+import Styles from "../../css/layouts/admin/layouts.module.css";
 import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, UserCircle2, LogOut } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 
-export default function Sidebar() {
+type Props = {
+    isSidebarOpen: boolean;
+    closeSidebar: () => void;
+};
+
+export default function Sidebar({ isSidebarOpen, closeSidebar } : Props) {
+    const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+    const navigate = useNavigate();
+    const logout = () => {
+        localStorage.clear();
+        navigate("/admin-login", { replace: true });
+    };
+
     return (
-        <div className="sidebar" style={{ width: "250px", padding: "20px", background: "#ffffff", color: "#1b1b1b", display: "flex", flexDirection: "column", gap: 16, borderRight: "1px solid #f1f1f1" }}>
-            <div>
-                <img src={logo} alt="Logo" style={{ width: "180px" }} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <SidebarItem icon={LayoutDashboardIcon} label="Dashboard" to="/admin/dashboard" />
-                <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" />
-                <SidebarItem icon={Blocks} label="Category" to="/admin/category" />
-                <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" />
-                <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" />
-                <SidebarItem icon={Logs} label="Logs" to="/admin/logs" />
-                <SidebarItem icon={UserCircle2} label="Profile" to="/admin/profile" />
-                <SidebarItem icon={LogOut} label="Logout" to="/admin/logout" />
-            </div>
-        </div>
+        <section>
+            <aside className={`${Styles['sidebar']} ${isSidebarOpen ? Styles['sidebar-active'] : ""}`}>
+                <section className={Styles['sidebar-items']}>
+                    <SidebarItem icon={LayoutDashboardIcon} label="Dashboard" to="/admin/dashboard" onClick={closeSidebar} />
+                    <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
+                    <SidebarItem icon={Blocks} label="Category" to="/admin/category" onClick={closeSidebar} />
+                    <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
+                    <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" onClick={closeSidebar} />
+                    <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
+                    <SidebarItem icon={UserCircle2} label="Profile" to="/admin/profile" onClick={closeSidebar} />
+                    <SidebarItem icon={LogOut} label="Logout" to="#" onClick={() => setIsLogoutOpen(true)} />
+                </section>
+    
+            </aside>
+            <ConfirmModal open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} onConfirm={logout} isTicket={false} message="Are you sure want to logout?" />
+        </section>
+
     );
 }

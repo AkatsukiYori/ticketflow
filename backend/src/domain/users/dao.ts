@@ -1,19 +1,31 @@
 import prisma from "../../prisma";
-import { Location } from "@prisma/client";
+import { Location, Prisma } from "@prisma/client";
+import * as DTO from "../../dtos/users/users_dto";
 
-type CreateUsersDTOInput = {
-    username: string;
-    password: string;
-    location: Location;
-    isActive: boolean;
+export const GetUserByIdDAO = async (id: number) => {
+    try {
+        const data = await prisma.users.findFirst({
+            where: {
+                id: id
+            }
+        });
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
 }
 
-type UpdateUsersDTOInput = {
-    id: number;
-    username?: string;
-    password?: string;
-    location?: Location;
-    isActive?: boolean;
+export const GetUserByUsernameDAO = async (username: string) => {
+    try {
+        const data = await prisma.users.findUnique({
+            where: {
+                username: username
+            }
+        });
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
 }
 
 export const GetAllUsersDAO = async () => {
@@ -25,24 +37,34 @@ export const GetAllUsersDAO = async () => {
     }
 }
 
-export const CreateUsersDAO = async (data: CreateUsersDTOInput) => {
+export const CreateUsersDAO = async (data: DTO.CreateUserInput) => {
     try {
-        await prisma.users.create({
-            data
+        const filteredData = Object.fromEntries(
+            Object.entries(data).filter(([_,v]) => v !== undefined)
+        ) as unknown as Prisma.UsersCreateInput;
+
+        await prisma.$transaction(async (tx) => {
+            await tx.users.create({
+                data: filteredData
+            });
         });
     } catch (error: any) {
         throw new Error(error.message);
     }
 }
 
-export const UpdateUsersDAO = async (data: UpdateUsersDTOInput) => {
+export const UpdateUsersDAO = async (data: Partial<DTO.UpdateUserInput>, id: number) => {
     try {
-        const {id, ...updateData} = data;
-        await prisma.users.update({
-            where: { id: data.id },
-            data: updateData
+        const filteredData = Object.fromEntries(
+            Object.entries(data).filter(([_,v]) => v !== undefined)
+        ) as unknown as Prisma.UsersUpdateInput;
 
-        })
+        await prisma.$transaction(async (tx) => {
+            await tx.users.update({
+                where: { id: id },
+                data: filteredData
+            })
+        });
     } catch (error: any) {
         throw new Error(error.message);
     }

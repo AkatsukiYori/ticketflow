@@ -40,5 +40,11 @@ export function InfoNotification({ message, variantType }: Props) {
 export function WarningNotification({ message, variantType }: Props) {
     enqueueSnackbar(message, {
         variant: variantType,
+        persist: true,
+        action: (key) => (
+            <button onClick={() => closeSnackbar(key)} className="btn-dismiss-notification">
+                x
+            </button>
+        )
     });
 }

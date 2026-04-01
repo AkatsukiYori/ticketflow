@@ -19,6 +19,14 @@ const CheckID = (id: number) => {
     return Number.isInteger(id) && id > 0;
 }
 
+export const GetUsersByIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    if(!CheckID(Number(req.params.id))) {
+        res.status(500).json({
+            message: "Invalid ID!"
+        });
+    }
+}
+
 export const CreateUsersMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const result = CreateSchema.safeParse(req.body);
     if(!result.success) {

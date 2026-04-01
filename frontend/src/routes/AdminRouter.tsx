@@ -7,12 +7,17 @@ import Logs from "../pages/admin/logs";
 import Report from "../pages/admin/reports";
 import Profile from "../pages/admin/profile";
 import AdminLayout from "../layouts/adminLayouts/Index";
+import ProtectedRouter from "./ProtectedRouter";
 
 export default function AdminRouter() {
     const routes = useRoutes([
         {
             path: "/",
-            element: <AdminLayout />,
+            element: (
+                <ProtectedRouter>
+                    <AdminLayout></AdminLayout>
+                </ProtectedRouter>
+            ),
             children: [
                 { path: "dashboard", element: <Dashboard /> },
                 { path: "ticket", element: <Ticket /> },

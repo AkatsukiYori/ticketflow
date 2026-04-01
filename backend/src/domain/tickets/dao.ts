@@ -9,10 +9,13 @@ function MakeDate() {
 
 export const GetTicketById = async (id: number) => {
     try {
-        const data = await prisma.tickets.findUnique({
+        const data = await prisma.tickets.findFirst({
             where: {
                 id: id,
                 deleted_at: null
+            },
+            orderBy: {
+                report_date: "desc"
             }
         });
         return data;
@@ -24,8 +27,14 @@ export const GetTicketById = async (id: number) => {
 export const GetAllTicketDAO = async () => {
     try {
         const data = await prisma.tickets.findMany({
+            include: {
+                fk_users_id: true
+            },
             where: {
                 deleted_at: null
+            },
+            orderBy: {
+                report_date: "desc"
             }
         });
         return data;
@@ -176,6 +185,29 @@ export const DeleteTicketDAO = async (id: number) => {
                     description: ticket.status_reason,
                 }
             });
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const AssignTicketDAO = async (ticketNo: string, userId: number) => {
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    ticket_no: ticketNo
+                }
+            });
+            
+            if(ticket) {
+                await tx.tickets.update({
+                    where: { id: ticket.id },
+                    data: {
+                        assign_to: userId
+                    }
+                })
+            }
         });
     } catch (error: any) {
         throw new Error(error.message);

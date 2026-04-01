@@ -1,5 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { UpdateButton, DeleteButton } from "../../../components/buttons/Button";
+import Styles from "../../../components/datatables/datatable.module.css";
 
 type Category = {
     id: number;
@@ -27,7 +28,7 @@ export const columns = (
             const data = row.original;
 
             return (
-                <div className="table-actions">
+                <div className={Styles['table-actions']}>
                     <UpdateButton func="edit" onClick={() => onEdit(data)} />
                     <DeleteButton func="delete" onClick={() => onDelete(data.id)} />
                 </div>

@@ -1,0 +1,172 @@
+.body-section {
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.overlay {
+    display: none;
+}
+
+/* Start Header */
+.header {
+    flex: 1;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 12px;
+    background-color: white;
+    color: #1b1b1b;
+}
+
+.header .logo img {
+    display: block;
+}
+
+.header .logo button {
+    display: none;
+}
+
+.header .section-profile {
+    background-color: #1b499d;
+    width: 200px;
+    padding: 16px 32px;
+    color: white;
+    border-radius: 50px 0 0 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+/* End Header */
+
+/* Start Main */
+.main {
+    padding: 16px;
+    flex: 10;
+}
+/* End Main */
+
+/* Start Footer */
+.footer {
+    flex: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #f1f1f1;
+    background-color: white;
+    color: #1b1b1b;
+}
+/* End Footer */
+
+/* Start Sidebar */
+.sidebar {
+    width: 250px;
+    height: 100%;
+    padding: 20px;
+    color: #1b1b1b;
+    gap: 16;
+    background-color: white;
+    border-right: 1px solid #f1f1f1;
+    position: fixed;
+    left: 0;
+    transition: transform 0.3s ease;
+    z-index: 100;
+}
+
+.sidebar-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+/* End Sidebar */
+
+/* Start Main */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-left: 300px;
+}
+
+.top-table {
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-ticket {
+    display: flex;
+    gap: 8px;
+}
+/* End Main */
+
+@media (max-width: 768px) {
+    .overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 90;
+    }
+
+    /* Start Header */
+    .header .logo img {
+        display: none;
+    }
+
+    .header .logo button {
+        display: block;
+        background-color: #1b499d;
+        border-radius: 8px;
+        border: none;
+        padding: 12px;
+    }
+
+    .header .section-profile {
+        width: 120px;
+        padding: 16px 32px;
+    }
+    /* End header */
+
+    /* Start Sidebar */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar-active {
+        transform: translateX(0);
+    }
+    /* End Sidebar */
+    
+    /* Start Main */
+    .main {
+        padding: 16px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .filter {
+        gap: 10px;
+    }
+
+    .top-table {
+        gap: 8px;
+    }
+
+    .filter-ticket {
+        width: 100%;
+        flex-direction: column;
+    }
+    /* End Main */
+}

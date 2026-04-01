@@ -14,6 +14,10 @@ type Ticket = {
     location: string;
     status: string;
     assign_to?: number;
+    fk_users_id?: {
+        id: number;
+        username: string;
+    }
 }
 
 const columnHelper = createColumnHelper<Ticket>();
@@ -56,6 +60,10 @@ export const columns = (
     }),
     columnHelper.accessor("assign_to", {
         header: "PIC",
+        cell: ({ row }) => {
+            const user = row.original.fk_users_id;
+            return user ? user.username : <span style={{ backgroundColor: "red", padding: "8px", borderRadius: "8px", fontSize: "11px", color: "white", fontWeight: "bold" }}>Not Assigned</span>
+        }
     }),
     columnHelper.display({
         id: "actions",
@@ -63,6 +71,11 @@ export const columns = (
         cell: ({ row }) => {
             const data = row.original;
             return (
+                data.assign_to ? 
+                <div className="table-actions">
+                    <DetailButton onClick={() => onDetail(data.id)} />
+                </div>
+                : 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
                     <IconAssignButton onClick={() => onAssign(data.id)} />

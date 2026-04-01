@@ -1,19 +1,35 @@
-export default function Header() {
+import Styles from "../../css/layouts/admin/layouts.module.css";
+import logo from "../../assets/logo2.png";
+import { List } from "lucide-react";
+import { useEffect, useState } from "react";
+
+type Props = {
+    toggleSidebar: () => void;
+};
+
+export default function Header({ toggleSidebar } : Props) {
+    const [username, setUsername] = useState("");
+    const [location, setLocation] = useState("");
+
+    useEffect(() => {
+        const storedName = localStorage.getItem("username");
+        const storedLocation = localStorage.getItem("location");
+        if(storedName && storedLocation) {
+            setUsername(storedName);
+            setLocation(storedLocation);
+        }
+    }, []);
+
     return (
-        <header style={{
-            height: "70px",
-            borderBottom: "1px solid #f1f1f1",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "end",
-            justifyContent: "center",
-            padding: "0 0 0 0",
-            backgroundColor: "white",
-            color: "#1b1b1b" }}>
-            <div style={{ backgroundColor: "#1b499d", width: "13%", padding: "16px 32px", color: "white", borderRadius: "50px 0 0 50px" }}>
-                <h3 style={{ margin: 0 }}>Alexander</h3>
-                <p style={{ margin: 0 }}>Pontianak</p>
-            </div>
+        <header className={Styles['header']}>
+            <section className={Styles['logo']}>
+                <img src={logo} alt="Logo" width="200dvw" />
+                <button type="button" className={Styles['btn-sidebar']} onClick={toggleSidebar}><List /></button>
+            </section>
+            <section className={Styles['section-profile']}>
+                <h3 style={{ margin: 0 }}>{ username }</h3>
+                <p style={{ margin: 0 }}>{ location.charAt(0).toUpperCase() + location.slice(1) }</p>
+            </section>
         </header>
     );
 }

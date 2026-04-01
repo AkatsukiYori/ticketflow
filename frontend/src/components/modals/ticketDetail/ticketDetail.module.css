@@ -1,0 +1,98 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    opacity: 0;
+    transform: scale(1);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.modal-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 700px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-overlay-show,
+.modal-popup-show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 16px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 0;
+    justify-content: center;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #f1f1f1;
+    padding-top: 16px;
+}
+
+.modal-body-content {
+    margin-bottom: 16px;
+}
+
+.modal-body-content, table {
+    width: 100%;
+}
+
+.modal-body-content h4 {
+    margin: 0;
+}
+
+table tbody tr td:first-child {
+    width: 30%;
+    vertical-align: top;
+}
+
+table tbody tr td:last-child {
+    width: 70%;
+}
+
+@media (max-width: 768px) {
+    .modal-popup {
+        width: 300px;
+        height: 90%;
+        overflow-y: auto;
+    }
+
+    .modal-body-content table tr {
+        border: none;
+        display: flex;
+        flex-direction: column;
+        padding: 0 0 0 10px;
+        margin-bottom: 6px;
+    }
+
+    .modal-body-content table tr td:nth-child(1) {
+        font-weight: 700;
+    }
+}

@@ -17,11 +17,18 @@
 }
 
 .modal-popup {
+    width: 600px;
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-overlay-show,
+.modal-popup-show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
 }
 
 .modal-header {
@@ -38,4 +45,10 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .modal-popup {
+        width: 300px;
+    }
 }

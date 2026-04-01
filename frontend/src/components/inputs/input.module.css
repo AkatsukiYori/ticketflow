@@ -26,3 +26,31 @@
     color: #374151;
     border-radius: 6px;
 }
+
+.textarea-input {
+    height: 6em;
+    width: 20em;
+    background-color: transparent;
+    border: 1px solid #d1d1d1;
+    color: #374151;
+    border-radius: 6px;
+    text-indent: 10px;
+}
+
+@media (max-width: 768px) {
+    .text-input {
+        width: auto;
+    }
+
+    .text-input:active {
+        width: auto;
+    }
+
+    .select-options {
+        width: auto;
+    }
+
+    .textarea-input {
+        width: auto;
+    }
+}

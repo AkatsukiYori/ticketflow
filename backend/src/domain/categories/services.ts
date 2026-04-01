@@ -15,7 +15,7 @@ export const GetAllCategoriesServices = async () => {
 export const CreateCategoriesServices = async (data: CategoriesBodyDTO.CreateCategoriesInput) => {
     try {
         await CategoriesDAO.CreateCategoriesDAO(data);
-        return ({ message: "Category successful created." });
+        return ({ message: "Category Successful Created." });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -25,7 +25,7 @@ export const UpdateCategoriesServices = async (id: number, data: CategoriesBodyD
     try {
         await CategoriesDAO.UpdateCategoriesDAO(data, id);
 
-        return ({ message: "Kategori berhasil diubah." });
+        return ({ message: "Category Successful Updated." });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -34,7 +34,7 @@ export const UpdateCategoriesServices = async (id: number, data: CategoriesBodyD
 export const DeleteCategoriesServices = async (id: number) => {
     try {
         await CategoriesDAO.DeleteCategoriesDAO(id);
-        return ({ message: "Kategori berhasil dihapus." });
+        return ({ message: "Category Successful Deleted." });
     } catch (error: any) {
         throw new Error(error.message);
     }

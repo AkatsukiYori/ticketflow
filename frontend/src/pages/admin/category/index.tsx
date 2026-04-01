@@ -1,17 +1,21 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { columns } from "./columns.tsx";
-import { InputText, SelectOptions } from "../../../components/inputs/Input.tsx";
-import { createCategories, getCategories, updateCategories, deleteCategories } from "../../../api/categoryApi.ts";
+import { InputText } from "../../../components/inputs/Input.tsx";
 import { NewButton, RefreshButton } from "../../../components/buttons/Button.tsx";
 import { getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
+import { useApi } from "../../../hooks/useApi.ts";
+import { socket } from "../../../api/socket.ts";
 
 import DataTables from "../../../components/datatables/DataTable";
 import CategoryModal from "../../../components/modals/category/CategoryModal.tsx";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal.tsx";
-import { SuccessNotification, ErrorNotification } from "../../../components/notifications/notification.tsx";
+import { SuccessNotification, ErrorNotification, InfoNotification } from "../../../components/notifications/notification.tsx";
+
+import Styles from "../../../css/layouts/admin/layouts.module.css";
 
 export default function Category() {
     // Ope Modal
+    const { callApi } = useApi();
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -22,46 +26,73 @@ export default function Category() {
     const [selected, setSelected] = useState<any>(null);
     const [data, setData] = useState<any[]>([]);
     const [deleteID, setDeleteID] = useState<number | null>(null);
+    const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
 
     // Filter
     const [globalFilter, setGlobalFilter] = useState("");
 
+    const fetchCategories = useCallback(async () => {
+        try {
+            const result = await callApi("get", "/categories/get-all-categories");
+            setData(result);
+        } catch (error: any) {
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+        }
+    }, [callApi]);
+
     useEffect(() => {
         fetchCategories();
-    }, []);
+        socket.on("category-change", () => {
+            fetchCategories();
+        });
 
-    async function fetchCategories() {
-        try {
-            const res = await getCategories();
-            setData(res.data);
-        } catch (error) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+        return () => {
+            socket.off("category-change");
         }
-    }
+    }, [fetchCategories]);
 
     async function handleSubmit(data: any) {
         try {
-            await createCategories(data);
-
-            SuccessNotification({ message: "Category successful created.", variantType: "success", persist: false });
-            fetchCategories();
+            const res = await callApi("post", `/categories/new-categories`, data);
+            SuccessNotification({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
-        } catch (error) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+        } catch (error: any) {
+            const errorArr = error.response?.data?.error;
+            if(Array.isArray(errorArr)) {
+                const formattedErrors: { [key: string]: string } = {};
+                errorArr.forEach((err: any) => {
+                    const fieldName = err.path[0];
+                    formattedErrors[fieldName] = err.message;
+                });
+
+                setFieldError(formattedErrors);
+                InfoNotification({ message: "Please fill in all required fields.", variantType: "info" });
+            } else {
+                ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            }
         }
     }
 
     async function handleUpdate(data: any) {
         try {
-            await updateCategories(data.id, {
-                name: data.name
-            });
-
-            SuccessNotification({ message: "Category successful updated.", variantType: "success", persist: false });
-            fetchCategories();
+            const res = await callApi("put", `/categories/update-categories/${data.id}`, data);
+            SuccessNotification({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
-        } catch (error) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+            setFieldError({});
+        } catch (error: any) {
+            const errorArr = error.response?.data?.error;
+            if(Array.isArray(errorArr)) {
+                const formattedErrors: { [key: string]: string } = {};
+                errorArr.forEach((err: any) => {
+                    const fieldName  = err.path[0];
+                    formattedErrors[fieldName] = err.message;
+                });
+
+                setFieldError(formattedErrors);
+                InfoNotification({ message: "Please fill in all required fields.", variantType: "info" });
+            } else {
+                ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            }
         }
     }
 
@@ -69,13 +100,12 @@ export default function Category() {
         if(!id) return;
 
         try {
-            await deleteCategories(id);
-            SuccessNotification({ message: "Category successful deleted.", variantType: "success", persist: false });
-            fetchCategories();
+            const res = await callApi("put", `/categories/delete-categories/${id}`);
+            SuccessNotification({ message: res.message, variantType: "success", persist: false });
             setConfirmOpen(false);
             setDeleteID(null);
-        } catch (error) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+        } catch (error: any) {
+            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
         }
     }
 
@@ -109,22 +139,23 @@ export default function Category() {
     });
     
     return (
-        <div>
-            <div className="filter" style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
-                <section style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <InputText name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
+        <section className={Styles['main-content']}>
+            <section className={Styles['top-table']}>
+                <section className={Styles['filter']}>
+                    <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
                     <RefreshButton onClick={() => fetchCategories()} />
                 </section>
                 <section>
-                    <NewButton label="Category" func="add" onClick={handleModalCreate}></NewButton>
+                    <NewButton label="New Category" func="add_desktop" onClick={handleModalCreate}></NewButton>
+                    <NewButton label="" func="add_mobile" onClick={handleModalCreate}></NewButton>
                 </section>
-            </div>
+            </section>
             <DataTables
                 table={table}
             />
 
-            <CategoryModal open={open} mode={mode} data={selected} onClose={() => setOpen(false)} onSubmit={handleSubmit} onUpdate={handleUpdate} />
-            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={() => deleteID && handleDelete(deleteID)} isDeleted={true} />
-        </div>
+            <CategoryModal open={open} mode={mode} data={selected} onClose={() => {setOpen(false); setFieldError({})}} onSubmit={handleSubmit} onUpdate={handleUpdate} validation={fieldError} />
+            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={() => deleteID && handleDelete(deleteID)} isTicket={false} message="Deleted data is permanent and cannot be retrieved!" />
+        </section>
     );
 }

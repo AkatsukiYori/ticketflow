@@ -2,6 +2,29 @@ import { Express, Request, Response } from "express";
 import * as UsersBodyDTO from "../../dtos/users/users_dto";
 import * as UsersServices from "./services";
 
+export const GetUserByIdController = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    try {
+        const result = await UsersServices.GetUserByIdServices(id);
+        res.status(200).json(result);
+    } catch (error: any) {
+        res.status(500).json({
+            message: "Something went wrong : " + error.message
+        });
+    }
+}
+
+export const GetUserByUsernameController = async (req: Request, res: Response) => {
+    try {
+        const result = await UsersServices.GetUserByUsernameServices(req.params.username as string);
+        res.status(200).json(result);
+    } catch (error: any) {
+        res.status(500).json({
+            message: "Terjadi Kesalahan : " + error.message
+        })
+    }
+}
+
 export const GetAllUsersController = async (req: Request, res: Response) => {
     try {
         const result = await UsersServices.GetAllUsersServices();
@@ -15,7 +38,7 @@ export const GetAllUsersController = async (req: Request, res: Response) => {
 
 export const CreateUsersController = async (req: Request, res: Response) => {
     try {
-        const data = req.body as UsersBodyDTO.CreateUsersBody;
+        const data = req.body as UsersBodyDTO.CreateUserInput;
         const result = await UsersServices.CreateUsersServices(data);
 
         res.status(201).json(result);
@@ -29,7 +52,7 @@ export const CreateUsersController = async (req: Request, res: Response) => {
 export const UpdateUsersController = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
-        const data = req.body as UsersBodyDTO.UpdateUsersBody;
+        const data = req.body as UsersBodyDTO.UpdateUserInput;
 
         const result = await UsersServices.UpdateUsersServices(id, data);
         res.status(201).json(result);

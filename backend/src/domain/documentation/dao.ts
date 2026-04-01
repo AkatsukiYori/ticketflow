@@ -4,8 +4,9 @@ import prisma from "../../prisma";
 
 export const GetDocumentationByIdDAO = async (id: number) => {
     try {
-        const data = await prisma.documentation.findUnique({
-            where: { id: id }
+        const data = await prisma.documentation.findFirst({
+            where: { id: id },
+            orderBy: { created_at: "desc" }
         });
         return data;
     } catch (error: any) {
@@ -15,7 +16,9 @@ export const GetDocumentationByIdDAO = async (id: number) => {
 
 export const GetAllDocumentationDAO = async () => {
     try {
-        const data = await prisma.documentation.findMany();
+        const data = await prisma.documentation.findMany({
+            orderBy: { created_at: "desc" }
+        });
         return data;
     } catch (error: any) {
         throw new Error(error.message);
@@ -84,6 +87,12 @@ export const UpdateDocumentationDAO = async (data: Partial<DocumentationDTO.Upda
 export const DeleteDocumentationDAO = async (id: number) => {
     try {
         await prisma.$transaction(async (tx) => {
+            await tx.documentation_files.deleteMany({
+                where: {
+                    document_id: id
+                }
+            });
+
             await tx.documentation.delete({
                 where: { id: id }
             });

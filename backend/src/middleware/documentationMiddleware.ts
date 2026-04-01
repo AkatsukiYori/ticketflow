@@ -6,7 +6,7 @@ const CheckID = (id: number) => {
 }
 
 export const GetDocumentationById = (req: Request, res: Response, next: NextFunction) => {
-    if(!CheckID(Number(req.params.id))) return res.status(500).json({ message: "Invalid ID" });
+    if(!CheckID(Number(req.params.id))) return res.status(500).json({ message: "Invalid ID." });
     next();
 }
 
@@ -27,7 +27,7 @@ export const CreateDocumentationMiddleware = (req: Request, res: Response, next:
 }
 
 export const UpdateDocumentationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    if(!CheckID(Number(req.params.id))) res.status(500).json({ message: "Invalid ID" });
+    if(!CheckID(Number(req.params.id))) res.status(500).json({ message: "Invalid ID." });
 
     const result = DocumentationDTO.UpdateDocumentationSchema.safeParse(req.body);
     if(!result.success) {
@@ -45,6 +45,6 @@ export const UpdateDocumentationMiddleware = (req: Request, res: Response, next:
 }
 
 export const DeleteDocumentationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    if(!CheckID(Number(req.params.id))) res.status(500).json({ message: "Invalid ID" });
+    if(!CheckID(Number(req.params.id))) res.status(500).json({ message: "Invalid ID." });
     next();
 }
