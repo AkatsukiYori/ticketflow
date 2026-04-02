@@ -115,14 +115,14 @@
     border-radius: 4px;
 }
 
-.btn-assign-icon {
+.btn-assign-icon, .btn-reassign {
     background-color: transparent;
     color: rgba(27, 73, 157, 0.8);
     border: none;
     transition: 0.3s;
 }
 
-.btn-assign-icon:hover {
+.btn-assign-icon:hover, .btn-reassign:hover {
     background-color: rgba(27, 73, 157, 0.2);
     border: none;
     transition: 0.3s;

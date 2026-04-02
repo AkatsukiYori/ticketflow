@@ -1,4 +1,4 @@
-import { Plus, Trash, Pencil, RefreshCcw, Info, UserCheck } from "lucide-react";
+import { Plus, Trash, Pencil, RefreshCcw, Info, UserCheck, UserPenIcon } from "lucide-react";
 import "../../components/buttons/button.css";
 
 type Props = {
@@ -56,9 +56,9 @@ export function DetailButton({ onClick }: Props) {
     );
 }
 
-export function TextAssignButton({ onClick }: Props) {
+export function TextAssignButton({ onClick, label }: Props) {
     return (
-        <button type="button" className="btn-assign-label" title="Apply" onClick={onClick}>Apply</button>
+        <button type="button" className="btn-assign-label" title={label} onClick={onClick}>{label}</button>
     );
 }
 
@@ -71,5 +71,11 @@ export function IconAssignButton({ onClick }: Props) {
 export function HeaderModalButton({ onClose }: Props) {
     return (
         <button type="button" className="btn-header-close" onClick={onClose}>x</button>
+    );
+}
+
+export function ReassignButton({ onClick }: Props) {
+    return (
+        <button type="button" className="btn-reassign" onClick={onClick} title="Re-assign"><UserPenIcon /></button>
     );
 }

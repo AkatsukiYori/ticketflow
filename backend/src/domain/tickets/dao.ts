@@ -204,7 +204,8 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number) => {
                 await tx.tickets.update({
                     where: { id: ticket.id },
                     data: {
-                        assign_to: userId
+                        assign_to: userId,
+                        status: "on_progress"
                     }
                 })
             }

@@ -3,10 +3,10 @@ import logo from "../../assets/logo.png";
 import Styles from "../../css/layouts/user/layouts.module.css";
 
 export default function Header() {
-    const navigate = useNavigate();
-    const newTicket = () => {
-        navigate("/tiket-baru");
-    }
+    // const navigate = useNavigate();
+    // const newTicket = () => {
+    //     navigate("/tiket-baru");
+    // }
 
     return (
         <header className={Styles['navHeader']}>
@@ -19,12 +19,12 @@ export default function Header() {
                     <p style={{ margin: 0, fontSize: 15 }}>Sistem HelpDesk Internal</p>
                 </div>
             </section>
-            <section className={Styles['section-right']}>
+            {/* <section className={Styles['section-right']}>
                 <button type="button" onClick={newTicket}>
                     <span className={Styles['btn-icon']}>+</span>
                     <span className={Styles['btn-text']}>Buat Tiket Baru</span>
                 </button>
-            </section>
+            </section> */}
         </header>
     );
 }

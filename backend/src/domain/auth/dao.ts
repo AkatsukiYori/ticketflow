@@ -3,9 +3,12 @@ import prisma from "../../prisma";
 
 export const LoginDAO = async (userData: LoginInput) => {
     try {
-        return await prisma.users.findUnique({
+        return await prisma.users.findFirst({
             where: {
-                username: userData.username
+                username: {
+                    equals: userData.username,
+                    mode: "insensitive"
+                }
             }
         });
     } catch (error: any) {

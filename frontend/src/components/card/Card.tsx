@@ -15,10 +15,10 @@ export default function Card({ data }: Props) {
                     <div className="card-body-top">
                         <div>
                             <h3 style={{ marginBottom: 0, marginTop: 0 }}>{data.ticket_title} </h3>
-                            <span style={{ backgroundColor: data.status === "pending" ? "yellow" : data.status === "on_progress" ? "orange" : data.status === "completed" ? "lightgreen" : "red", padding: "4px 16px", borderRadius: "16px", fontSize: 12 }}>{data.status.charAt(0).toUpperCase() + data.status.replace("_", " ").slice(1)}</span>
+                            <span style={{ backgroundColor: data.status === "pending" ? "#FEF08A" : data.status === "on_progress" ? "#FFD6A5" : data.status === "completed" ? "#BBF7D0" : "#FECACA", padding: "4px 16px", borderRadius: "16px", fontSize: 12 }}>{data.status.charAt(0).toUpperCase() + data.status.replace("_", " ").slice(1)}</span>
                         </div>
                         <div>
-                            <div className="circle" style={{ backgroundColor: data.priority === "low" ? "green" : "red" }}></div><span>{data.priority.charAt(0).toUpperCase() + data.priority.slice(1)}</span>
+                            <div className="circle" style={{ backgroundColor: data.priority === "low" ? "limegreen" : "red" }}></div><span style={{ marginLeft: "-8px" }}>{data.priority.charAt(0).toUpperCase() + data.priority.slice(1)}</span>
                         </div>
                     </div>
                     <p style={{ margin: 0 }}>{data.problem}</p>

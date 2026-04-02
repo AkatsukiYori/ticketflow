@@ -1,5 +1,9 @@
+import Styles from "../../../css/layouts/admin/layouts.module.css";
+
 export default function Profile() {
     return (
-        <h3>Profile Page</h3>
+        <section className={Styles['main-content']}>
+            <p>Profile Page</p>
+        </section>
     );
 }

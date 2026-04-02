@@ -1,5 +1,9 @@
+import { useCallback, useEffect, useState } from "react";
 import { CancelButton, HeaderModalButton, TextAssignButton } from "../../buttons/Button";
 import Styles from "./ticketDetail.module.css";
+import { useApi } from "../../../hooks/useApi";
+import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
+import ReassignModal from "../reassign/ReassignTicket";
 
 type Props = {
     open: boolean;
@@ -8,6 +12,60 @@ type Props = {
 }
 
 export default function TicketDetailModal({ open, data, onClose }: Props) {
+    const [userID, setUserID] = useState("");
+    const [openModal, setOpenModal] = useState(false);
+    const [isAlreadyAssign, setIsAlreadyAssign] = useState(
+        data?.assign_to !== null && data?.assign_to !== undefined
+    );
+
+    const { callApi } = useApi();
+
+    const fetchUser = useCallback(async (name: string) => {
+        if(!name) return;
+
+        try {
+            const result = await callApi("get", `/users/get-user/${name}`);
+            setUserID(result.id);
+        } catch (error: any) {
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+        }
+    }, [callApi]);
+
+    useEffect(() => {
+        const storedUsername = localStorage.getItem("username");
+        if(storedUsername) {
+            fetchUser(storedUsername);
+        }
+    }, [fetchUser]);
+
+    useEffect(() => {
+        const isAssign = data.assign_to !== null && data.assign_to !== undefined;
+        setIsAlreadyAssign(isAssign);
+    }, [data]);
+
+    async function handleUpdate() {
+        const payload = {
+            user_id: userID
+        };
+
+        try {
+            const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
+            SuccessNotification({ message: res.message, variantType: "success" });  
+            setIsAlreadyAssign(true);
+            onClose();
+        } catch (error: any) {
+            ErrorNotification({ message: "Somthing Went Wrong.", variantType: "error" });
+        }
+    }
+
+    const handleSubmit = () => {
+        if(isAlreadyAssign) {
+            setOpenModal(true);
+        } else {
+            handleUpdate();
+        }
+    }
+
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
@@ -88,10 +146,12 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <TextAssignButton />
+                    <TextAssignButton onClick={handleSubmit} label={isAlreadyAssign ? "Re-assign" : "Apply"} />
                     <CancelButton onClose={onClose} label="Cancel" />
                 </div>
             </div>
+
+            <ReassignModal open={openModal} onClose={() => setOpenModal(false)} data={data} />
         </div>
     );
 }

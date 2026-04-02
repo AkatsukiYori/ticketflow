@@ -2,9 +2,11 @@
 import Card from "../../components/card/Card";
 import { ErrorNotification } from "../../components/notifications/notification";
 import { getTicket } from "../../api/ticketApi";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { InputText } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
+import { useApi } from "../../hooks/useApi";
+import { socket } from "../../api/socket";
 
 export default function CheckTicketStatus() {
     const [data, setData] = useState<any[]>([]);
@@ -17,18 +19,26 @@ export default function CheckTicketStatus() {
         );
     });
 
-    useEffect(() => {
-        fetchTicket();
+    const { callApi } = useApi();
+    const fetchTicket = useCallback(async () => {
+        try {
+            const res = await callApi("get", "tickets/get-all-ticket");
+            setData(res);
+        } catch (error: any) {
+            ErrorNotification({ message: "Gagal mengambil data.", variantType: "error" });
+        }
     }, []);
 
-    async function fetchTicket() {
-        try {
-            const res = await getTicket();
-            setData(res.data);
-        } catch (error) {
-            ErrorNotification({ message: "Terjadi kesalahan.", variantType: "error" });
+    useEffect(() => {
+        fetchTicket();
+        socket.on("ticket-change", () => {
+            fetchTicket();
+        });
+
+        return () => {
+            socket.off("ticket-change");
         }
-    }
+    }, [fetchTicket]);
 
     return (
         <main className={Styles['main-content-status']}>

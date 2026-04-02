@@ -41,11 +41,10 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
         };
         try {
             const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            console.log(res);
             SuccessNotification({ message: res.message, variantType: "success" });
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
         }
     }
 

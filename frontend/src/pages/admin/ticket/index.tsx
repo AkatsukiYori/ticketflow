@@ -8,6 +8,7 @@ import { getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable,
 import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
+import ReassignModal from "../../../components/modals/reassign/ReassignTicket";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
@@ -16,10 +17,12 @@ import { socket } from "../../../api/socket";
 export default function Ticket() {
     const [data, setData] = useState<any[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [open, setOpen] = useState(false);
     const [ticketId, setTicketId] = useState<number | null>(null);
     const [ticketDetail, setTicketDetail] = useState<any[]>([]);
+
+    const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [reassignOpen, setReassignOpen] = useState(false);
 
     const { callApi } = useApi();
     const fetchTicket = useCallback(async () => {
@@ -27,7 +30,7 @@ export default function Ticket() {
             const result = await callApi("get", "/tickets/get-all-ticket");
             setData(result);
         } catch (error: any) {
-            ErrorNotification({ message: "Gagal mengambil ticket.", variantType: "error" });
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
     }, [callApi]);
 
@@ -65,7 +68,12 @@ export default function Ticket() {
         setTicketId(id);
     }
 
-    const getColumns = useMemo(() => columns(handleModalDetail, handleModalAssign), []);
+    function handleModalReassign(id: number) {
+        setReassignOpen(true);
+        setTicketId(id);
+    }
+
+    const getColumns = useMemo(() => columns(handleModalDetail, handleModalAssign, handleModalReassign), []);
     const table = useReactTable({
         data,
         columns: getColumns,
@@ -110,6 +118,7 @@ export default function Ticket() {
 
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} data={ticketDetail} />
+            <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} />
         </section>
     );
 }

@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { DetailButton, IconAssignButton } from "../../../components/buttons/Button";
+import { DetailButton, IconAssignButton, ReassignButton } from "../../../components/buttons/Button";
 
 type Ticket = {
     id: number;
@@ -24,12 +24,13 @@ const columnHelper = createColumnHelper<Ticket>();
 
 export const columns = (
     onDetail: (id: number) => void,
-    onAssign: (id: number) => void
+    onAssign: (id: number) => void,
+    onReassign: (id: number) => void
 ) => [
     columnHelper.display({
         id: "no",
         header: "No",
-        cell: ({ row, table }) => row.index + 1
+        cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor(row => new Date(row.report_date), {
         id: "report_date",
@@ -49,9 +50,29 @@ export const columns = (
         header: "Status",
         cell: ({ row }) => {
             const data = row.original;
-            const wordUpperCase = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+            const statusStyle: React.CSSProperties = {
+                padding: "6px 12px",
+                borderRadius: "8px",
+                fontSize: "12px",
+                textAlign: "center",
+                width: "100%"
+            }
+            const getStatus = () => {
+                switch (data.status) {
+                    case "pending":
+                        return <span style={{ ...statusStyle, backgroundColor:"#FEF08A" }} >Pending</span>
+                    case "on_progress":
+                        return <span style={{ ...statusStyle, backgroundColor:"#FFD6A5" }} >On Progress</span>
+                    case "completed":
+                        return <span style={{ ...statusStyle, backgroundColor:"#BBF7D0" }} >Completed</span>
+                    case "reject":
+                        return <span style={{ ...statusStyle, backgroundColor:"#FECACA" }} >Reject</span>
+                }
+            }
             return (
-                <span>{wordUpperCase.replace("_", " ")}</span>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+                    {getStatus()}
+                </div>
             );
         }
     }),
@@ -62,7 +83,8 @@ export const columns = (
         header: "PIC",
         cell: ({ row }) => {
             const user = row.original.fk_users_id;
-            return user ? user.username : <span style={{ backgroundColor: "red", padding: "8px", borderRadius: "8px", fontSize: "11px", color: "white", fontWeight: "bold" }}>Not Assigned</span>
+            return user ? <span style={{ backgroundColor: "#DBEAFE", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#1E40AF" }}>{user.username}</span>
+            : <span style={{ backgroundColor: "#F3F4F6", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#4B5563" }}>Not Assigned</span>
         }
     }),
     columnHelper.display({
@@ -74,6 +96,7 @@ export const columns = (
                 data.assign_to ? 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
+                    <ReassignButton onClick={() => onReassign(data.id)} />
                 </div>
                 : 
                 <div className="table-actions">
