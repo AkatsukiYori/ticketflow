@@ -1,5 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { DetailButton, IconAssignButton, ReassignButton } from "../../../components/buttons/Button";
+import { ActionDropdown } from "../../../components/actions/Actions";
 
 type Ticket = {
     id: number;
@@ -25,7 +26,9 @@ const columnHelper = createColumnHelper<Ticket>();
 export const columns = (
     onDetail: (id: number) => void,
     onAssign: (id: number) => void,
-    onReassign: (id: number) => void
+    onReassign: (id: number) => void,
+    onFeedback: (id: number, mode: string) => void,
+    onRemove: (id: number) => void
 ) => [
     columnHelper.display({
         id: "no",
@@ -64,7 +67,7 @@ export const columns = (
                     case "on_progress":
                         return <span style={{ ...statusStyle, backgroundColor:"#FFD6A5" }} >On Progress</span>
                     case "completed":
-                        return <span style={{ ...statusStyle, backgroundColor:"#BBF7D0" }} >Completed</span>
+                        return <span style={{ ...statusStyle, backgroundColor:"#BBF7D0" }} >Feedback</span>
                     case "reject":
                         return <span style={{ ...statusStyle, backgroundColor:"#FECACA" }} >Reject</span>
                 }
@@ -96,12 +99,24 @@ export const columns = (
                 data.assign_to ? 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
-                    <ReassignButton onClick={() => onReassign(data.id)} />
+                    {/* <ReassignButton onClick={() => onReassign(data.id)} /> */}
+                    <ActionDropdown
+                        onAssign={() => onAssign(data.id)}
+                        onReject={() => onFeedback(data.id, "reject")}
+                        onComplete={() => onFeedback(data.id, "feedback")}
+                        onRemove={() => onRemove(data.id)}
+                    />
                 </div>
                 : 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
-                    <IconAssignButton onClick={() => onAssign(data.id)} />
+                    {/* <IconAssignButton onClick={() => onAssign(data.id)} /> */}
+                    <ActionDropdown
+                        onAssign={() => onAssign(data.id)}
+                        onReject={() => onFeedback(data.id, "reject")}
+                        onComplete={() => onFeedback(data.id, "feedback")}
+                        onRemove={() => onRemove(data.id)}
+                    />
                 </div>
             );
         }

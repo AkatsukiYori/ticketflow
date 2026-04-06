@@ -95,3 +95,35 @@ export const AssignTicketController = async (req: any, res: Response) => {
         res.status(500).json({ message: "Something went wrong : " + error.messaeg });
     }
 }
+
+export const RejectTicketController = async (req: any, res: Response) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const reason = req.body.reason;
+        const result = await TicketServices.RejectTicketServices(ticketNo, reason);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
+        res.status(201).json(result);
+    }  catch (error: any) {
+        res.status(500).json({ message: "Something Went Wrong : " + error.message });
+    }
+}
+
+export const TicketFeedbackController = async (req: any, res: Response) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const { role, reason, user_id } = req.body;
+        const result = await TicketServices.TicketFeedbackServices(ticketNo, reason, role, user_id);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Something Went Wrong : " + error.message });
+    }
+}

@@ -8,13 +8,14 @@ import { useApi } from "../../../hooks/useApi";
 type Props = {
     open: boolean;
     isTicket?: boolean;
+    isAssign?: boolean;
     data?: any;
     onConfirm?: () => void;
     onClose: () => void;
     message?: string;
 }
 
-export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data, message } : Props) {
+export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data, message, isAssign } : Props) {
     const [userID, setUserID] = useState("");
     const { callApi } = useApi();
 
@@ -48,9 +49,24 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
         }
     }
 
+    async function handleRemove() {
+        try {
+            const res = await callApi("put", `/tickets/delete-ticket/${data.id}`);
+            SuccessNotification({ message: res.message, variantType: "success" });
+            onClose();
+        } catch (error: any) {
+            console.log(error);
+            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+        }
+    }
+
     const handleSubmit = () => {
         if(isTicket) {
-            handleUpdate();
+            if(isAssign) {
+                handleUpdate();
+            } else {
+                handleRemove();
+            }
         } else if(onConfirm) {
             onConfirm();
         }
@@ -61,7 +77,7 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
             <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-body']} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                     <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>{isTicket ? <CircleQuestionMark /> : <TriangleAlertIcon />} Are You Sure?</h3>
-                    <p style={{ marginTop: "10px", marginBottom: 0, textAlign: "center" }}>{isTicket === false ? message : `Ticket no ${data.ticket_no} will assign to you.` }</p>
+                    <p style={{ marginTop: "10px", marginBottom: 0, textAlign: "center" }}>{isTicket === false ? message : isAssign ? `Ticket no ${data.ticket_no} will assign to you.` : `Ticket no ${data.ticket_no} will be removed.` }</p>
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>

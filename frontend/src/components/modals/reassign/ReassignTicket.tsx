@@ -80,7 +80,7 @@ export default function ReassignModal({ open, onClose, data }: Props) {
                     <HeaderModalButton onClose={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
-                    <div style={{ margin: "8px 0", width: "100%" }}>
+                    <div style={{ width: "100%" }}>
                         <label htmlFor="">Choose New PIC <span style={{ color: "red" }}>*</span></label>
                         <SelectOptions
                             label="-- Choose PIC --"

@@ -13,22 +13,33 @@ import ReassignModal from "../../../components/modals/reassign/ReassignTicket";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
 import { socket } from "../../../api/socket";
+import { FeedbackModal } from "../../../components/modals/feedback/FeedbackModal";
 
 export default function Ticket() {
     const [data, setData] = useState<any[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [ticketId, setTicketId] = useState<number | null>(null);
     const [ticketDetail, setTicketDetail] = useState<any[]>([]);
+    const [pageCount, setPageCount] = useState(0);
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 10
+    });
+
+    const [isAssign, setIsAssign] = useState(false);
 
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [reassignOpen, setReassignOpen] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [mode, setMode] = useState("");
 
     const { callApi } = useApi();
     const fetchTicket = useCallback(async () => {
         try {
             const result = await callApi("get", "/tickets/get-all-ticket");
             setData(result);
+            setPageCount(result.length);
         } catch (error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
@@ -66,6 +77,7 @@ export default function Ticket() {
     function handleModalAssign(id: number) {
         setConfirmOpen(true);
         setTicketId(id);
+        setIsAssign(true);
     }
 
     function handleModalReassign(id: number) {
@@ -73,15 +85,36 @@ export default function Ticket() {
         setTicketId(id);
     }
 
-    const getColumns = useMemo(() => columns(handleModalDetail, handleModalAssign, handleModalReassign), []);
+    function handleFeedback(id: number, selectedMode: string) {
+        setMode(selectedMode);
+        setIsFeedbackOpen(true);
+        setTicketId(id);
+    }
+
+    function handleModalConfirm(id: number) {
+        setConfirmOpen(true);
+        setTicketId(id);
+        setIsAssign(false);
+    }
+
+    const getColumns = useMemo(() => columns(
+        handleModalDetail,
+        handleModalAssign,
+        handleModalReassign,
+        handleFeedback,
+        handleModalConfirm
+    ), []);
     const table = useReactTable({
         data,
         columns: getColumns,
+        pageCount: pageCount,
         state: {
             columnFilters,
             // sorting
         },
         // onSortingChange: setSorting,
+        onPaginationChange: setPagination,
+        manualPagination: true,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -117,8 +150,9 @@ export default function Ticket() {
             />
 
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} />
-            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} data={ticketDetail} />
+            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} />
             <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} />
+            <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} />
         </section>
     );
 }

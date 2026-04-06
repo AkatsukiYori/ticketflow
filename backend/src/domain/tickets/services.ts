@@ -58,7 +58,7 @@ export const DeleteTicketServices = async (id: number) => {
     try {
         await TicketDAO.DeleteTicketDAO(id);
 
-        return ({ message: "Ticket berhasil dihapus." });
+        return ({ message: "Ticket Successful Removed." });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -69,6 +69,26 @@ export const AssignTicketServices = async (ticketNo: string, userId: number) => 
         await TicketDAO.AssignTicketDAO(ticketNo, userId);
 
         return ({ message: "Ticket Successful Assigned." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const RejectTicketServices = async (ticketNo: string, reason: string) => {
+    try {
+        await TicketDAO.RejectTicketDAO(ticketNo, reason);
+
+        return ({ message: "Ticket Successful Rejected." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const TicketFeedbackServices = async (ticketNo: string, reason: string, role: string, userId?: number) => {
+    try {
+        await TicketDAO.TicketFeedbackDAO(ticketNo, reason, role, userId);
+
+        return ({ message: "Feedback Successful Sent." });
     } catch (error: any) {
         throw new Error(error.message);
     }

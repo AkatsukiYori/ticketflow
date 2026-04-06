@@ -1,6 +1,7 @@
 import { flexRender } from "@tanstack/react-table";
 import Styles from "../../components/datatables/datatable.module.css";
 import StylesContent from "../../css/layouts/admin/layouts.module.css";
+import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -60,6 +61,57 @@ export default function DataTables({ table }: Props) {
                         )}
                     </tbody>
                 </table>
+
+                {/* Fungsi pagination */}
+                {/* <div className={Styles.paginationContainer}>
+                    <div className={Styles.paginationInfo}>
+                        Showing {table.getRowModel().rows.length} of ... entries
+                    </div>
+                    
+                    <div className={Styles.paginationControls}>
+                        <button 
+                            onClick={() => table.setPageIndex(0)} 
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <ChevronsLeft size={18} />
+                        </button>
+                        <button 
+                            onClick={() => table.previousPage()} 
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className={Styles.pageIndicator}>
+                            Page <strong>{table.getState().pagination.pageIndex + 1}</strong> of {table.getPageCount()}
+                        </span>
+
+                        <button 
+                            onClick={() => table.nextPage()} 
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                        <button 
+                            onClick={() => table.setPageIndex(table.getPageCount() - 1)} 
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <ChevronsRight size={18} />
+                        </button>
+                    </div>
+
+                    <select
+                        value={table.getState().pagination.pageSize}
+                        onChange={e => table.setPageSize(Number(e.target.value))}
+                        className={Styles.pageSizeSelect}
+                    >
+                        {[10, 20, 30, 50].map(pageSize => (
+                            <option key={pageSize} value={pageSize}>
+                                Show {pageSize}
+                            </option>
+                        ))}
+                    </select>
+                </div> */}
             </section>
         </section>
     );

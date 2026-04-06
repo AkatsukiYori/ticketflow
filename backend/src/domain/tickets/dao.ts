@@ -214,3 +214,63 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number) => {
         throw new Error(error.message);
     }
 }
+
+export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    ticket_no: ticketNo
+                }
+            });
+
+            if(ticket) {
+                await tx.tickets.update({
+                    where: { id: ticket.id },
+                    data: {
+                        reject_at: MakeDate(),
+                        status: "reject",
+                        status_reason: reason
+                    }
+                });
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, userId?: number) => {
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    ticket_no: ticketNo
+                }
+            });
+
+            if(ticket) {
+                await tx.ticketFeedback.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        message: reason,
+                        role: role,
+                        user_id: userId ?? null,
+                        created_at: MakeDate()
+                    }
+                });
+
+                await tx.tickets.update({
+                    where: {
+                        id: ticket.id
+                    },
+                    data: {
+                        status: "completed"
+                    }
+                });
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}

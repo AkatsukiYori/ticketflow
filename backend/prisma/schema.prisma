@@ -7,15 +7,16 @@ datasource db {
 }
 
 model Users {
-  id         Int       @id @default(autoincrement())
-  username   String    @db.VarChar(150) @unique
-  password   String    @db.VarChar(100)
-  location   Location  @default(pontianak)
-  isActive   Boolean
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-  tickets    Tickets[]
+  id              Int       @id @default(autoincrement())
+  username        String    @db.VarChar(150) @unique
+  password        String    @db.VarChar(100)
+  location        Location  @default(pontianak)
+  isActive        Boolean
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  deleted_at      DateTime?
+  tickets         Tickets[]
+  ticket_feedback TicketFeedback[]
 
   @@map("users")
 }
@@ -33,30 +34,46 @@ model Categories {
 }
 
 model Tickets {
-  id             Int          @id @default(autoincrement())
-  assign_to      Int?
-  category_id    Int
-  ticket_no      String       @db.VarChar(100)
-  ticket_title   String       @db.VarChar(100)
-  problem        String
-  report_date    DateTime     @default(now())
-  department     String       @db.VarChar(100)
-  location       String       @db.VarChar(50)
-  priority       Priority     @default(low)
-  note           String?
-  status         TicketStatus @default(pending)
-  status_reason  String?      @db.VarChar(100)
-  closed_at      DateTime?
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
-  user           String       @db.VarChar(100)
-  deleted_at     DateTime?
-  images         Images[]
-  log            Log[]
-  fk_users_id    Users?       @relation(fields: [assign_to], references: [id])
-  fk_category_id Categories   @relation(fields: [category_id], references: [id])
+  id              Int               @id @default(autoincrement())
+  assign_to       Int?
+  category_id     Int
+  ticket_no       String            @db.VarChar(100)
+  ticket_title    String            @db.VarChar(100)
+  problem         String
+  report_date     DateTime          @default(now())
+  department      String            @db.VarChar(100)
+  location        String            @db.VarChar(50)
+  priority        Priority          @default(low)
+  note            String?
+  status          TicketStatus      @default(pending)
+  status_reason   String?           @db.VarChar(100)
+  closed_at       DateTime?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  user            String            @db.VarChar(100)
+  deleted_at      DateTime?
+  estimate        DateTime?
+  reject_at       DateTime?
+  images          Images[]
+  log             Log[]
+  fk_users_id     Users?            @relation(fields: [assign_to], references: [id])
+  fk_category_id  Categories        @relation(fields: [category_id], references: [id])
+  ticket_feedback TicketFeedback[]
 
   @@map("tickets")
+}
+
+model TicketFeedback {
+  id            Int       @id @default(autoincrement())
+  ticket_id     Int
+  message       String    @db.Text
+  role          String
+  user_id       Int?
+  created_at    DateTime  @default(now())
+  fk_ticket_id  Tickets   @relation(fields: [ticket_id], references: [id])
+  fk_admin_id   Users?    @relation(fields: [user_id], references: [id])
+
+  @@map("ticket_feedback")
 }
 
 model Images {

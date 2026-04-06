@@ -48,6 +48,60 @@ tbody tr:hover {
     background: #f9fafb;
 }
 
+/* Start Pagination */
+.paginationContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #edf2f7;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.paginationControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.paginationControls button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.paginationControls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.paginationControls button:not(:disabled):hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.pageIndicator {
+    margin: 0 10px;
+}
+
+.pageSizeSelect {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+    outline: none;
+    color: #111827;
+}
+/* End Pagination */
+
 @media (max-width: 768px) {
     .table {
         max-height: 60dvh;
