@@ -37,6 +37,67 @@
     text-indent: 10px;
 }
 
+/* Start: Checkbox */
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* Sembunyikan checkbox asli */
+.checkboxContainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Kotak default */
+.checkmark {
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #334155;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Warna saat dicentang */
+.checked {
+    background-color: rgba(27, 73, 157, 1);
+    border-color: rgba(27, 73, 157, 1);
+}
+
+/* Membuat simbol centang (L-shape) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(045deg);
+}
+
+/* Tampilkan centang jika checked */
+.checked:after {
+    display: block;
+}
+
+.labelText {
+    color: #334155;
+    font-weight: 500;
+}
+/* End: Checkbox */
 @media (max-width: 768px) {
     .text-input {
         width: auto;

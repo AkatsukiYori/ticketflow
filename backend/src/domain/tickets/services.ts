@@ -84,9 +84,9 @@ export const RejectTicketServices = async (ticketNo: string, reason: string) => 
     }
 }
 
-export const TicketFeedbackServices = async (ticketNo: string, reason: string, role: string, userId?: number) => {
+export const TicketFeedbackServices = async (ticketNo: string, reason: string, role: string, estimate: Date, make_doc: boolean, userId?: number) => {
     try {
-        await TicketDAO.TicketFeedbackDAO(ticketNo, reason, role, userId);
+        await TicketDAO.TicketFeedbackDAO(ticketNo, reason, role, estimate, make_doc, userId);
 
         return ({ message: "Feedback Successful Sent." });
     } catch (error: any) {

@@ -16,8 +16,10 @@ type Props = {
     onChangeInput?: React.ChangeEventHandler<HTMLInputElement>;
     onChangeSelect?: React.ChangeEventHandler<HTMLSelectElement>;
     onChangeTextArea?: React.ChangeEventHandler<HTMLTextAreaElement>;
+    onChangeCheckbox?: (checked: boolean) => void;
     label?: string;
     options?: Option[];
+    checked?: boolean;
 }
 
 export function InputText({ type, name, id, className, placeholder, style, value, onChangeInput } : Props) {
@@ -40,5 +42,15 @@ export function SelectOptions({ label, value, options, name, id, onChangeSelect,
 export function TextArea({ name, id, placeholder, style, value, className, onChangeTextArea }: Props) {
     return (
         <textarea name={name} id={id} placeholder={placeholder} value={value} onChange={onChangeTextArea} style={style} className={Styles['textarea-input']}></textarea>
+    );
+}
+
+export function CustomCheckbox({ label, checked, onChangeCheckbox, name }: Props) {
+    return (
+        <label className={Styles.checkboxContainer}>
+            <input type="checkbox" name={name} checked={checked} onChange={(e) => onChangeCheckbox?.(e.target.checked)} />
+            <span className={`${Styles.checkmark} ${checked ? Styles.checked : ""}`}></span>
+            <span className={`${Styles.labelText}`}>{label}</span>
+        </label>
     );
 }

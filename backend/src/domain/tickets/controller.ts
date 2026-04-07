@@ -115,8 +115,8 @@ export const RejectTicketController = async (req: any, res: Response) => {
 export const TicketFeedbackController = async (req: any, res: Response) => {
     try {
         const ticketNo = req.params.ticket_no;
-        const { role, reason, user_id } = req.body;
-        const result = await TicketServices.TicketFeedbackServices(ticketNo, reason, role, user_id);
+        const { role, reason, user_id, estimate, make_doc } = req.body;
+        const result = await TicketServices.TicketFeedbackServices(ticketNo, reason, role, estimate, make_doc, user_id);
 
         if(req.io) {
             req.io.emit("ticket-change");

@@ -17,9 +17,9 @@ export default function Card({ data }: Props) {
                             <h3 style={{ marginBottom: 0, marginTop: 0 }}>{data.ticket_title} </h3>
                             <span style={{ backgroundColor: data.status === "pending" ? "#FEF08A" : data.status === "on_progress" ? "#FFD6A5" : data.status === "completed" ? "#BBF7D0" : "#FECACA", padding: "4px 16px", borderRadius: "16px", fontSize: 12 }}>{data.status.charAt(0).toUpperCase() + data.status.replace("_", " ").slice(1)}</span>
                         </div>
-                        <div>
+                        {/* <div>xx`
                             <div className="circle" style={{ backgroundColor: data.priority === "low" ? "limegreen" : "red" }}></div><span style={{ marginLeft: "-8px" }}>{data.priority.charAt(0).toUpperCase() + data.priority.slice(1)}</span>
-                        </div>
+                        </div> */}
                     </div>
                     <p style={{ margin: 0 }}>{data.problem}</p>
                 </div>

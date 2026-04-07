@@ -240,7 +240,7 @@ export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
     }
 }
 
-export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, userId?: number) => {
+export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, estimate: Date, make_doc: boolean, userId?: number) => {
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -265,9 +265,20 @@ export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: 
                         id: ticket.id
                     },
                     data: {
-                        status: "completed"
+                        status: "completed",
+                        estimate: new Date(estimate),
                     }
                 });
+
+                if(make_doc) {
+                    await tx.documentation.create({
+                        data: {
+                            category_id: ticket.category_id,
+                            title: ticket.ticket_title,
+                            description: reason
+                        }
+                    })
+                }
             }
         });
     } catch (error: any) {
