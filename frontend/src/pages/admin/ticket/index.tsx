@@ -3,7 +3,7 @@ import { RefreshButton } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
 import { ErrorNotification } from "../../../components/notifications/notification";
-import { getTicket, getTicketById } from "../../../api/ticketApi";
+import { getTicketById } from "../../../api/ticketApi";
 import { getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
@@ -20,6 +20,10 @@ export default function Ticket() {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [ticketId, setTicketId] = useState<number | null>(null);
     const [ticketDetail, setTicketDetail] = useState<any[]>([]);
+    const [username, setUsername] = useState(() => {
+        return localStorage.getItem("username") || "";
+    });
+    const [userId, setUserId] = useState("");
     const [pageCount, setPageCount] = useState(0);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -33,17 +37,35 @@ export default function Ticket() {
     const [reassignOpen, setReassignOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [mode, setMode] = useState("");
+    const [isReassign, setIsReassign] = useState(false);
 
     const { callApi } = useApi();
     const fetchTicket = useCallback(async () => {
         try {
-            const result = await callApi("get", "/tickets/get-all-ticket");
+            const result = await callApi("get", `/tickets/get-all-ticket?status=${true}`);
             setData(result);
             setPageCount(result.length);
         } catch (error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
     }, [callApi]);
+
+    const fetchUser = useCallback(async () => {
+        if(!username) return;
+        try {
+            const result = await callApi("get", `/users/get-user/${username}`);
+            setUserId(result.id);
+        } catch(error: any) {
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+        }
+    }, [callApi]);
+
+    useEffect(() => {
+        const storedName = localStorage.getItem("username");
+        if(storedName) {
+            setUsername(storedName);
+        }
+    }, []);
 
     useEffect(() => {
         fetchTicket();
@@ -55,10 +77,14 @@ export default function Ticket() {
         if(!ticketId) return;
         fetchTicketById(ticketId);
 
+        if(username) {
+            fetchUser();
+        }
+
         return () => {
             socket.off("ticket-change");
         }
-    }, [ticketId, fetchTicket]);
+    }, [ticketId, fetchTicket, username, fetchUser]);
 
     async function fetchTicketById(id: number) {
         try {
@@ -80,9 +106,10 @@ export default function Ticket() {
         setIsAssign(true);
     }
 
-    function handleModalReassign(id: number) {
+    function handleModalReassign(id: number, isReassign: boolean) {
         setReassignOpen(true);
         setTicketId(id);
+        setIsReassign(isReassign);
     }
 
     function handleFeedback(id: number, selectedMode: string) {
@@ -151,7 +178,7 @@ export default function Ticket() {
 
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} />
-            <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} />
+            <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} isReassign={isReassign} userId={userId} />
             <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} />
         </section>
     );

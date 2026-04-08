@@ -1,13 +1,13 @@
 services:
-  app:
+  react_app:
     build: ./backend
-    container_name: ticketflow_app
+    container_name: ticketflow_react_app
     env_file:
       - ./backend/.env
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - react_db
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -22,22 +22,22 @@ services:
     networks:
       - ticket-network
 
-  frontend:
+  react_frontend:
     build: ./frontend
-    container_name: ticketflow_frontend
+    container_name: ticketflow_react_frontend
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     depends_on:
-      - app
+      - react_app
     networks:
       - ticket-network
 
-  db:
+  react_db:
     image: postgres:16
-    container_name: ticketflow_db
+    container_name: ticketflow_react_db
     restart: always
     ports:
       - "5432:5432"

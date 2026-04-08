@@ -7,11 +7,13 @@ import { Server } from "socket.io";
 
 const app = Express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
         methods: ["GET", "POST"],
-        credentials: true
+        credentials: true,
+        allowedHeaders: "Content-Type, Authorization"
     }
 });
 
@@ -22,7 +24,8 @@ app.use((req: any, _res, next) => {
 
 app.use(cors({
     origin: "http://localhost:5173",
-    credentials: true
+    credentials: true,
+    allowedHeaders: "Content-Type, Authorization"
 }));
 app.use(Express.json());
 app.use("/api", router);

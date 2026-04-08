@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { InputText, CustomCheckbox } from "../../inputs/Input";
 import { useApi } from "../../../hooks/useApi";
 import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
-import { socket } from "../../../api/socket";
 
 type Props = {
     open: boolean;
@@ -148,7 +147,7 @@ export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
                             )}
                         </div>
 
-                        <div>
+                        <div style={{ display: mode === "feedback" ? "block" : "none" }}>
                             <CustomCheckbox
                                 label="Add to documentation ?"
                                 checked={isDoc}

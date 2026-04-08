@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { DetailButton, IconAssignButton, ReassignButton } from "../../../components/buttons/Button";
+import { DetailButton } from "../../../components/buttons/Button";
 import { ActionDropdown } from "../../../components/actions/Actions";
 
 type Ticket = {
@@ -26,7 +26,7 @@ const columnHelper = createColumnHelper<Ticket>();
 export const columns = (
     onDetail: (id: number) => void,
     onAssign: (id: number) => void,
-    onReassign: (id: number) => void,
+    onReassign: (id: number, isReassign: boolean) => void,
     onFeedback: (id: number, mode: string) => void,
     onRemove: (id: number) => void
 ) => [
@@ -101,7 +101,7 @@ export const columns = (
                     <DetailButton onClick={() => onDetail(data.id)} />
                     {/* <ReassignButton onClick={() => onReassign(data.id)} /> */}
                     <ActionDropdown
-                        onAssign={() => onAssign(data.id)}
+                        onAssign={() => onReassign(data.id, true)}
                         onReject={() => onFeedback(data.id, "reject")}
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}
@@ -112,7 +112,7 @@ export const columns = (
                     <DetailButton onClick={() => onDetail(data.id)} />
                     {/* <IconAssignButton onClick={() => onAssign(data.id)} /> */}
                     <ActionDropdown
-                        onAssign={() => onAssign(data.id)}
+                        onAssign={() => onReassign(data.id, false)}
                         onReject={() => onFeedback(data.id, "reject")}
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}

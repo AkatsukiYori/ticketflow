@@ -11,10 +11,19 @@ export const getTicketById = async (id: number) => {
     }
 }
 
-export const GetAllTicketServices = async () => {
+export const GetAllTicketServices = async (filter: any) => {
     try {
-        const data = await TicketDAO.GetAllTicketDAO();
+        const data = await TicketDAO.GetAllTicketDAO(filter);
 
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const FilterTicketServices = async (filterData: any) => {
+    try {
+        const data = await TicketDAO.FilterTicketDAO(filterData);
         return data;
     } catch (error: any) {
         throw new Error(error.message);
@@ -64,9 +73,9 @@ export const DeleteTicketServices = async (id: number) => {
     }
 }
 
-export const AssignTicketServices = async (ticketNo: string, userId: number) => {
+export const AssignTicketServices = async (ticketNo: string, userId: number, priority: any) => {
     try {
-        await TicketDAO.AssignTicketDAO(ticketNo, userId);
+        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority);
 
         return ({ message: "Ticket Successful Assigned." });
     } catch (error: any) {

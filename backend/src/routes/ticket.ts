@@ -11,9 +11,12 @@ const upload = createUploader("tickets");
 //   res.json({ ok: true });
 // });
 
-routerTicket.get("/get-ticket/:id", Middleware.FetchTicketMiddleware, Controller.GetTicketByIdController);
 routerTicket.get("/get-all-ticket", Controller.GetAllTicketController);
+routerTicket.get("/get-ticket/:id", Middleware.FetchTicketMiddleware, Controller.GetTicketByIdController);
+routerTicket.get("/filter-ticket", Controller.FilterTicketController);
+
 routerTicket.post("/new-ticket", upload.single("ticket_file"), Middleware.CreateTicketMiddleware, Controller.CreateTicketController);
+
 routerTicket.put("/assign/:ticket_no", Controller.AssignTicketController);
 routerTicket.put("/update-ticket/:id", upload.single("ticket_file"), Middleware.UpdateTicketMiddleware, Controller.UpdateTicketController);
 routerTicket.put("/delete-ticket/:id", Middleware.DeleteTicketMiddleware, Controller.DeleteTicketController);

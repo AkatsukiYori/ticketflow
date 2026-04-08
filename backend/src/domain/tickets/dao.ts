@@ -24,20 +24,65 @@ export const GetTicketById = async (id: number) => {
     }
 }
 
-export const GetAllTicketDAO = async () => {
+export const GetAllTicketDAO = async (filter: any) => {
+    const { status } = filter;
+
+    const whereClause: any = {
+        deleted_at: null
+    }
+
+    const isAdmin = status === "true" || status === true;
+
+    if(!isAdmin) {
+        whereClause.report_date = {
+            gte: new Date(MakeDate().getFullYear(), MakeDate().getMonth(), 1),
+            lte: new Date(MakeDate().getFullYear(), MakeDate().getMonth() + 1, 0)
+        }
+    }
+
     try {
         const data = await prisma.tickets.findMany({
             include: {
                 fk_users_id: true
             },
-            where: {
-                deleted_at: null
-            },
+            where: whereClause,
             orderBy: {
                 report_date: "desc"
             }
         });
         return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const FilterTicketDAO = async (filterData: any) => {
+    const { startMonth, endMonth, title, user } = filterData;
+
+    const whereClause: any = {
+        deleted_at: null,
+    };
+
+    if(title) {
+        whereClause.ticket_title = { contains: title, mode: "insensitive" }
+    }
+
+    if(user) {
+        whereClause.user = { contains: user, mode: "insensitive" }
+    }
+
+    if(startMonth || endMonth) {
+        const dateFilter: any = {};
+        if(startMonth) dateFilter.gte = new Date(startMonth);
+        if(endMonth) dateFilter.lte = new Date(endMonth);
+
+        whereClause.report_date = dateFilter;
+    }
+
+    try {
+        return await prisma.tickets.findMany({
+            where: whereClause
+        });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -191,7 +236,8 @@ export const DeleteTicketDAO = async (id: number) => {
     }
 }
 
-export const AssignTicketDAO = async (ticketNo: string, userId: number) => {
+export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any) => {
+    console.log(userId);
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -205,7 +251,8 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number) => {
                     where: { id: ticket.id },
                     data: {
                         assign_to: userId,
-                        status: "on_progress"
+                        status: "on_progress",
+                        priority: priority
                     }
                 })
             }
