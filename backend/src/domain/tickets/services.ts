@@ -102,3 +102,13 @@ export const TicketFeedbackServices = async (ticketNo: string, reason: string, r
         throw new Error(error.message);
     }
 }
+
+export const ClosedTicketServices = async (ticketNo: string) => {
+    try {
+        await TicketDAO.ClosedTicketDAO(ticketNo);
+
+        return ({ message: "Tiket berhasil ditutup." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}

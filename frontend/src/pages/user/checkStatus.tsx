@@ -1,12 +1,19 @@
 import Card from "../../components/card/Card";
-import { ErrorNotification } from "../../components/notifications/notification";
+import { ErrorNotification, SuccessNotification } from "../../components/notifications/notification";
 import { useCallback, useEffect, useState } from "react";
 import { InputText } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
 import { useApi } from "../../hooks/useApi";
 import { socket } from "../../api/socket";
 
+import ResponseModal from "../../components/modals/response/ResponseModal";
+import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
+
 export default function CheckTicketStatus() {
+    const [open, setOpen] = useState(false);
+    const [confirmModal, setConfirmModal] = useState(false);
+
+    const [ticketNo, setTIcketNo] = useState("");
     const [data, setData] = useState<any[]>([]);
     const [ticketSearch, setTicketSearch] = useState("");
     const [userSearch, setUserSearch] = useState("");
@@ -22,6 +29,41 @@ export default function CheckTicketStatus() {
             ErrorNotification({ message: "Gagal mengambil data.", variantType: "error" });
         }
     }, []);
+
+    const handleModalResponse = (ticketNo: string) => {
+        setTIcketNo(ticketNo);
+        setOpen(true);
+    }
+
+    const handleModalClosed = (ticketNo: string) => {
+        setConfirmModal(true);
+        setTIcketNo(ticketNo);
+    }
+
+    async function handleCloseTicket() {
+        try {
+            const res = await callApi("put", `/tickets/close-ticket/${ticketNo}`);
+            SuccessNotification({ message: res.message, variantType: "success" });
+            setConfirmModal(false);
+        } catch (error: any) {
+            ErrorNotification({ message: "Terjadi Kesalahan", variantType: "error" })
+        }
+    }
+
+    async function handleResponTicket(responValue: string) {
+        try {
+            const payload = {
+                isAdmin: false,
+                reason: responValue,
+                role: "user"
+            }
+            await callApi("put", `/tickets/feedback/${ticketNo}`, payload);
+            SuccessNotification({ message: "Respon berhasil dikirimkan.", variantType: "success" });
+            setOpen(false);
+        } catch (error: any) {
+            ErrorNotification({ message: "Terjadi Kesalahan", variantType: "error" });
+        }
+    }
 
     useEffect(() => {
         if((startMonth && endMonth) || ticketSearch || userSearch) {
@@ -61,9 +103,12 @@ export default function CheckTicketStatus() {
             </section>
             <section className={Styles['content-body']}>
                 {data.map((ticket, index) => (
-                    <Card key={index} data={ticket} />
+                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} />
                 ))}
             </section>
+
+            <ResponseModal open={open} onClose={() => setOpen(false)} onClick={handleResponTicket} />
+            <ConfirmModal open={confirmModal} onClose={() => setConfirmModal(false)} isTicket={false} message={`Apakah anda yakin ingin menutup tiket #${ticketNo}? Pastikan kendala anda sudah teratasi sebelum menutup tiket. Dengan menutup tiket, ini menandai laporan anda sudah terselesaikan sepenuhnya.`} label="Konfirmasi Tutup Tiket" btnCancel="Batal" btnYes="Tutup Tiket" onConfirm={handleCloseTicket} />
         </main>
     );
 }

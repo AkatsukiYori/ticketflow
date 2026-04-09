@@ -22,5 +22,6 @@ routerTicket.put("/update-ticket/:id", upload.single("ticket_file"), Middleware.
 routerTicket.put("/delete-ticket/:id", Middleware.DeleteTicketMiddleware, Controller.DeleteTicketController);
 routerTicket.put("/reject-ticket/:ticket_no", Controller.RejectTicketController);
 routerTicket.put("/feedback/:ticket_no", Controller.TicketFeedbackController);
+routerTicket.put("/close-ticket/:ticket_no", Controller.ClosedTicketController);
 
 export default routerTicket;

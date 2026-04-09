@@ -126,6 +126,7 @@ export const RejectTicketController = async (req: any, res: Response) => {
 
 export const TicketFeedbackController = async (req: any, res: Response) => {
     try {
+        console.log(req.body);
         const ticketNo = req.params.ticket_no;
         const { role, reason, user_id, estimate, make_doc } = req.body;
         const result = await TicketServices.TicketFeedbackServices(ticketNo, reason, role, estimate, make_doc, user_id);
@@ -137,5 +138,20 @@ export const TicketFeedbackController = async (req: any, res: Response) => {
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Something Went Wrong : " + error.message });
+    }
+}
+
+export const ClosedTicketController = async (req: any, res: Response) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const result = await TicketServices.ClosedTicketServices(ticketNo);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
     }
 }

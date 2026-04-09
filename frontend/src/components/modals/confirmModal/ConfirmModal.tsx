@@ -13,9 +13,12 @@ type Props = {
     onConfirm?: () => void;
     onClose: () => void;
     message?: string;
+    label: string;
+    btnCancel: string;
+    btnYes: string;
 }
 
-export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data, message, isAssign } : Props) {
+export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data, message, isAssign, label, btnYes, btnCancel } : Props) {
     const [userID, setUserID] = useState("");
     const { callApi } = useApi();
 
@@ -55,7 +58,6 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
             SuccessNotification({ message: res.message, variantType: "success" });
             onClose();
         } catch (error: any) {
-            console.log(error);
             ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
         }
     }
@@ -76,13 +78,13 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
         <section className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-body']} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>{isTicket ? <CircleQuestionMark /> : <TriangleAlertIcon />} Are You Sure?</h3>
+                    <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>{isTicket ? <CircleQuestionMark /> : <TriangleAlertIcon />} {label}</h3>
                     <p style={{ marginTop: "10px", marginBottom: 0, textAlign: "center" }}>{isTicket === false ? message : isAssign ? `Ticket no ${data.ticket_no} will assign to you.` : `Ticket no ${data.ticket_no} will be removed.` }</p>
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-                    <SubmitButton onClick={handleSubmit} label="Yes" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <SubmitButton onClick={handleSubmit} label={btnYes} />
+                    <CancelButton onClose={onClose} label={btnCancel} />
                 </div>
             </section>
         </section>

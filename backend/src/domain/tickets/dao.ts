@@ -237,7 +237,6 @@ export const DeleteTicketDAO = async (id: number) => {
 }
 
 export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any) => {
-    console.log(userId);
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -287,7 +286,7 @@ export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
     }
 }
 
-export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, estimate: Date, make_doc: boolean, userId?: number) => {
+export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, estimate?: Date, make_doc?: boolean, userId?: number) => {
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -307,25 +306,52 @@ export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: 
                     }
                 });
 
+                if(role === "admin") {
+                    await tx.tickets.update({
+                        where: {
+                            id: ticket.id
+                        },
+                        data: {
+                            status: "completed",
+                            estimate: estimate ? new Date(estimate) : null,
+                        }
+                    });
+    
+                    if(make_doc) {
+                        await tx.documentation.create({
+                            data: {
+                                category_id: ticket.category_id,
+                                title: ticket.ticket_title,
+                                description: reason
+                            }
+                        })
+                    }
+                }
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const ClosedTicketDAO = async (ticketNo: string) => {
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    ticket_no: ticketNo
+                }
+            });
+
+            if(ticket) {
                 await tx.tickets.update({
                     where: {
                         id: ticket.id
                     },
                     data: {
-                        status: "completed",
-                        estimate: new Date(estimate),
+                        closed_at: MakeDate()
                     }
                 });
-
-                if(make_doc) {
-                    await tx.documentation.create({
-                        data: {
-                            category_id: ticket.category_id,
-                            title: ticket.ticket_title,
-                            description: reason
-                        }
-                    })
-                }
             }
         });
     } catch (error: any) {
