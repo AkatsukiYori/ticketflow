@@ -116,6 +116,7 @@ export const columns = (
                         onRemove={() => onRemove(data.id)}
                         onReopen={() => onReopen(data.id)}
                         isClosed={data.closed_at ? true : false}
+                        isAssign={data.assign_to ? true : false}
                     />
                 </div>
                 : 
@@ -128,6 +129,7 @@ export const columns = (
                         onRemove={() => onRemove(data.id)}
                         onReopen={() => onReopen(data.id)}
                         isClosed={data.closed_at ? true : false}
+                        isAssign={data.assign_to ? true : false}
                     />
                 </div>
             );

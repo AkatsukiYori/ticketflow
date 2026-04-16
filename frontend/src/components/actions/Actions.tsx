@@ -9,9 +9,10 @@ type Props = {
     onRemove: () => void;
     onReopen: () => void;
     isClosed: boolean;
+    isAssign: boolean;
 }
 
-export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed }: Props) => {
+export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed, isAssign }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,9 +43,15 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                         <button onClick={onReopen} title="Re-Open Ticket"><LucideLockOpen size={15} /> Re-Open</button>
                     ) : (
                         <>
+                        {isAssign ? (
+                            <>
+                                <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
+                                <button onClick={onComplete} title="Complete"><CheckCircle size={15} /> Feedback</button>
+                                <button onClick={onReject} title="Reject"><XCircle size={15} /> Reject</button>
+                            </>
+                        ) : (
                             <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
-                            <button onClick={onComplete} title="Complete"><CheckCircle size={15} /> Feedback</button>
-                            <button onClick={onReject} title="Reject"><XCircle size={15} /> Reject</button>
+                        )}
                         </>
                     )}
                     <button onClick={onRemove} title="Delete"><Trash2 size={15} color="red" /> <span style={{ color: "red" }}>Remove</span></button>
