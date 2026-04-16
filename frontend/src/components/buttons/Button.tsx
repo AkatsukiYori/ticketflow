@@ -6,6 +6,7 @@ type Props = {
     func?: string;
     onClick?: () => void;
     onClose?: () => void;
+    btnTitle?: string;
 }
 
 export function NewButton({label, func, onClick} : Props) {
@@ -50,9 +51,9 @@ export function NewTicketButton({ onClick }: Props) {
     );
 }
 
-export function DetailButton({ onClick }: Props) {
+export function DetailButton({ onClick, btnTitle }: Props) {
     return (
-        <button type="button" className="btn-detail" title="Detail" onClick={onClick}><Info /></button>
+        <button type="button" className="btn-detail" onClick={onClick} title={btnTitle}><Info /></button>
     );
 }
 

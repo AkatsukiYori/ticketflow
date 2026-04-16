@@ -19,16 +19,17 @@ type Ticket = {
         id: number;
         username: string;
     }
+    closed_at: Date;
 }
 
 const columnHelper = createColumnHelper<Ticket>();
 
 export const columns = (
     onDetail: (id: number) => void,
-    onAssign: (id: number) => void,
     onReassign: (id: number, isReassign: boolean) => void,
     onFeedback: (id: number, mode: string) => void,
-    onRemove: (id: number) => void
+    onRemove: (id: number) => void,
+    onReopen: (id: number) => void
 ) => [
     columnHelper.display({
         id: "no",
@@ -40,7 +41,14 @@ export const columns = (
         header: "Date",
         sortingFn: "datetime",
         cell: ({ getValue }) => {
-            return getValue<Date>().toLocaleString();
+            return getValue<Date>().toLocaleString("en-US", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Jakarta"
+            }).replaceAll(/\./g, ":");
         }
     }),
     columnHelper.accessor("ticket_no", {
@@ -61,16 +69,18 @@ export const columns = (
                 width: "100%"
             }
             const getStatus = () => {
-                switch (data.status) {
-                    case "pending":
-                        return <span style={{ ...statusStyle, backgroundColor:"#FEF08A" }} >Pending</span>
-                    case "on_progress":
-                        return <span style={{ ...statusStyle, backgroundColor:"#FFD6A5" }} >On Progress</span>
-                    case "completed":
-                        return <span style={{ ...statusStyle, backgroundColor:"#BBF7D0" }} >Feedback</span>
-                    case "reject":
-                        return <span style={{ ...statusStyle, backgroundColor:"#FECACA" }} >Reject</span>
-                }
+                return data.status == "completed" && data.closed_at ?
+                    <span style={{ ...statusStyle, backgroundColor: "#dfdfdf" }}>Closed</span>
+                : data.status === "pending" ?
+                    <span style={{ ...statusStyle, backgroundColor:"#FEF08A" }} >Pending</span>
+                : data.status === "on_progress" ?
+                    <span style={{ ...statusStyle, backgroundColor:"#FFD6A5" }} >On Progress</span>
+                : data.status === "completed" ?
+                    <span style={{ ...statusStyle, backgroundColor:"#BBF7D0" }} >Feedback</span>
+                : data.status === "reject" ?
+                    <span style={{ ...statusStyle, backgroundColor:"#FECACA" }} >Reject</span>
+                :
+                    <></>
             }
             return (
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
@@ -99,23 +109,25 @@ export const columns = (
                 data.assign_to ? 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
-                    {/* <ReassignButton onClick={() => onReassign(data.id)} /> */}
                     <ActionDropdown
                         onAssign={() => onReassign(data.id, true)}
                         onReject={() => onFeedback(data.id, "reject")}
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}
+                        onReopen={() => onReopen(data.id)}
+                        isClosed={data.closed_at ? true : false}
                     />
                 </div>
                 : 
                 <div className="table-actions">
                     <DetailButton onClick={() => onDetail(data.id)} />
-                    {/* <IconAssignButton onClick={() => onAssign(data.id)} /> */}
                     <ActionDropdown
                         onAssign={() => onReassign(data.id, false)}
                         onReject={() => onFeedback(data.id, "reject")}
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}
+                        onReopen={() => onReopen(data.id)}
+                        isClosed={data.closed_at ? true : false}
                     />
                 </div>
             );

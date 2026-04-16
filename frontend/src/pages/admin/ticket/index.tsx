@@ -2,13 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshButton } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
-import { ErrorNotification } from "../../../components/notifications/notification";
+import { ErrorNotification, SuccessNotification } from "../../../components/notifications/notification";
 import { getTicketById } from "../../../api/ticketApi";
-import { getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
 import ReassignModal from "../../../components/modals/reassign/ReassignTicket";
+import ReopenModal from "../../../components/modals/reopen/ReopenModal";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
@@ -25,10 +26,7 @@ export default function Ticket() {
     });
     const [userId, setUserId] = useState("");
     const [pageCount, setPageCount] = useState(0);
-    const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 10
-    });
+    const [ticketNo, setTicketNo] = useState("");
 
     const [isAssign, setIsAssign] = useState(false);
 
@@ -36,6 +34,7 @@ export default function Ticket() {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [reassignOpen, setReassignOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [reOpenModal, setReOpenModal] = useState(false);
     const [mode, setMode] = useState("");
     const [isReassign, setIsReassign] = useState(false);
 
@@ -60,6 +59,17 @@ export default function Ticket() {
         }
     }, [callApi]);
 
+    const fetchTicketById = useCallback(async () => {
+        if(!ticketId) return;
+        try {
+            const res = await callApi("get", `/tickets/get-ticket/${ticketId}`);
+            setTicketDetail(res);
+            setTicketNo(res.ticket_no);
+        } catch (error: any) {
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+        }
+    }, [ticketId, callApi]);
+
     useEffect(() => {
         const storedName = localStorage.getItem("username");
         if(storedName) {
@@ -69,41 +79,28 @@ export default function Ticket() {
 
     useEffect(() => {
         fetchTicket();
+        if(username) {
+            fetchUser();
+        }
 
         socket.on("ticket-change", () => {
             fetchTicket();
         });
 
-        if(!ticketId) return;
-        fetchTicketById(ticketId);
-
-        if(username) {
-            fetchUser();
-        }
-
         return () => {
             socket.off("ticket-change");
         }
-    }, [ticketId, fetchTicket, username, fetchUser]);
+    }, [fetchTicket, username, fetchUser]);
 
-    async function fetchTicketById(id: number) {
-        try {
-            const res = await getTicketById(id);
-            setTicketDetail(res.data);
-        } catch (error) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+    useEffect(() => {
+        if(ticketId) {
+            fetchTicketById();
         }
-    }
+    }, [ticketId, fetchTicketById]);
 
     function handleModalDetail(id: number) {
         setTicketId(id);
         setOpen(true);
-    }
-
-    function handleModalAssign(id: number) {
-        setConfirmOpen(true);
-        setTicketId(id);
-        setIsAssign(true);
     }
 
     function handleModalReassign(id: number, isReassign: boolean) {
@@ -124,30 +121,47 @@ export default function Ticket() {
         setIsAssign(false);
     }
 
+    function handleModalReopen(id: number) {
+        setReOpenModal(true);
+        setTicketId(id);
+    }
+
+    async function handleSubmit() {
+        try {
+            await callApi("put", `/tickets/re-open/${ticketNo}`);
+            SuccessNotification({ message: "Re-open ticket successfully.", variantType: "success" });
+            setReOpenModal(false);
+        } catch (error: any) {
+            ErrorNotification({ message: "", variantType: "error" });
+        }
+    }
+
     const getColumns = useMemo(() => columns(
         handleModalDetail,
-        handleModalAssign,
         handleModalReassign,
         handleFeedback,
-        handleModalConfirm
+        handleModalConfirm,
+        handleModalReopen
     ), []);
+
     const table = useReactTable({
         data,
         columns: getColumns,
-        pageCount: pageCount,
         state: {
             columnFilters,
             // sorting
         },
-        // onSortingChange: setSorting,
-        onPaginationChange: setPagination,
-        manualPagination: true,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        getSortedRowModel: getSortedRowModel()
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+            pagination: {
+                pageSize: 10
+            }
+        }
     });
-
     return (
         <section className={Styles['main-content']}>
             <section className={Styles['top-table']}>
@@ -180,6 +194,7 @@ export default function Ticket() {
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
             <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} isReassign={isReassign} userId={userId} />
             <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} />
+            <ReopenModal open={reOpenModal} onClose={() => setReOpenModal(false)} data={ticketDetail} onClick={handleSubmit} />
         </section>
     );
 }

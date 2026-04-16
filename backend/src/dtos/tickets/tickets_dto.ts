@@ -22,7 +22,11 @@ export const CreateTicketSchema = z.object({
     user: z.string().min(1, "Nama Pengguna tidak boleh kosong."),
     status_reason: z.string().trim().optional(),
     closed_at: z.coerce.date().optional(),
-    deleted_at: z.coerce.date().optional()
+    deleted_at: z.coerce.date().optional(),
+    modul: z.string().min(1, "Modul tidak boleh kosong.").optional(),
+    sub_modul: z.string().min(1, "Sub modul tidak boleh kosong.").optional(),
+    reopened_at: z.coerce.date().optional(),
+    no_wa: z.string().min(1, "No whatsapp tidak boleh kosong.").optional()
 });
 
 export type CreateTicketInput = z.infer<typeof CreateTicketSchema>;
@@ -50,7 +54,11 @@ export const UpdateTicketSchema = z.object({
     user: z.string().min(1, "Nama Pengguna tidak boleh kosong.").optional(),
     status_reason: z.string().trim().optional(),
     closed_at: z.coerce.date().optional(),
-    deleted_at: z.coerce.date().optional()
+    deleted_at: z.coerce.date().optional(),
+    modul: z.string().min(1, "Modul tidak boleh kosong.").optional(),
+    sub_modul: z.string().min(1, "Sub modul tidak boleh kosong.").optional(),
+    reopened_at: z.coerce.date().optional(),
+    no_wa: z.string().min(1, "No whatsapp tidak boleh kosong.").optional()
 });
 
 export type UpdateTicketInput = z.infer<typeof UpdateTicketSchema>;

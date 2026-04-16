@@ -4,7 +4,7 @@ import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useState } from "react";
 import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
 import { socket } from "../../../api/socket";
-import { SelectOptions } from "../../inputs/Input";
+import { InputText, SelectOptions } from "../../inputs/Input";
 
 type Props = {
     open: boolean;
@@ -18,18 +18,23 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     const [userData, setUserData] = useState<any[]>([]);
     const [pic, setPic] = useState("");
     const [priority, setPriority] = useState("");
-    const [error, setError] = useState<{ pic?: string, priority?: any }>({});
+    const [estimate, setEstimate] = useState("");
+    const [error, setError] = useState<{ pic?: string, priority?: any, estimate?: string }>({});
 
     const { callApi } = useApi();
     
     const validate = () => {
-        const newError: {pic?: string, priority?: any} = {};
+        const newError: {pic?: string, priority?: any, estimate?: string} = {};
         if(!pic.trim() && isReassign) {
             newError.pic = "PIC cannot be empty.";
         }
 
         if(!priority.trim()) {
             newError.priority = "Priority cannot be empty.";
+        }
+
+        if(!estimate.trim()) {
+            newError.estimate = "Estimate cannot be empty.";
         }
 
         setError(newError);
@@ -40,6 +45,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
         setError({});
         setPic("");
         setPriority("");
+        setEstimate("");
     }
 
     const fetchUser = useCallback(async () => {
@@ -71,7 +77,8 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
 
         const payload = {
             user_id: pic ? pic : userId,
-            priority: priority
+            priority: priority,
+            estimate: estimate
         };
 
         try {
@@ -117,7 +124,6 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.pic}</span>
                             )}
                         </div>
-
                         <div>
                             <label htmlFor="">Priority <span style={{ color: "red" }}>*</span></label>
                             <SelectOptions
@@ -138,6 +144,24 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                             />
                             {error.priority && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.priority}</span>
+                            )}
+                        </div>
+                        <div>
+                            <label htmlFor="">Estimate <span style={{ color: "red" }}>*</span></label>
+                            <InputText
+                                type="date"
+                                name="estimate"
+                                id="estimate"
+                                placeholder="Estimate ticket"
+                                value={estimate}
+                                onChangeInput={(e) => {
+                                    setEstimate(e.target.value);
+                                    if(error.estimate) setError(prev => ({ ...prev, estimate: "" }));
+                                }}
+                                style={{ width: "100%", marginTop: "4px", borderColor: error.estimate ? "red" : "" }}
+                            />
+                            {error.estimate && (
+                                <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.estimate}</span>
                             )}
                         </div>
                     </div>

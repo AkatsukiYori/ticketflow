@@ -15,7 +15,6 @@ type Props = {
 
 export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
     const [reason, setReason] = useState("");
-    const [estimate, setEstimate] = useState("");
     const [userId, setUserId] = useState("");
     const [error, setError] = useState<{ reason?: string; estimate?: string; }>({});
     const [isDoc, setIsDoc] = useState<boolean>(false);
@@ -28,17 +27,12 @@ export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
             newError.reason = mode === "feedback" ? "Feedback cannot be empty." : "Reject reason cannot be empty."
         }
 
-        if(mode === "feedback" && !estimate.trim()) {
-            newError.estimate = "Estimate cannot be empty.";
-        }
-
         setError(newError);
         return Object.keys(newError).length === 0;
     }
 
     const handleClear = () => {
         setReason("");
-        setEstimate("");
         setError({});
         setIsDoc(false);
     }
@@ -65,7 +59,6 @@ export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
             reason: reason,
             role: "admin",
             user_id: userId,
-            estimate: estimate,
             make_doc: isDoc
         }
 
@@ -125,25 +118,6 @@ export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
                             />
                             {error.reason && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.reason}</span>
-                            )}
-                        </div>
-
-                        <div style={{ display: mode === "feedback" ? "block" : "none" }}>
-                            <label htmlFor="">Estimate <span style={{ color: "red" }}>*</span></label>
-                            <InputText
-                                type="date"
-                                name="estimate"
-                                id="estimate"
-                                placeholder="Estimate ticket"
-                                value={estimate}
-                                onChangeInput={(e) => {
-                                    setEstimate(e.target.value);
-                                    if(error.estimate) setError(prev => ({ ...prev, estimate: "" }));
-                                }}
-                                style={{ width: "100%", marginTop: "4px", borderColor: error.estimate ? "red" : "" }}
-                            />
-                            {error.estimate && (
-                                <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.estimate}</span>
                             )}
                         </div>
 

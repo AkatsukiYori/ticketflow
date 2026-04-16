@@ -1,6 +1,5 @@
 import { flexRender } from "@tanstack/react-table";
 import Styles from "../../components/datatables/datatable.module.css";
-import StylesContent from "../../css/layouts/admin/layouts.module.css";
 import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -63,9 +62,9 @@ export default function DataTables({ table }: Props) {
                 </table>
 
                 {/* Fungsi pagination */}
-                {/* <div className={Styles.paginationContainer}>
+                <div className={Styles.paginationContainer}>
                     <div className={Styles.paginationInfo}>
-                        Showing {table.getRowModel().rows.length} of ... entries
+                        Showing {table.getRowModel().rows.length} of {table.getCoreRowModel().rows.length} entries
                     </div>
                     
                     <div className={Styles.paginationControls}>
@@ -111,7 +110,7 @@ export default function DataTables({ table }: Props) {
                             </option>
                         ))}
                     </select>
-                </div> */}
+                </div>
             </section>
         </section>
     );

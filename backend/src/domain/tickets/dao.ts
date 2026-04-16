@@ -88,6 +88,18 @@ export const FilterTicketDAO = async (filterData: any) => {
     }
 }
 
+export const GetAllTicketLogs = async () => {
+    try {
+        return await prisma.tickets.findMany({
+            orderBy: {
+                report_date: 'desc'
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileData: any) => {
     try {
         const filteredData = Object.fromEntries(
@@ -116,12 +128,20 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
         const counterStr = String(counter).padStart(3, "0");
         const ticketNo = `TKT-${today}-${counterStr}`;
 
-        await prisma.$transaction(async (tx) => {
+        const isIKB = await prisma.categories.findFirst({
+            where: {
+                id: data.category_id
+            }
+        });
+
+        return await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.create({
                 data: {
                     ...filteredData,
                     ticket_no: ticketNo,
-                    report_date: date
+                    report_date: date,
+                    modul: isIKB ? (data.modul ? data.modul : null) : null,
+                    sub_modul: isIKB ? (data.sub_modul ? data.sub_modul : null) : null
                 },
             });
     
@@ -137,18 +157,19 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
                 });
             }
 
-            await tx.log.create({
+            const logs = await tx.log.create({
                 data: {
                     ticket_id: ticket.id,
+                    user_id: ticket.assign_to,
                     status: ticket.status,
                     action_type: "create",
                     log_date: MakeDate(),
-                    description: ticket.status_reason,
+                    description: null,
                 }
             });
-        });
 
-        return ticketNo;
+            return { ticketNo, logStatus: !!logs };
+        });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -181,10 +202,11 @@ export const UpdateTicketDAO = async (data: Partial<TicketDTO.UpdateTicketInput>
             await tx.log.create({
                 data: {
                     ticket_id: ticket.id,
+                    user_id: ticket.assign_to,
                     status: ticket.status,
                     action_type: "update",
                     log_date: MakeDate(),
-                    description: ticket.status_reason,
+                    description: null,
                 }
             });
         });
@@ -224,10 +246,11 @@ export const DeleteTicketDAO = async (id: number) => {
             await tx.log.create({   
                 data: {
                     ticket_id: ticket.id ?? null,
+                    user_id: ticket.assign_to,
                     status: ticket.status,
                     action_type: "delete",
                     log_date: MakeDate(),
-                    description: ticket.status_reason,
+                    description: null,
                 }
             });
         });
@@ -236,7 +259,7 @@ export const DeleteTicketDAO = async (id: number) => {
     }
 }
 
-export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any) => {
+export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any, estimate?: Date) => {
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -249,9 +272,21 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number, priority
                 await tx.tickets.update({
                     where: { id: ticket.id },
                     data: {
+                        estimate: estimate ? new Date(estimate) : null,
                         assign_to: userId,
                         status: "on_progress",
                         priority: priority
+                    }
+                });
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        user_id: ticket.assign_to,
+                        status: "on_progress",
+                        action_type: "assign",
+                        log_date: MakeDate(),
+                        description: `Priority : ${priority} | Estimate : ${estimate}`
                     }
                 })
             }
@@ -279,6 +314,17 @@ export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
                         status_reason: reason
                     }
                 });
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        user_id: ticket.assign_to,
+                        status: "reject",
+                        action_type: "reject",
+                        log_date: MakeDate(),
+                        description: reason
+                    }
+                })
             }
         });
     } catch (error: any) {
@@ -286,7 +332,7 @@ export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
     }
 }
 
-export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, estimate?: Date, make_doc?: boolean, userId?: number) => {
+export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, make_doc?: boolean, userId?: number) => {
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -306,27 +352,40 @@ export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: 
                     }
                 });
 
+                const payload: any = {};
                 if(role === "admin") {
-                    await tx.tickets.update({
-                        where: {
-                            id: ticket.id
-                        },
+                        payload.status = "completed"
+                } else {
+                    payload.status = "on_progress"
+                }
+
+                await tx.tickets.update({
+                    where: {
+                        id: ticket.id
+                    },
+                    data: payload
+                });
+
+                if(role === "admin" && make_doc) {
+                    await tx.documentation.create({
                         data: {
-                            status: "completed",
-                            estimate: estimate ? new Date(estimate) : null,
+                            category_id: ticket.category_id,
+                            title: ticket.ticket_title,
+                            description: reason
                         }
                     });
-    
-                    if(make_doc) {
-                        await tx.documentation.create({
-                            data: {
-                                category_id: ticket.category_id,
-                                title: ticket.ticket_title,
-                                description: reason
-                            }
-                        })
-                    }
                 }
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        user_id: userId ? userId : null,
+                        status: "feedback",
+                        action_type: "feedback",
+                        log_date: new Date(),
+                        description: reason
+                    }
+                });
             }
         });
     } catch (error: any) {
@@ -350,6 +409,50 @@ export const ClosedTicketDAO = async (ticketNo: string) => {
                     },
                     data: {
                         closed_at: MakeDate()
+                    }
+                });
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        user_id: ticket.assign_to,
+                        status: "closed",
+                        action_type: "closed",
+                        log_date: MakeDate(),
+                        description: null
+                    }
+                })
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const ReOpenTicketDAO = async (ticketNo: string) => {
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({ where: { ticket_no: ticketNo } });
+            if(ticket) {
+                await tx.tickets.update({
+                    where: {
+                        id: ticket.id
+                    },
+                    data: {
+                        closed_at: null,
+                        status: "on_progress",
+                        reopened_at: MakeDate()
+                    }
+                });
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket.id,
+                        user_id: ticket.assign_to,
+                        status: "reopen",
+                        action_type: "open_ticket",
+                        log_date: MakeDate(),
+                        description: null
                     }
                 });
             }

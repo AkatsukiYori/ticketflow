@@ -17,6 +17,7 @@ model Users {
   deleted_at      DateTime?
   tickets         Tickets[]
   ticket_feedback TicketFeedback[]
+  log             Log[]
 
   @@map("users")
 }
@@ -54,6 +55,10 @@ model Tickets {
   deleted_at      DateTime?
   estimate        DateTime?
   reject_at       DateTime?
+  modul           String?
+  sub_modul       String?
+  reopened_at     DateTime?
+  no_wa           String?
   images          Images[]
   log             Log[]
   fk_users_id     Users?            @relation(fields: [assign_to], references: [id])
@@ -93,6 +98,7 @@ model Images {
 model Log {
   id           Int      @id @default(autoincrement())
   ticket_id    Int
+  user_id      Int?
   status       String   @db.VarChar(100)
   action_type  String   @db.VarChar(100)
   log_date     DateTime @default(now())
@@ -100,6 +106,7 @@ model Log {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
   fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
+  fk_user_id   Users?    @relation(fields: [user_id], references: [id])
 
   @@map("log")
 }
@@ -129,6 +136,17 @@ model Documentation_files {
   fk_document_id Documentation @relation(fields: [document_id], references: [id])
 
   @@map("documentation_files")
+}
+
+model Rating {
+  id            Int       @id @default(autoincrement())
+  user_id       Int
+  ticket_id     Int
+  score         Int
+  note          String?
+  created_at    DateTime
+
+  @@map("rating")
 }
 
 enum Location {

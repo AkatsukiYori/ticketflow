@@ -30,6 +30,14 @@ export const FilterTicketServices = async (filterData: any) => {
     }
 }
 
+export const GetAllTicketLogs = async () => {
+    try {
+        return await TicketDAO.GetAllTicketLogs();
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const CreateTicketServices = async (data: TicketBodyDTO.CreateTicketInput, file: Express.Multer.File | undefined) => {
     try {
         const fileData = file ? {
@@ -40,7 +48,7 @@ export const CreateTicketServices = async (data: TicketBodyDTO.CreateTicketInput
         } : null;
 
         const res = await TicketDAO.CreateTicketDAO(data, fileData);
-        return ({ message: "Ticket berhasil dibuat : ", ticketNo: res });
+        return ({ message: "Ticket berhasil dibuat : ", ticketNo: res.ticketNo, logStat: res.logStatus });
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -73,9 +81,9 @@ export const DeleteTicketServices = async (id: number) => {
     }
 }
 
-export const AssignTicketServices = async (ticketNo: string, userId: number, priority: any) => {
+export const AssignTicketServices = async (ticketNo: string, userId: number, priority: any, estimate: Date) => {
     try {
-        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority);
+        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority, estimate);
 
         return ({ message: "Ticket Successful Assigned." });
     } catch (error: any) {
@@ -93,9 +101,9 @@ export const RejectTicketServices = async (ticketNo: string, reason: string) => 
     }
 }
 
-export const TicketFeedbackServices = async (ticketNo: string, reason: string, role: string, estimate: Date, make_doc: boolean, userId?: number) => {
+export const TicketFeedbackServices = async (ticketNo: string, reason: string, role: string, make_doc: boolean, userId?: number) => {
     try {
-        await TicketDAO.TicketFeedbackDAO(ticketNo, reason, role, estimate, make_doc, userId);
+        await TicketDAO.TicketFeedbackDAO(ticketNo, reason, role, make_doc, userId);
 
         return ({ message: "Feedback Successful Sent." });
     } catch (error: any) {
@@ -108,6 +116,15 @@ export const ClosedTicketServices = async (ticketNo: string) => {
         await TicketDAO.ClosedTicketDAO(ticketNo);
 
         return ({ message: "Tiket berhasil ditutup." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const ReOpenTicketServices = async (ticketNo: string) => {
+    try {
+        await TicketDAO.ReOpenTicketDAO(ticketNo);
+        return ({ message: "Ticket berhasil dibuka." });
     } catch (error: any) {
         throw new Error(error.message);
     }

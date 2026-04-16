@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NewButton, RefreshButton } from "../../../components/buttons/Button";
 import { InputText } from "../../../components/inputs/Input";
-import { getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./column";
 
 import DataTables from "../../../components/datatables/DataTable";
@@ -134,7 +134,13 @@ export default function Documentation() {
         },
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel()
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+            pagination: {
+                pageSize: 10
+            }
+        }
     });
 
     return (

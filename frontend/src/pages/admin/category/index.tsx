@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { columns } from "./columns.tsx";
 import { InputText } from "../../../components/inputs/Input.tsx";
 import { NewButton, RefreshButton } from "../../../components/buttons/Button.tsx";
-import { getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { useApi } from "../../../hooks/useApi.ts";
 import { socket } from "../../../api/socket.ts";
 
@@ -135,7 +135,13 @@ export default function Category() {
         },
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel()
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+            pagination: {
+                pageSize: 10
+            }
+        }
     });
     
     return (

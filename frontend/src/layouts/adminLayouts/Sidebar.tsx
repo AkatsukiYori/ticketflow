@@ -33,7 +33,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar } : Props) {
                 </section>
     
             </aside>
-            <ConfirmModal open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} onConfirm={logout} isTicket={false} message="Are you sure want to logout?" />
+            <ConfirmModal open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} onConfirm={logout} isTicket={false} message="Are you sure want to logout?" btnCancel="Canecl" btnYes="Logout" label="Are You Sure ?" />
         </section>
 
     );

@@ -5,14 +5,22 @@ type Props = {
     data: any,
     onClickClosed: (ticketNo: string) => void;
     onClickResponse: (ticketNo: string) => void;
+    onClickOpenTicket: (ticketNo: string) => void;
 }
 
-export default function Card({ data, onClickClosed, onClickResponse }: Props) {
+export default function Card({ data, onClickClosed, onClickResponse, onClickOpenTicket }: Props) {
     return (
         <div className={Styles['card']} style={{ width: "100%" }}>
             <div className={Styles['card-content']}>
                 <div className={Styles['card-header']}>
-                    <p style={{ fontSize: 14, margin: 0 }}>#{data.ticket_no} - {new Date(data.report_date).toLocaleString()} - {data.user}</p>
+                    <p style={{ fontSize: 14, margin: 0 }}>#{data.ticket_no} - {new Date(data.report_date).toLocaleString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: "Asia/Jakarta"
+                    }).replaceAll(/\./g, ":").replaceAll(" pukul", ",")} - {data.user}</p>
                 </div>
                 <div className={Styles['card-body']}>
                     <div className={Styles['card-body-top']}>
@@ -29,7 +37,6 @@ export default function Card({ data, onClickClosed, onClickResponse }: Props) {
                                 : data.status === "reject" ?
                                     <span style={{ backgroundColor: "#FECACA", padding: "4px 16px", borderRadius: "16px", fontSize: 12 }}>Reject</span>
                                 : <></>
-
                              }
                         </div>
                         {/* <div>
@@ -38,14 +45,14 @@ export default function Card({ data, onClickClosed, onClickResponse }: Props) {
                     </div>
                     <p style={{ margin: 0 }}>{data.problem}</p>
                 </div>
-                <div className={Styles['card-footer']} style={{ display: data.status === "completed" ? "flex" : "none" }}>
-                    {data.status === "completed" ? 
-                            <button type="button" onClick={() => onClickClosed(data.ticket_no)} style={{ display: data.status === "completed" && data.closed_at ? "none" : "flex" }}><X size={18} /> Tutup Tiket</button>
-                        :
-                            <></>
-                    }
-                    {!data.closed_at ?    
-                            <button type="button" onClick={() => onClickResponse(data.ticket_no)}><MessageCircleMore size={18} /> Respon</button>
+                <div className={Styles['card-footer']}>
+                    {data.closed_at && data.status === "completed" ?
+                            <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><MessageCircleMore size={18} /> Buka Ticket</button>
+                        : !data.closed_at && data.status === "completed" ?
+                            <>
+                                <button type="button" className={Styles['btn-closed']} onClick={() => onClickClosed(data.ticket_no)}><X size={18} /> Tutup Tiket</button>
+                                <button type="button" className={Styles['btn-respon']} onClick={() => onClickResponse(data.ticket_no)}><MessageCircleMore size={18} /> Respon</button>
+                            </>
                         : <></>
                     }
                 </div>

@@ -27,6 +27,7 @@
 
 /* Start: Card Footer */
 .card-footer {
+    display: flex;
     gap: 8px;
     margin-top: 16px;
 }
@@ -44,22 +45,32 @@
     font-size: 0.9em;
 }
 
-.card-footer button:nth-child(2) {
+.card-footer > .btn-respon {
     background-color: #d2e3fc;
-}
-
-.card-footer button:hover:nth-child(2) {
-    background-color: rgba(27, 73, 157, 0.3);
     transition: background 0.3s;
 }
 
-.card-footer button:nth-child(1) {
+.card-footer > .btn-respon:hover {
+    background-color: rgba(27, 73, 157, 0.3);
+}
+
+.card-footer > .btn-closed {
     background-color: #fcd2d2;
     color: rgba(239, 68, 68, 1);
+    transition: background 0.3s;
 }
 
-.card-footer button:hover:nth-child(1) {
+.card-footer > .btn-closed:hover {
     background-color: rgba(239, 68, 68, 0.3);
+}
+
+.card-footer > .btn-open-ticket {
+    background-color: rgba(27, 73, 157, 0.2);
+    color: rgba(27, 73, 157, 1);
     transition: background 0.3s;
+}
+
+.card-footer > .btn-open-ticket:hover {
+    background-color: rgba(27, 73, 157, 0.3);
 }
 /* End: Card Footer */

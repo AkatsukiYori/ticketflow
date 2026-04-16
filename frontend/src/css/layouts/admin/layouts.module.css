@@ -107,6 +107,12 @@
 }
 /* End Main */
 
+/* Start Table */
+.table-container {
+    width: 100%;
+}
+/* End Table */
+
 @media (max-width: 768px) {
     .overlay {
         display: block;
