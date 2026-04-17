@@ -9,11 +9,13 @@ import { socket } from "../../api/socket";
 import ResponseModal from "../../components/modals/response/ResponseModal";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 import ReopenModal from "../../components/modals/reopen/ReopenModal";
+import LogsModal from "../../components/modals/logs/ViewLogs";
 
 export default function CheckTicketStatus() {
     const [open, setOpen] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [openTicket, setOpenTicket] = useState(false);
+    const [openLogs, setOpenLogs] = useState(false);
 
     const [ticketNo, setTicketNo] = useState("");
     const [data, setData] = useState<any[]>([]);
@@ -21,6 +23,7 @@ export default function CheckTicketStatus() {
     const [userSearch, setUserSearch] = useState("");
     const [startMonth, setStartMonth] = useState("");
     const [endMonth, setEndMonth] = useState("");
+    const [ticketId, setTicketId] = useState(0);
 
     const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
@@ -47,6 +50,11 @@ export default function CheckTicketStatus() {
     const handleModalOpenTicket = (ticketNo: string) => {
         setOpenTicket(true);
         setTicketNo(ticketNo);
+    }
+
+    const handleModalLogs = (ticketId: number) => {
+        setOpenLogs(true);
+        setTicketId(ticketId);
     }
 
     async function handleOpenTicket() {
@@ -123,13 +131,14 @@ export default function CheckTicketStatus() {
             </section>
             <section className={Styles['content-body']}>
                 {data.map((ticket, index) => (
-                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} />
+                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} />
                 ))}
             </section>
 
             <ResponseModal open={open} onClose={() => setOpen(false)} onClick={handleResponTicket} />
             <ConfirmModal open={confirmModal} onClose={() => setConfirmModal(false)} isTicket={false} message={`Apakah anda yakin ingin menutup tiket #${ticketNo}? Pastikan kendala anda sudah teratasi sebelum menutup tiket. Dengan menutup tiket, ini menandai laporan anda sudah terselesaikan sepenuhnya.`} label="Konfirmasi Tutup Tiket" btnCancel="Batal" btnYes="Tutup Tiket" onConfirm={handleCloseTicket} />
             <ReopenModal open={openTicket} onClose={() => setOpenTicket(false)} data={selectedTicket} onClick={handleOpenTicket} />
+            <LogsModal open={openLogs} onClose={() => setOpenLogs(false)} ticketId={ticketId} />
         </main>
     );
 }

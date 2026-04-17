@@ -1,14 +1,15 @@
 import Styles from "./card.module.css";
-import { X, MessageCircleMore } from "lucide-react";
+import { X, MessageCircleMore, LockOpenIcon, LogsIcon } from "lucide-react";
 
 type Props = {
     data: any,
     onClickClosed: (ticketNo: string) => void;
     onClickResponse: (ticketNo: string) => void;
     onClickOpenTicket: (ticketNo: string) => void;
+    onClickLogs: (ticketId: number) => void;
 }
 
-export default function Card({ data, onClickClosed, onClickResponse, onClickOpenTicket }: Props) {
+export default function Card({ data, onClickClosed, onClickResponse, onClickOpenTicket, onClickLogs }: Props) {
     return (
         <div className={Styles['card']} style={{ width: "100%" }}>
             <div className={Styles['card-content']}>
@@ -47,7 +48,7 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                 </div>
                 <div className={Styles['card-footer']}>
                     {data.closed_at && data.status === "completed" ?
-                            <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><MessageCircleMore size={18} /> Buka Ticket</button>
+                            <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><LockOpenIcon size={18} /> Buka Ticket</button>
                         : !data.closed_at && data.status === "completed" ?
                             <>
                                 <button type="button" className={Styles['btn-closed']} onClick={() => onClickClosed(data.ticket_no)}><X size={18} /> Tutup Tiket</button>
@@ -55,6 +56,7 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                             </>
                         : <></>
                     }
+                    <button type="button" className={Styles['btn-logs']} onClick={() => onClickLogs(data.id)}><LogsIcon size={18} /> Logs</button>
                 </div>
             </div>
         </div>
