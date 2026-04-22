@@ -44,7 +44,7 @@ model Tickets {
   report_date     DateTime          @default(now())
   department      String            @db.VarChar(100)
   location        String            @db.VarChar(50)
-  priority        Priority          @default(low)
+  priority        Priority?
   note            String?
   status          TicketStatus      @default(pending)
   status_reason   String?           @db.VarChar(100)
@@ -64,6 +64,7 @@ model Tickets {
   fk_users_id     Users?            @relation(fields: [assign_to], references: [id])
   fk_category_id  Categories        @relation(fields: [category_id], references: [id])
   ticket_feedback TicketFeedback[]
+  rating          Rating[]
 
   @@map("tickets")
 }
@@ -140,11 +141,11 @@ model Documentation_files {
 
 model Rating {
   id            Int       @id @default(autoincrement())
-  user_id       Int
   ticket_id     Int
   score         Int
   note          String?
   created_at    DateTime
+  fk_tickets_id Tickets   @relation(fields: [ticket_id], references: [id])
 
   @@map("rating")
 }

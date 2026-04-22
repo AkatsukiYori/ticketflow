@@ -5,7 +5,6 @@ import Category from "../pages/admin/category";
 import Documentation from "../pages/admin/documentation";
 import Logs from "../pages/admin/logs";
 import Report from "../pages/admin/reports";
-import Profile from "../pages/admin/profile";
 import AdminLayout from "../layouts/adminLayouts/Index";
 import ProtectedRouter from "./ProtectedRouter";
 
@@ -25,7 +24,6 @@ export default function AdminRouter() {
                 { path: "documentation", element: <Documentation /> },
                 { path: "report", element: <Report /> },
                 { path: "logs", element: <Logs /> },
-                { path: "profile", element: <Profile /> },
             ],
         },
     ]);

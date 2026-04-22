@@ -17,6 +17,7 @@ routerTicket.get("/filter-ticket", Controller.FilterTicketController);
 routerTicket.get("/get-all-ticket-logs", Controller.GetAllTicketLogs);
 
 routerTicket.post("/new-ticket", upload.single("ticket_file"), Middleware.CreateTicketMiddleware, Controller.CreateTicketController);
+routerTicket.post("/rating/:ticket_no", Controller.RatingController);
 
 routerTicket.put("/assign/:ticket_no", Controller.AssignTicketController);
 routerTicket.put("/update-ticket/:id", upload.single("ticket_file"), Middleware.UpdateTicketMiddleware, Controller.UpdateTicketController);

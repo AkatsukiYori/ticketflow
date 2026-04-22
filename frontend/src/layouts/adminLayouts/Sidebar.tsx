@@ -1,6 +1,6 @@
 import SidebarItem from "../../components/sidebar/SidebarItem";
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, UserCircle2, LogOut } from "lucide-react";
+import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
@@ -28,7 +28,6 @@ export default function Sidebar({ isSidebarOpen, closeSidebar } : Props) {
                     <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
                     <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" onClick={closeSidebar} />
                     <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
-                    <SidebarItem icon={UserCircle2} label="Profile" to="/admin/profile" onClick={closeSidebar} />
                     <SidebarItem icon={LogOut} label="Logout" to="#" onClick={() => setIsLogoutOpen(true)} />
                 </section>
     

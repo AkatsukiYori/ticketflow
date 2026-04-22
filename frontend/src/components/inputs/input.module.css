@@ -6,6 +6,11 @@
     color: #374151;
     text-indent: 10px;
     border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.text-input:focus {
+    outline: none;
 }
 
 .text-input:active {
@@ -25,6 +30,7 @@
     border: 1px solid #d1d1d1;
     color: #374151;
     border-radius: 6px;
+    box-sizing: border-box;
 }
 
 .textarea-input {
@@ -35,6 +41,7 @@
     color: #374151;
     border-radius: 6px;
     text-indent: 10px;
+    box-sizing: border-box;
 }
 
 /* Start: Checkbox */
@@ -55,6 +62,7 @@
     cursor: pointer;
     height: 0;
     width: 0;
+    box-sizing: border-box;
 }
 
 /* Kotak default */

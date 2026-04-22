@@ -24,7 +24,7 @@
     width: 100%;
 }
 
-.data-th:first-child, .data-td:first-child {
+/* .data-th:first-child, .data-td:first-child {
     text-align: center;
     vertical-align: middle;
     width: 40px;
@@ -33,7 +33,7 @@
 .data-th:last-child, .data-td:last-child {
     width: 100px;
     text-align: center;
-}
+} */
 
 .cell-label {
     display: none;

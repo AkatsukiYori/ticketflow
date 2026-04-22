@@ -12,9 +12,7 @@ export const CreateTicketSchema = z.object({
     }).optional(),
     department: z.string().min(1, "Departemen tidak boleh kosong."),
     location: z.string().min(1, "Lokasi tidak boleh kosong."),
-    priority: z.enum(Priority, {
-        error: "Prioritas tidak boleh kosong."
-    }),
+    priority: z.nativeEnum(Priority).optional().nullable().or(z.literal("").transform(() => null)),
     note: z.string().trim().optional(),
     status: z.enum(TicketStatus, {
         error: "Status tiket tidak boleh kosong."

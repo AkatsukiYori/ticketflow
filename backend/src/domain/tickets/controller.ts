@@ -182,3 +182,21 @@ export const ReOpenTicketController = async (req: any, res: Response) => {
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
     }
 }
+
+export const RatingController = async (req: any, res: Response) => {
+    try {
+        const ticket_no = req.params.ticket_no;
+        const raw_data = req.body
+        const data = { ticket_no: ticket_no, ...raw_data };
+
+        const result = await TicketServices.RatingServices(data);
+
+        if(req.io) {
+            req.io.emit("ticket-change");
+        }
+
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Terjadi kesalahan : " + error.message });
+    }
+}

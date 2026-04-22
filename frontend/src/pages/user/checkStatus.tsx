@@ -10,12 +10,14 @@ import ResponseModal from "../../components/modals/response/ResponseModal";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 import ReopenModal from "../../components/modals/reopen/ReopenModal";
 import LogsModal from "../../components/modals/logs/ViewLogs";
+import RatingModal from "../../components/modals/rating/RatingModal";
 
 export default function CheckTicketStatus() {
     const [open, setOpen] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [openTicket, setOpenTicket] = useState(false);
     const [openLogs, setOpenLogs] = useState(false);
+    const [openRating, setOpenRating] = useState(false);
 
     const [ticketNo, setTicketNo] = useState("");
     const [data, setData] = useState<any[]>([]);
@@ -24,6 +26,7 @@ export default function CheckTicketStatus() {
     const [startMonth, setStartMonth] = useState("");
     const [endMonth, setEndMonth] = useState("");
     const [ticketId, setTicketId] = useState(0);
+    const [isRating, setIsRating] = useState("");
 
     const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
@@ -55,6 +58,11 @@ export default function CheckTicketStatus() {
     const handleModalLogs = (ticketId: number) => {
         setOpenLogs(true);
         setTicketId(ticketId);
+    }
+
+    const handleModalRating = (ticketNo: string) => {
+        setOpenRating(true);
+        setTicketNo(ticketNo);
     }
 
     async function handleOpenTicket() {
@@ -90,6 +98,21 @@ export default function CheckTicketStatus() {
             setOpen(false);
         } catch (error: any) {
             ErrorNotification({ message: "Terjadi Kesalahan", variantType: "error" });
+        }
+    }
+
+    async function handleSubmitRating(ticketNo: string, pesan: string, rating: number) {
+        try {
+            const payload = {
+                score: rating,
+                note: pesan,
+            }
+
+            const res = await callApi("post", `/tickets/rating/${ticketNo}`, payload);
+            SuccessNotification({ message: res.message, variantType: "success" });
+            setOpenRating(false);
+        } catch (error: any) {
+            ErrorNotification({ message: "Terjadi kesalahan.", variantType: "error" })
         }
     }
 
@@ -131,7 +154,7 @@ export default function CheckTicketStatus() {
             </section>
             <section className={Styles['content-body']}>
                 {data.map((ticket, index) => (
-                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} />
+                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
                 ))}
             </section>
 
@@ -139,6 +162,7 @@ export default function CheckTicketStatus() {
             <ConfirmModal open={confirmModal} onClose={() => setConfirmModal(false)} isTicket={false} message={`Apakah anda yakin ingin menutup tiket #${ticketNo}? Pastikan kendala anda sudah teratasi sebelum menutup tiket. Dengan menutup tiket, ini menandai laporan anda sudah terselesaikan sepenuhnya.`} label="Konfirmasi Tutup Tiket" btnCancel="Batal" btnYes="Tutup Tiket" onConfirm={handleCloseTicket} />
             <ReopenModal open={openTicket} onClose={() => setOpenTicket(false)} data={selectedTicket} onClick={handleOpenTicket} />
             <LogsModal open={openLogs} onClose={() => setOpenLogs(false)} ticketId={ticketId} />
+            <RatingModal open={openRating} onClose={() => setOpenRating(false)} ticketNo={ticketNo} onClick={handleSubmitRating} />
         </main>
     );
 }

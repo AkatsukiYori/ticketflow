@@ -145,7 +145,7 @@ export default function Documentation() {
 
     return (
         <section className={Styles['main-content']}>
-            <section className={Styles['top-table']}>
+            <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
                     <RefreshButton onClick={() => fetchDocumentation()} />
@@ -155,9 +155,11 @@ export default function Documentation() {
                     <NewButton label="" func="add_mobile" onClick={handleModalCreate}></NewButton>
                 </section>
             </section>
-            <DataTables
-                table={table}
-            />
+            <section className={Styles['content-body']}>
+                <DataTables
+                    table={table}
+                />
+            </section>
 
             <DocumentationModal open={open} mode={mode} data={selected} onClose={() => {setOpen(false); setFieldError({})}} onSubmit={handleSubmit} onUpdate={handleUpdate} validation={fieldError} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={() => deleteID && handleDelete(deleteID)} isTicket={false} message="Deleted data is permanent and cannot be retrieved!" label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />

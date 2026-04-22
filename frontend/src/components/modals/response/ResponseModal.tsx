@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { InputText } from "../../inputs/Input";
 import { SubmitButton, CancelButton, HeaderModalButton } from "../../buttons/Button";
 import Styles from "./responseModal.module.css";

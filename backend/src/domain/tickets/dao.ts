@@ -43,7 +43,8 @@ export const GetAllTicketDAO = async (filter: any) => {
     try {
         const data = await prisma.tickets.findMany({
             include: {
-                fk_users_id: true
+                fk_users_id: true,
+                rating: true
             },
             where: whereClause,
             orderBy: {
@@ -91,6 +92,23 @@ export const FilterTicketDAO = async (filterData: any) => {
 export const GetAllTicketLogs = async () => {
     try {
         return await prisma.tickets.findMany({
+            include: {
+                rating: {
+                    select: {
+                        score: true
+                    }
+                },
+                fk_category_id: {
+                    select: {
+                        name: true
+                    }
+                },
+                fk_users_id: {
+                    select: {
+                        username: true
+                    }
+                }
+            },
             orderBy: {
                 report_date: 'desc'
             }
@@ -453,6 +471,32 @@ export const ReOpenTicketDAO = async (ticketNo: string) => {
                         action_type: "open_ticket",
                         log_date: MakeDate(),
                         description: null
+                    }
+                });
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const RatingDAO = async (data: any) => {
+    try {
+        const { ticket_no, score, note } = data;
+        return await prisma.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    ticket_no: ticket_no
+                }
+            });
+            
+            if(ticket) {
+                await tx.rating.create({
+                    data: {
+                        ticket_id: ticket?.id,
+                        score: score,
+                        note: note,
+                        created_at: new Date()
                     }
                 });
             }

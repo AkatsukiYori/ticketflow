@@ -124,7 +124,18 @@ export const ClosedTicketServices = async (ticketNo: string) => {
 export const ReOpenTicketServices = async (ticketNo: string) => {
     try {
         await TicketDAO.ReOpenTicketDAO(ticketNo);
-        return ({ message: "Ticket berhasil dibuka." });
+        return ({ message: "Tiket berhasil dibuka." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const RatingServices = async (data: any) => {
+    try {
+        // console.log(data);
+        await TicketDAO.RatingDAO(data);
+
+        return ({ message: "Terima kasih atas penilaian anda!" });
     } catch (error: any) {
         throw new Error(error.message);
     }

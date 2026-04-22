@@ -44,8 +44,10 @@
 
 /* Start Main */
 .main {
-    padding: 16px;
     flex: 10;
+    padding: 16px;
+    overflow-y: auto;
+    max-height: 100%;
 }
 /* End Main */
 
@@ -91,9 +93,11 @@
     margin-left: 300px;
 }
 
-.top-table {
+.content-header {
+    flex: 1;
     display: flex;
     justify-content: space-between;
+    gap: 16px;
 }
 
 .filter {
@@ -101,8 +105,48 @@
     gap: 8px;
 }
 
-.filter-ticket {
+.filter > .filter-content {
     display: flex;
+    flex-direction: column;
+}
+
+.filter-content > .filter-input {
+    display: flex;
+    gap: 8px
+}
+
+.filter-ticket {
+    flex: 1;
+    display: flex;
+    gap: 8px;       
+}
+
+.main-content > .content-body {
+    flex: 5;
+    display: flex;
+}
+
+.main-content > .content-body > .content-body-left {
+    flex: 2;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 1000px;
+}
+
+.content-body-left > .category-chart {
+    flex: 1;
+}
+
+.content-body-left > .list-ticket {
+    flex: 1;
+}
+
+.main-content > .content-body > .content-body-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
 }
 /* End Main */
@@ -112,6 +156,110 @@
     width: 100%;
 }
 /* End Table */
+
+/* Start Report Card */
+.content-header > .card-1,
+.content-header > .card-2,
+.content-header > .card-3,
+.content-header > .card-4 {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    border: 1px solid #e2e2e2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transition: background-color 0.3s;
+}
+
+.card-1 > .card-content,
+.card-2 > .card-content,
+.card-3 > .card-content,
+.card-4 > .card-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.content-header > .card-1:hover {
+    background-color: #F0F4FA;
+}
+
+.content-header > .card-2:hover {
+    background-color: #FEFCE8;
+}
+
+.content-header > .card-3:hover {
+    background-color: #F0FDF4;
+}
+
+.content-header > .card-4:hover {
+    background-color: #FEF2F2;
+}
+
+.card-content > .card-content-left {
+    display: flex;
+    align-items: center;
+}
+
+.content-header > .card-1 > .card-content > .card-content-left {
+    border-left: 3px solid #1B499D;
+}
+
+.content-header > .card-2 > .card-content > .card-content-left {
+    border-left: 3px solid #EAB308;
+}
+
+.content-header > .card-3 > .card-content > .card-content-left {
+    border-left: 3px solid #22C55E;
+}
+
+.content-header > .card-4 > .card-content > .card-content-left {
+    border-left: 3px solid #EF4444;
+}
+
+.card-content > .card-content-right {
+    text-align: center;
+}
+
+.card-content h1, .card-content p {
+    margin: 0;
+}
+/* End Report Card */
+
+/* Start Priority */
+.content-body-right > .priority {
+    border: 1px solid #c4c4c4;
+    border-radius: 8px;
+    padding: 16px;
+    height: 400px;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+/* End Priority */
+
+/* Start Rating Card */
+.content-body-right > .rating-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #c4c4c4;
+    border-radius: 8px;
+}
+
+.content-body-right > .rating-card > .rating-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+/* End Rating Card */
 
 @media (max-width: 768px) {
     .overlay {
@@ -166,7 +314,7 @@
         gap: 10px;
     }
 
-    .top-table {
+    .content-header {
         gap: 8px;
     }
 

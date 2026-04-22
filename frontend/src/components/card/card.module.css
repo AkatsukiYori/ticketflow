@@ -83,4 +83,14 @@
 .card-footer > .btn-logs:hover {
     background-color: rgba(218, 218, 218, 0.8);
 }
+
+.card-footer > .btn-rating {
+    background-color: #FEF08A90;
+    color: rgb(82, 82, 82);
+    transition: background 0.3s;
+}
+
+.card-footer > .btn-rating:hover {
+    background-color: #FEF08A;
+}
 /* End: Card Footer */

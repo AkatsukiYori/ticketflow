@@ -4,11 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { ErrorNotification, InfoNotification, SuccessNotification } from "../../components/notifications/notification";
 import { useApi } from "../../hooks/useApi";
 import { socket } from "../../api/socket";
-import { preinitModule } from "react-dom";
 
 export default function NewTicket() {
     const navigate = useNavigate();
-    const [data, setData] = useState<any[]>([]);
     const [category, setCategory] = useState<any[]>([]);
     const [fieldError, setFieldError] = useState<{[key: string]: string}>({});
 
@@ -30,39 +28,25 @@ export default function NewTicket() {
         }
     }, [callApi]);
 
-    const fetchTicket = useCallback(async () => {
-        try {
-            const result = await callApi("get", "/tickets/get-all-ticket");
-            setData(result);
-        } catch (error: any) {
-            ErrorNotification({ message: "Gagal mengambil ticket.", variantType: "error" });
-        }
-    }, [callApi]);
-
     useEffect(() => {
         fetchCategory();
-        fetchTicket();
 
         socket.on("category-change", () => {
             fetchCategory();
-        });
-
-        socket.on("ticket-change", () => {
-            fetchTicket();
         });
 
         return () => {
             socket.off("category-change");
             socket.off("ticket-change");
         }
-    }, [fetchCategory, fetchTicket]);
+    }, [fetchCategory]);
 
     const initialForm = {
         ticket_title: "",
         problem: "",
         department: "",
         location: "",
-        priority: "low",
+        priority: "",
         note: "",
         status: "pending",
         category_id: "",
@@ -101,6 +85,7 @@ export default function NewTicket() {
             setForm(initialForm);
             setFieldError({});
         } catch (error: any) {
+            console.log(error);
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
