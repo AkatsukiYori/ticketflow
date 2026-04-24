@@ -162,6 +162,26 @@
     transition: 0.3s;
 }
 
+.btn-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f1f1f1;
+    color: #8a8a8a;
+    border: none;
+    transition: 0.3s;
+    padding: 10px 16px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.btn-filter:hover {
+    background-color: #e1e1e1;
+    border: none;
+    transition: 0.3s;
+}
+
 @media (max-width: 768px) {
     .btn_add_mobile {
         display: flex;

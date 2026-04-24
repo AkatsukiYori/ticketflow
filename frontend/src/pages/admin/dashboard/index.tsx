@@ -8,9 +8,14 @@ import { SelectOptions } from "../../../components/inputs/Input";
 import DataTables from "../../../components/datatables/DataTable";
 import { columns } from "./columns";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import { FilterButton } from "../../../components/buttons/Button";
 
 export default function Dashboard() {
     const { callApi } = useApi();
+
+    const [filterMonth, setFilterMonth] = useState(new Date().getMonth().toString());
+    const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
+    const [triggerFilter, setTriggerFilter] = useState(0);
 
     const [userID, setUserID] = useState(0);
     const [dataTicket, setDataTicket] = useState<any[]>([]);
@@ -36,6 +41,7 @@ export default function Dashboard() {
     });
     const [barChartData, setBarChartData] = useState<{name: string, total: number, fill: string}[]>([]);
 
+
     const fetchUser = useCallback(async () => {
         try {
             const username = localStorage.getItem("username");
@@ -55,7 +61,7 @@ export default function Dashboard() {
                 await callApi("get", "/categories/get-all-categories")
             ]);
 
-            const dateNow = new Date();
+            // const dateNow = new Date();
             const categoryMap: { [key: string]: number } = {};
 
             let stats = {
@@ -87,12 +93,13 @@ export default function Dashboard() {
 
             const myTicket = resTicket.filter((ticket: any) => {
                 const ticketDate = new Date(ticket.report_date);
-                const isThisMonth = ticketDate.getMonth() === dateNow.getMonth() && ticketDate.getFullYear() === dateNow.getFullYear();
+                const isThisMonth = (!filterMonth || ticketDate.getMonth() === Number(filterMonth)) && (!filterYear || ticketDate.getFullYear() === Number(filterYear));
                 const assign = ticket.assign_to === userID;
                 const isDeleted = ticket.deleted_at === null || ticket.deleted_at === undefined;
 
                 return isThisMonth && assign && isDeleted;
             });
+
             myTicket.forEach((ticket: any) => {
                 if(ticket.assign_to === userID) {
                     // Start Status ticket
@@ -155,7 +162,7 @@ export default function Dashboard() {
         } catch (error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
-    }, [callApi, userID]);
+    }, [callApi, userID, triggerFilter]);
 
     const getPercentage = (scoreCount: number) => {
         if(countRating.total === 0) return 0;
@@ -278,30 +285,34 @@ export default function Dashboard() {
                     <section className={Styles['filter-input']}>
                         <SelectOptions
                             label="All Month"
-                            name="filter"
-                            id="filter"
+                            name="filter_month"
+                            id="filter_month"
+                            value={filterMonth}
+                            onChangeSelect={(e) => setFilterMonth(e.target.value)}
                             options={[
-                                { label: "January", value: "1" },
-                                { label: "February", value: "2" },
-                                { label: "March", value: "3" },
-                                { label: "April", value: "4" },
-                                { label: "May", value: "5" },
-                                { label: "June", value: "6" },
-                                { label: "July", value: "7" },
-                                { label: "August", value: "8" },
-                                { label: "September", value: "9" },
-                                { label: "October", value: "10" },
-                                { label: "November", value: "11" },
-                                { label: "December", value: "12" }
+                                { label: "January", value: "0" },
+                                { label: "February", value: "1" },
+                                { label: "March", value: "2" },
+                                { label: "April", value: "3" },
+                                { label: "May", value: "4" },
+                                { label: "June", value: "5" },
+                                { label: "July", value: "6" },
+                                { label: "August", value: "7" },
+                                { label: "September", value: "8" },
+                                { label: "October", value: "9" },
+                                { label: "November", value: "10" },
+                                { label: "December", value: "11" }
                             ]}
                         />
                         <SelectOptions
                             label="All Year"
-                            name="filter"
-                            id="filter"
+                            name="filter_year"
+                            id="filter_year"
+                            value={filterYear}
+                            onChangeSelect={(e) => setFilterYear(e.target.value)}
                             options={dynamicYear}
                         />
-                        <button type="button">Filter</button>
+                        <FilterButton onClick={() => setTriggerFilter(prev => prev + 1)} />
                     </section>
                 </section>
             </section>

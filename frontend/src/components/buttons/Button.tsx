@@ -1,4 +1,4 @@
-import { Plus, Trash, Pencil, RefreshCcw, Info, UserCheck, UserPenIcon } from "lucide-react";
+import { Plus, Trash, Pencil, RefreshCcw, Info, UserCheck, UserPenIcon, FilterIcon } from "lucide-react";
 import "../../components/buttons/button.css";
 
 type Props = {
@@ -78,5 +78,11 @@ export function HeaderModalButton({ onClose }: Props) {
 export function ReassignButton({ onClick }: Props) {
     return (
         <button type="button" className="btn-reassign" onClick={onClick} title="Re-assign"><UserPenIcon /></button>
+    );
+}
+
+export function FilterButton({ onClick }: Props) {
+    return (
+        <button type="button" className="btn-filter" onClick={onClick} title="Filter"><FilterIcon /> Filter</button>
     );
 }
