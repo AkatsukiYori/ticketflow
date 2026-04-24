@@ -6,15 +6,6 @@ const HashPassword = (password: string) => {
     return bcrypt.hash(password, 10);
 }
 
-export const GetUserByIdServices = async (id: number) => {
-    try {
-        const data = await UsersDAO.GetUserByIdDAO(id);
-        return data;
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
-}
-
 export const GetUserByUsernameServices = async (username: string) => {
     try {
         const data = await UsersDAO.GetUserByUsernameDAO(username);

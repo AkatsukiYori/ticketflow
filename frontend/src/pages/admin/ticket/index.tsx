@@ -3,7 +3,6 @@ import { RefreshButton } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
 import { ErrorNotification, SuccessNotification } from "../../../components/notifications/notification";
-import { getTicketById } from "../../../api/ticketApi";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
@@ -25,8 +24,8 @@ export default function Ticket() {
         return localStorage.getItem("username") || "";
     });
     const [userId, setUserId] = useState("");
-    const [pageCount, setPageCount] = useState(0);
     const [ticketNo, setTicketNo] = useState("");
+    const [userRole, setUserRole] = useState("");
 
     const [isAssign, setIsAssign] = useState(false);
 
@@ -43,7 +42,6 @@ export default function Ticket() {
         try {
             const result = await callApi("get", `/tickets/get-all-ticket?status=${true}`);
             setData(result);
-            setPageCount(result.length);
         } catch (error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
@@ -54,6 +52,7 @@ export default function Ticket() {
         try {
             const result = await callApi("get", `/users/get-user/${username}`);
             setUserId(result.id);
+            setUserRole(result.role);
         } catch(error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
@@ -141,8 +140,9 @@ export default function Ticket() {
         handleModalReassign,
         handleFeedback,
         handleModalConfirm,
-        handleModalReopen
-    ), []);
+        handleModalReopen,
+        userRole
+    ), [userRole]);
 
     const table = useReactTable({
         data,
@@ -190,10 +190,10 @@ export default function Ticket() {
                 table={table}
             />
 
-            <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} />
+            <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} userRole={userRole} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
             <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} isReassign={isReassign} userId={userId} />
-            <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} />
+            <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} userRole={userRole} />
             <ReopenModal open={reOpenModal} onClose={() => setReOpenModal(false)} data={ticketDetail} onClick={handleSubmit} />
         </section>
     );

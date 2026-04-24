@@ -8,9 +8,10 @@ import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 type Props = {
     isSidebarOpen: boolean;
     closeSidebar: () => void;
+    user: any;
 };
 
-export default function Sidebar({ isSidebarOpen, closeSidebar } : Props) {
+export default function Sidebar({ isSidebarOpen, closeSidebar, user } : Props) {
     const [isLogoutOpen, setIsLogoutOpen] = useState(false);
     const navigate = useNavigate();
     const logout = () => {
@@ -22,12 +23,18 @@ export default function Sidebar({ isSidebarOpen, closeSidebar } : Props) {
         <section>
             <aside className={`${Styles['sidebar']} ${isSidebarOpen ? Styles['sidebar-active'] : ""}`}>
                 <section className={Styles['sidebar-items']}>
-                    <SidebarItem icon={LayoutDashboardIcon} label="Dashboard" to="/admin/dashboard" onClick={closeSidebar} />
-                    <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
-                    <SidebarItem icon={Blocks} label="Category" to="/admin/category" onClick={closeSidebar} />
-                    <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
-                    <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" onClick={closeSidebar} />
-                    <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
+                    {user.role === "admin" ? (
+                        <>
+                            <SidebarItem icon={LayoutDashboardIcon} label="Dashboard" to="/admin/dashboard" onClick={closeSidebar} />
+                            <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
+                            <SidebarItem icon={Blocks} label="Category" to="/admin/category" onClick={closeSidebar} />
+                            <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
+                            <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" onClick={closeSidebar} />
+                            <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
+                        </>
+                    ) : (
+                        <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
+                    )}
                     <SidebarItem icon={LogOut} label="Logout" to="#" onClick={() => setIsLogoutOpen(true)} />
                 </section>
     

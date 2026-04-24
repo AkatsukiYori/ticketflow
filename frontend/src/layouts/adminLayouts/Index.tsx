@@ -3,10 +3,14 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Navigate, Outlet, replace, useNavigate } from "react-router-dom";
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ErrorNotification } from "../../components/notifications/notification";
+import { useApi } from "../../hooks/useApi";
 
 export default function AdminLayout() {
+    const { callApi } = useApi();
+
+    const [userData, setUserData] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
     const closeSidebar = () => {
@@ -14,16 +18,33 @@ export default function AdminLayout() {
             setIsOpen(false);
         }
     };
+
+    const fetchUser = useCallback(async (username: string) => {
+        try {
+            const res = await callApi("get", `/users/get-user/${username}`);
+            setUserData(res);
+        } catch (error: any) {
+            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+        }
+    }, [callApi]);
+
     useEffect(() => {
-        const checkExpiredToken = () => {
-            const expire = localStorage.getItem("expire");
-            if(expire && Date.now() > parseInt(expire)) {
-                localStorage.clear();
-                ErrorNotification({ message: "Your session has expired. Please login again.", variantType: "info" });
-                navigate("/admin-login", { replace: true });
-            }
-        };
-        const interval = setInterval(checkExpiredToken, 30000);
+        const storedName = localStorage.getItem("username");
+        if(storedName) {
+            fetchUser(storedName)
+        }
+    }, [fetchUser]);
+
+    useEffect(() => {
+        // const checkExpiredToken = () => {
+        //     const expire = localStorage.getItem("expire");
+        //     if(expire && Date.now() > parseInt(expire)) {
+        //         localStorage.clear();
+        //         ErrorNotification({ message: "Your session has expired. Please login again.", variantType: "info" });
+        //         navigate("/admin-login", { replace: true });
+        //     }
+        // };
+        // const interval = setInterval(checkExpiredToken, 30000);
 
         const handleResize = () => {
             if(window.innerWidth > 768) {
@@ -34,15 +55,15 @@ export default function AdminLayout() {
         };
         handleResize();
         window.addEventListener("resize", handleResize);
-        return () => {window.removeEventListener("resize", handleResize), clearInterval(interval)};
+        return () => {window.removeEventListener("resize", handleResize)};
     }, [navigate]);
-    
+
     return (
         <section className={Styles['body-section']}>
             <Header toggleSidebar={() => setIsOpen(prev => !prev)} />
             {isOpen && <div className={Styles['overlay']} onClick={closeSidebar}></div>}
             <main className={Styles['main']}>
-                <Sidebar isSidebarOpen={isOpen} closeSidebar={closeSidebar} />
+                <Sidebar isSidebarOpen={isOpen} closeSidebar={closeSidebar} user={userData} />
                 <Outlet />
             </main>
             <Footer />

@@ -2,7 +2,7 @@
 import { CheckCircle, CircleEllipsis, SigmaSquare, XCircle } from "lucide-react";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { SelectOptions } from "../../../components/inputs/Input";
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import DataTables from "../../../components/datatables/DataTable";
 import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ export default function Report() {
     
     const [dataTicket, setDataTicket] = useState<any[]>([]);
     const [userData, setUserData] = useState<any[]>([]);
+    const [dataCategory, setDataCategory] = useState([]);
     const [countStat, setCountStat] = useState({
         total: 0,
         pending: 0,
@@ -186,7 +187,7 @@ export default function Report() {
             setBarChartData(formattedBarChartData);
             setDataTicket(myTicket);
             setUserData(userRate);
-            console.log(userData);
+            setDataCategory(resCategory);
         } catch (error: any) {
             ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
         }
@@ -342,6 +343,14 @@ export default function Report() {
                             name="filter"
                             id="filter"
                             options={dynamicYear}
+                        />
+                        <SelectOptions
+                            label="Filter Category"
+                            name="filter"
+                            id="filter"
+                            options={dataCategory.map((val: any) => (
+                                { label: val.name, value: val.id }
+                            ))}
                         />
                         <button type="button">Filter</button>
                         <button type="button">Download Excel</button>

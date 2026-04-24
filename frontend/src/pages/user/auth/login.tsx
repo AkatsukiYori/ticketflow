@@ -26,7 +26,11 @@ export default function Login() {
                 localStorage.setItem("location", response.data.location);
                 localStorage.setItem("expire", expireTime.toString());
 
-                navigate("/admin/dashboard");
+                if(username === "ikb" || username === "IKB") {
+                    navigate("/admin/ticket");
+                } else {
+                    navigate("/admin/dashboard");
+                }
             } else {
                 ErrorNotification({ message: response.message, variantType: "error" });
             }

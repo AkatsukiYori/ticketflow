@@ -11,9 +11,10 @@ type Props = {
     mode: string;
     onClose: () => void;
     ticket?: any;
+    userRole: string;
 }
 
-export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
+export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) => {
     const [reason, setReason] = useState("");
     const [userId, setUserId] = useState("");
     const [error, setError] = useState<{ reason?: string; estimate?: string; }>({});
@@ -121,13 +122,15 @@ export const FeedbackModal = ({ open, onClose, mode, ticket }: Props) => {
                             )}
                         </div>
 
-                        <div style={{ display: mode === "feedback" ? "block" : "none" }}>
-                            <CustomCheckbox
-                                label="Add to documentation ?"
-                                checked={isDoc}
-                                onChangeCheckbox={(e) => setIsDoc(e)}
-                            />
-                        </div>
+                        {userRole === "admin" && (
+                            <div style={{ display: mode === "feedback" ? "block" : "none" }}>
+                                <CustomCheckbox
+                                    label="Add to documentation ?"
+                                    checked={isDoc}
+                                    onChangeCheckbox={(e) => setIsDoc(e)}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>

@@ -18,6 +18,7 @@ type Ticket = {
     fk_users_id?: {
         id: number;
         username: string;
+        role: string;
     }
     closed_at: Date;
 }
@@ -29,7 +30,8 @@ export const columns = (
     onReassign: (id: number, isReassign: boolean) => void,
     onFeedback: (id: number, mode: string) => void,
     onRemove: (id: number) => void,
-    onReopen: (id: number) => void
+    onReopen: (id: number) => void,
+    userRole: string
 ) => [
     columnHelper.display({
         id: "no",
@@ -117,6 +119,8 @@ export const columns = (
                         onReopen={() => onReopen(data.id)}
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
+                        userRole={userRole}
+                    
                     />
                 </div>
                 : 
@@ -130,6 +134,7 @@ export const columns = (
                         onReopen={() => onReopen(data.id)}
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
+                        userRole={userRole}
                     />
                 </div>
             );

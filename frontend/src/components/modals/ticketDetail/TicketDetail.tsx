@@ -9,9 +9,10 @@ type Props = {
     open: boolean;
     data: any;
     onClose: () => void;
+    userRole?: string;
 }
 
-export default function TicketDetailModal({ open, data, onClose }: Props) {
+export default function TicketDetailModal({ open, data, onClose, userRole }: Props) {
     const [userID, setUserID] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const [isAlreadyAssign, setIsAlreadyAssign] = useState(
@@ -195,7 +196,9 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <TextAssignButton onClick={handleSubmit} label={isAlreadyAssign ? "Re-assign" : "Apply"} />
+                    {userRole === "admin" && (
+                        <TextAssignButton onClick={handleSubmit} label={isAlreadyAssign ? "Re-assign" : "Apply"} />
+                    )}
                     <CancelButton onClose={onClose} label="Cancel" />
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { Location } from "@prisma/client";
+import { Location, RoleUsers } from "@prisma/client";
 import z from "zod";
 
 export const CreateUserSchema = z.object({
@@ -9,6 +9,9 @@ export const CreateUserSchema = z.object({
     }),
     isActive: z.boolean({
         error: "Status aktif tidak boleh kosong"
+    }),
+    role: z.enum(RoleUsers, {
+        error: "Role tidak boleh kosong."
     })
 });
 export type CreateUserInput = z.infer<typeof CreateUserSchema>;
@@ -21,6 +24,9 @@ export const UpdateUserSchema = z.object({
     }).optional(),
     isActive: z.boolean({
         error: "Status aktif tidak boleh kosong"
+    }).optional(),
+    role: z.enum(RoleUsers, {
+        error: "Role tidak boleh kosong."
     }).optional()
 });
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;

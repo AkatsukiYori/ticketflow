@@ -15,6 +15,7 @@ model Users {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
   deleted_at      DateTime?
+  role            RoleUsers @default(admin)
   tickets         Tickets[]
   ticket_feedback TicketFeedback[]
   log             Log[]
@@ -166,4 +167,9 @@ enum TicketStatus {
   on_progress
   completed
   reject
+}
+
+enum RoleUsers {
+  admin
+  ikb
 }

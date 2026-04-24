@@ -2,24 +2,16 @@ import prisma from "../../prisma";
 import { Location, Prisma } from "@prisma/client";
 import * as DTO from "../../dtos/users/users_dto";
 
-export const GetUserByIdDAO = async (id: number) => {
-    try {
-        const data = await prisma.users.findFirst({
-            where: {
-                id: id
-            }
-        });
-        return data;
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
-}
-
 export const GetUserByUsernameDAO = async (username: string) => {
     try {
         const data = await prisma.users.findUnique({
             where: {
                 username: username
+            },
+            select: {
+                id: true,
+                username: true,
+                role: true,
             }
         });
         return data;
@@ -30,7 +22,13 @@ export const GetUserByUsernameDAO = async (username: string) => {
 
 export const GetAllUsersDAO = async () => {
     try {
-        const data = await prisma.users.findMany();
+        const data = await prisma.users.findMany({
+            select: {
+                id: true,
+                username: true,
+                role: true
+            }
+        });
         return data;
     } catch (error: any) {
         throw new Error(error.message);

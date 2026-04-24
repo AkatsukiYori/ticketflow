@@ -10,9 +10,11 @@ type Props = {
     onReopen: () => void;
     isClosed: boolean;
     isAssign: boolean;
+    userRole?: string;
 }
 
-export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed, isAssign }: Props) => {
+export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed, isAssign, userRole }: Props) => {
+    console.log(userRole);
     const [isOpen, setIsOpen] = useState(false);
     
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,22 +41,42 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
 
             {isOpen && (
                 <div className={Styles.menu}>
-                    {isClosed ? (
-                        <button onClick={onReopen} title="Re-Open Ticket"><LucideLockOpen size={15} /> Re-Open</button>
+                    {userRole === "admin" ? (
+                        <>
+                            {isClosed ? (
+                                <button onClick={onReopen} title="Re-Open Ticket"><LucideLockOpen size={15} /> Re-Open</button>
+                            ) : (
+                                <>
+                                    {isAssign ? (
+                                        <>
+                                            <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
+                                            <button onClick={onComplete} title="Complete"><CheckCircle size={15} /> Feedback</button>
+                                            <button onClick={onReject} title="Reject"><XCircle size={15} /> Reject</button>
+                                        </>
+                                    ) : (
+                                        <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
+                                    )}
+                                </>
+                            )}
+                            <button onClick={onRemove} title="Delete"><Trash2 size={15} color="red" /> <span style={{ color: "red" }}>Remove</span></button>
+                        </>
                     ) : (
                         <>
-                        {isAssign ? (
-                            <>
-                                <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
-                                <button onClick={onComplete} title="Complete"><CheckCircle size={15} /> Feedback</button>
-                                <button onClick={onReject} title="Reject"><XCircle size={15} /> Reject</button>
-                            </>
-                        ) : (
-                            <button onClick={onAssign} title="Apply"><UserCheck size={15} /> Assign</button>
-                        )}
+                            {isClosed ? (
+                                <p>Ticket Closed.</p>
+                            ) : (
+                                <>
+                                    {isAssign ? (
+                                        <>
+                                            <button onClick={onComplete} title="Complete"><CheckCircle size={15} /> Feedback</button>
+                                        </>
+                                    ) : (
+                                        <p>Ticket is not assigned yet.</p>
+                                    )}
+                                </>
+                            )}
                         </>
                     )}
-                    <button onClick={onRemove} title="Delete"><Trash2 size={15} color="red" /> <span style={{ color: "red" }}>Remove</span></button>
                 </div>
             )}
         </div>
