@@ -14,7 +14,6 @@ type Props = {
 }
 
 export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed, isAssign, userRole }: Props) => {
-    console.log(userRole);
     const [isOpen, setIsOpen] = useState(false);
     
     const dropdownRef = useRef<HTMLDivElement>(null);

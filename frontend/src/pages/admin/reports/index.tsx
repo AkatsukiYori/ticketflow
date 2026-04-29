@@ -2,19 +2,24 @@
 import { CheckCircle, CircleEllipsis, SigmaSquare, XCircle } from "lucide-react";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { SelectOptions } from "../../../components/inputs/Input";
-import { Bar, BarChart, CartesianGrid, Cell, Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import DataTables from "../../../components/datatables/DataTable";
 import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ErrorNotification } from "../../../components/notifications/notification";
+import { Notifications } from "../../../components/notifications/notification";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./columns";
+import { Buttons } from "../../../components/buttons/Button";
 
 
 export default function Report() {
     const { callApi } = useApi();
+
+    const [filterMonth, setFilterMonth] = useState("");
+    const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
+    const [filterCategory, setFilterCategory] = useState("");
+    const [triggerFilter, setTriggerFilter] = useState(0);
     
-    const [dataTicket, setDataTicket] = useState<any[]>([]);
     const [userData, setUserData] = useState<any[]>([]);
     const [dataCategory, setDataCategory] = useState([]);
     const [countStat, setCountStat] = useState({
@@ -37,7 +42,7 @@ export default function Report() {
         mid: 0,
         high: 0
     });
-    const [barChartData, setBarChartData] = useState<{name: string, total: number, fill: string}[]>([]);
+    const [pieChartCategory, setPieChartCategory] = useState<{name: string, value: number, fill: string}[]>([]);
 
     const fetchTicket = useCallback(async () => {
         try {
@@ -47,7 +52,6 @@ export default function Report() {
                 await callApi("get", "/users/get-all-user")
             ]);
 
-            const dateNow = new Date();
             const categoryMap: { [key: string]: number } = {};
 
             let stats = {
@@ -98,10 +102,11 @@ export default function Report() {
 
             const myTicket = resTicket.filter((ticket: any) => {
                 const ticketDate = new Date(ticket.report_date);
-                const isThisYear = ticketDate.getFullYear() === dateNow.getFullYear();
+                const isThisMonth = (!filterMonth || ticketDate.getMonth() === Number(filterMonth));
+                const isThisYear = (!filterYear || ticketDate.getFullYear() === Number(filterYear));
                 const isDeleted = ticket.deleted_at === null || ticket.deleted_at === undefined;
 
-                return isThisYear && isDeleted;
+                return isThisMonth && isThisYear && isDeleted;
             });
             myTicket.forEach((ticket: any) => {
                 const status = ticket.status?.toLowerCase();
@@ -174,24 +179,23 @@ export default function Report() {
                 };
             });
 
-            const formattedBarChartData = resCategory.map((category: any, index: number) => ({
+            const formattedPieChartCategory = resCategory.map((category: any, index: number) => ({
                 name: category.name,
-                total: categoryMap[category.name],
-                fill: ["#1B499D", "#3B82F6", "#EAB308", "#F97316", "#EF4444"][index % 5]
+                value: categoryMap[category.name],
+                fill: ["#1B499D", "#1fc068", "#EAB308", "#F97316", "#EF4444"][index % 5]
             }));
 
             const totalScore = rating.score_1 + rating.score_2 + rating.score_3 + rating.score_4 + rating.score_5;
             setCountRating({ ...rating, total: totalScore });
             setCountStat(stats);
             setCountPriority(priority);
-            setBarChartData(formattedBarChartData);
-            setDataTicket(myTicket);
+            setPieChartCategory(formattedPieChartCategory);
             setUserData(userRate);
             setDataCategory(resCategory);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
-    }, [callApi]);
+    }, [callApi, triggerFilter]);
 
     const getPercentage = (scoreCount: number) => {
         if(countRating.total === 0) return 0;
@@ -220,7 +224,13 @@ export default function Report() {
     }
 
     // Start PieChart
-    const dataPie = [
+    const dataPiePriority = [
+        { name: 'Low', value: countPriority.low || 0, fill: '#1b499d' },
+        { name: 'Mid', value: countPriority.mid || 0, fill: '#EAB308' },
+        { name: 'High', value: countPriority.high || 0, fill: '#EF4444' },
+    ];
+
+    const dataPieDepartment = [
         { name: 'Low', value: countPriority.low || 0, fill: '#1b499d' },
         { name: 'Mid', value: countPriority.mid || 0, fill: '#EAB308' },
         { name: 'High', value: countPriority.high || 0, fill: '#EF4444' },
@@ -323,69 +333,135 @@ export default function Report() {
                             label="All Month"
                             name="filter"
                             id="filter"
+                            value={filterMonth}
+                            onChangeSelect={(e) => setFilterMonth(e.target.value)}
                             options={[
-                                { label: "January", value: "1" },
-                                { label: "February", value: "2" },
-                                { label: "March", value: "3" },
-                                { label: "April", value: "4" },
-                                { label: "May", value: "5" },
-                                { label: "June", value: "6" },
-                                { label: "July", value: "7" },
-                                { label: "August", value: "8" },
-                                { label: "September", value: "9" },
-                                { label: "October", value: "10" },
-                                { label: "November", value: "11" },
-                                { label: "December", value: "12" }
+                                { label: "January", value: "0" },
+                                { label: "February", value: "1" },
+                                { label: "March", value: "2" },
+                                { label: "April", value: "3" },
+                                { label: "May", value: "4" },
+                                { label: "June", value: "5" },
+                                { label: "July", value: "6" },
+                                { label: "August", value: "7" },
+                                { label: "September", value: "8" },
+                                { label: "October", value: "9" },
+                                { label: "November", value: "10" },
+                                { label: "December", value: "11" }
                             ]}
                         />
                         <SelectOptions
                             label="All Year"
                             name="filter"
                             id="filter"
+                            value={filterYear}
+                            onChangeSelect={(e) => setFilterYear(e.target.value)}
                             options={dynamicYear}
                         />
                         <SelectOptions
                             label="Filter Category"
                             name="filter"
                             id="filter"
+                            value={filterCategory}
+                            onChangeSelect={(e) => setFilterCategory(e.target.value)}
                             options={dataCategory.map((val: any) => (
                                 { label: val.name, value: val.id }
                             ))}
                         />
-                        <button type="button">Filter</button>
+                        <Buttons label="Filter" func="filter" btnTitle="Filter" onClick={() => setTriggerFilter(prev => prev + 1)} />
                         <button type="button">Download Excel</button>
                     </section>
                 </section>
             </section>
             <section className={Styles['content-body']}>
                 <section className={Styles['content-body-left']}>
-                    <section className={Styles['category-chart']}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={barChartData}
-                                margin={{
-                                    top: 20,
-                                    right: 30,
-                                    left: -20,
-                                    bottom: 5,
-                                }}
-                            >
-                                <CartesianGrid strokeDasharray="3" vertical={false} stroke="#F0F0F0" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                                <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    <section className={Styles['ticket-chart']}>
+                        <h3>Tickets</h3>
+                        <section style={{ width: "100%", height: "350px" }}>
+                            {/* <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={barChartData}
+                                    margin={{
+                                        top: 20,
+                                        right: 30,
+                                        left: -20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3" vertical={false} stroke="#F0F0F0" />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
 
-                                <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
-                                    {barChartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.fill}></Cell>
-                                    ))}
-                                </Bar>
-                                <Legend />
-                                {/* <RechartsDevtools /> */}
-                            </BarChart>
-                        </ResponsiveContainer>
+                                    <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
+                                        {barChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill}></Cell>
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer> */}
+                        </section>
+                    </section>
+                    <section className={Styles['split-charts']}>
+                        <section className={Styles['category-chart']}>
+                            <h3>Category</h3>
+                            <section style={{ width: "100%", height: "350px" }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                                        <Pie
+                                            data={pieChartCategory}
+                                            dataKey="value" 
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius="60%"
+                                            outerRadius="80%"
+                                            paddingAngle={5}
+                                            label={(entry) => entry.value}
+                                        >
+                                            {pieChartCategory.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ borderRadius: '8px', border: 'none' }} 
+                                        />
+                                        <Legend iconType="circle" verticalAlign="bottom" />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </section>
+                        </section>
+                        <section className={Styles['department-chart']}>
+                            <h3>Department</h3>
+                            <section style={{ width: "100%", height: "350px" }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                                        <Pie
+                                            data={dataPieDepartment}
+                                            dataKey="value" 
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius="60%"
+                                            outerRadius="80%"
+                                            paddingAngle={5}
+                                            label={(entry) => entry.value}
+                                        >
+                                            {dataPieDepartment.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ borderRadius: '8px', border: 'none' }} 
+                                        />
+                                        <Legend iconType="circle" verticalAlign="bottom" />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </section>
+                        </section>
                     </section>
                     <section className={Styles['list-ticket']}>
+                        <h3>Users</h3>
                         <DataTables
                             table={table}
                             style={{ height: "auto" }}
@@ -404,7 +480,7 @@ export default function Report() {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
                                 <Pie
-                                    data={dataPie}
+                                    data={dataPiePriority}
                                     dataKey="value" 
                                     nameKey="name"
                                     cx="50%"
@@ -414,7 +490,7 @@ export default function Report() {
                                     paddingAngle={5}
                                     label={(entry) => entry.value}
                                 >
-                                    {dataPie.map((entry, index) => (
+                                    {dataPiePriority.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.fill} />
                                     ))}
                                 </Pie>

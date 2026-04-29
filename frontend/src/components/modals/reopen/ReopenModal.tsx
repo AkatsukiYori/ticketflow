@@ -1,5 +1,5 @@
 import Styles from "./reopenModal.module.css";
-import { CancelButton, SubmitButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import { TriangleAlertIcon } from "lucide-react";
 
 type Props = {
@@ -19,8 +19,8 @@ export default function ReopenModal({ open, onClick, onClose, data } : Props) {
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-                    <SubmitButton onClick={onClick} label="Open" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Open" func="submit" btnTitle="Open" onClick={onClick} />
+                    <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </section>
         </section>

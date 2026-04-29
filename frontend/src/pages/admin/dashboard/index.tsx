@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
-import { ErrorNotification } from "../../../components/notifications/notification";
+import { Notifications } from "../../../components/notifications/notification";
 import { CheckCircle, CircleEllipsis, SigmaSquare, XCircle } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SelectOptions } from "../../../components/inputs/Input";
 import DataTables from "../../../components/datatables/DataTable";
 import { columns } from "./columns";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { FilterButton } from "../../../components/buttons/Button";
+import { Buttons } from "../../../components/buttons/Button";
 
 export default function Dashboard() {
     const { callApi } = useApi();
@@ -50,7 +50,7 @@ export default function Dashboard() {
             const res = await callApi("get", `/users/get-user/${username}`);
             setUserID(res.id);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -61,7 +61,6 @@ export default function Dashboard() {
                 await callApi("get", "/categories/get-all-categories")
             ]);
 
-            // const dateNow = new Date();
             const categoryMap: { [key: string]: number } = {};
 
             let stats = {
@@ -160,7 +159,7 @@ export default function Dashboard() {
             setCountPriority(priority);
             setBarChartData(formattedBarChartData);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi, userID, triggerFilter]);
 
@@ -312,37 +311,40 @@ export default function Dashboard() {
                             onChangeSelect={(e) => setFilterYear(e.target.value)}
                             options={dynamicYear}
                         />
-                        <FilterButton onClick={() => setTriggerFilter(prev => prev + 1)} />
+                        <Buttons label="Filter" btnTitle="Filter" func="filter" onClick={() => setTriggerFilter(prev => prev + 1)} />
                     </section>
                 </section>
             </section>
             <section className={Styles['content-body']}>
                 <section className={Styles['content-body-left']}>
                     <section className={Styles['category-chart']}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                                data={barChartData}
-                                margin={{
-                                    top: 20,
-                                    right: 30,
-                                    left: -20,
-                                    bottom: 5,
-                                }}
-                            >
-                                <CartesianGrid strokeDasharray="3" vertical={false} stroke="#F0F0F0" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                                <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                        <h3>Category</h3>
+                        <section style={{ width: "100%", height: "350px" }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={barChartData}
+                                    margin={{
+                                        top: 20,
+                                        right: 30,
+                                        left: -20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3" vertical={false} stroke="#F0F0F0" />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
 
-                                <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
-                                    {barChartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.fill}></Cell>
-                                    ))}
-                                </Bar>
-                                <Legend />
-                                {/* <RechartsDevtools /> */}
-                            </BarChart>
-                        </ResponsiveContainer>
+                                    <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
+                                        {barChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill}></Cell>
+                                        ))}
+                                    </Bar>
+                                    {/* <Legend /> */}
+                                    {/* <RechartsDevtools /> */}
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </section>
                     </section>
                     <section className={Styles['list-ticket']}>
                         <DataTables

@@ -1,8 +1,8 @@
 import Styles from "./confirmModal.module.css";
-import { CancelButton, SubmitButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import { TriangleAlertIcon, CircleQuestionMark } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
+import { Notifications } from "../../notifications/notification";
 import { useApi } from "../../../hooks/useApi";
 
 type Props = {
@@ -28,7 +28,7 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
             const result = await callApi("get", `/users/get-user/${name}`);
             setUserID(result.id);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -45,20 +45,20 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
         };
         try {
             const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+            Notifications({ message: "Something Went Wrong.", variantType: "error", persist: false });
         }
     }
 
     async function handleRemove() {
         try {
             const res = await callApi("put", `/tickets/delete-ticket/${data.id}`);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Something Went Wrong.", variantType: "error" });
+            Notifications({ message: "Something Went Wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -83,8 +83,8 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-                    <SubmitButton onClick={handleSubmit} label={btnYes} />
-                    <CancelButton onClose={onClose} label={btnCancel} />
+                    <Buttons label="Yes" btnTitle={btnYes} func="submit" onClick={handleSubmit} />
+                    <Buttons label="Cancel" btnTitle={btnCancel} func="cancel" onClick={onClose} />
                 </div>
             </section>
         </section>

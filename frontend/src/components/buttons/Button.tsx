@@ -9,80 +9,25 @@ type Props = {
     btnTitle?: string;
 }
 
-export function NewButton({label, func, onClick} : Props) {
-    return (
-        <button type="button" className={`btn_${func}`} name={`btn_${func}`} id={`btn_${func}`} onClick={onClick} title="New"><Plus /> {label}</button>
-    );
-}
+export function Buttons({ label, func, onClick, btnTitle }: Props) {
+    const renderIcon = () => {
+        switch (func) {
+            case "add-desktop":
+                return <Plus />;
+            case "refresh":
+                return <RefreshCcw />;
+            case "edit":
+                return <Pencil />;
+            case "delete":
+                return <Trash />;
+            default:
+                return null;
+            // case "new-ticket":
+            //     return 
+        }
+    }
 
-export function UpdateButton({func, onClick} : Props) {
     return (
-        <button type="button" className={`btn_${func}`} name={`btn_${func}`} id={`btn_${func}`} onClick={onClick} title="Edit"><Pencil /></button>
-    );
-}
-
-export function DeleteButton({func, onClick} : Props) {
-    return (
-        <button type="button" className={`btn_${func}`} name={`btn_${func}`} id={`btn_${func}`} onClick={onClick} title="Delete"><Trash /></button>
-    );
-}
-
-export function RefreshButton({ onClick }: Props) {
-    return (
-        <button type="button" className="btn-refresh" title="Refresh" onClick={onClick}><RefreshCcw /></button>
-    );
-}
-
-export function SubmitButton({ onClick, label }: Props) {
-    return (
-        <button type="button" onClick={onClick} className="btn-submit">{label}</button>
-    );
-}
-
-export function CancelButton({ onClose, label }: Props) {
-    return (
-        <button type="button" onClick={onClose} title="Cancel" className="btn-cancel">{label}</button>
-    );
-}
-
-export function NewTicketButton({ onClick }: Props) {
-    return (
-        <button type="button" className="btn-new-ticket" onClick={onClick}>Buat Tiket Baru</button>
-    );
-}
-
-export function DetailButton({ onClick, btnTitle }: Props) {
-    return (
-        <button type="button" className="btn-detail" onClick={onClick} title={btnTitle}><Info /></button>
-    );
-}
-
-export function TextAssignButton({ onClick, label }: Props) {
-    return (
-        <button type="button" className="btn-assign-label" title={label} onClick={onClick}>{label}</button>
-    );
-}
-
-export function IconAssignButton({ onClick }: Props) {
-    return (
-        <button type="button" className="btn-assign-icon" title="Apply" onClick={onClick}><UserCheck /></button>
-    );
-}
-
-export function HeaderModalButton({ onClose }: Props) {
-    return (
-        <button type="button" className="btn-header-close" onClick={onClose}>x</button>
-    );
-}
-
-export function ReassignButton({ onClick }: Props) {
-    return (
-        <button type="button" className="btn-reassign" onClick={onClick} title="Re-assign"><UserPenIcon /></button>
-    );
-}
-
-export function FilterButton({ onClick }: Props) {
-    return (
-        <button type="button" className="btn-filter" onClick={onClick} title="Filter"><FilterIcon /> Filter</button>
+        <button type="button" className={`btn-${func}`} onClick={onClick} title={btnTitle}>{renderIcon()} {label}</button>
     );
 }

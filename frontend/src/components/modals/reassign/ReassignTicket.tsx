@@ -1,8 +1,8 @@
 import Styles from "./reassignTicket.module.css";
-import { HeaderModalButton, TextAssignButton, CancelButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useState } from "react";
-import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
+import { Notifications } from "../../notifications/notification";
 import { socket } from "../../../api/socket";
 import { InputText, SelectOptions } from "../../inputs/Input";
 
@@ -53,7 +53,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             const res = await callApi("get", "/users/get-all-user");
             setUserData(res);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, []);
 
@@ -83,11 +83,11 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
 
         try {
             const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             handleClear();
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -99,7 +99,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                         <h2 style={{ margin: 0 }}>{isReassign ? "Re-assign Ticket" : "Assign Ticket"}</h2>
                         <p style={{ margin: 0 }}>Ticket No : #{data.ticket_no}</p>
                     </div>
-                    <HeaderModalButton onClose={onClose} />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -167,8 +167,8 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <TextAssignButton onClick={handleSubmit} label="Assign" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Assign" func="assign-label" btnTitle="Assign" onClick={handleSubmit} />
+                    <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </div>
         </div>

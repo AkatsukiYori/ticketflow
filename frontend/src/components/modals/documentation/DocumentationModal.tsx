@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { CancelButton, HeaderModalButton, SubmitButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import { InputText, TextArea, SelectOptions } from "../../inputs/Input";
 import Styles from "./documentationModal.module.css";
-import { ErrorNotification } from "../../notifications/notification";
+import { Notifications } from "../../notifications/notification";
 import { useApi } from "../../../hooks/useApi";
 import { socket } from "../../../api/socket";
 
@@ -38,7 +38,7 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
             const result = await callApi("get", "/categories/get-all-categories");
             setDataCategory(result);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -98,7 +98,7 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-header']}>
                     <h2>{ mode === "create" ? "New Documentation" : "Edit Documentation" }</h2>
-                    <HeaderModalButton onClose={onClose} label="X" />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     <label htmlFor="">Category <span style={{ color: "red" }}>*</span></label>
@@ -152,8 +152,8 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
                     )}
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <SubmitButton onClick={handleSave} label="Submit" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Submit" btnTitle="Submit" func="submit" onClick={handleSave} />
+                    <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </div>
         </div>

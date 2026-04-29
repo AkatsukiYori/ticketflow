@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { DetailButton } from "../../../components/buttons/Button";
+import { Buttons } from "../../../components/buttons/Button";
 import { ActionDropdown } from "../../../components/actions/Actions";
 
 type Ticket = {
@@ -110,7 +110,7 @@ export const columns = (
             return (
                 data.assign_to ? 
                 <div className="table-actions">
-                    <DetailButton onClick={() => onDetail(data.id)} />
+                    <Buttons label="" func="detail" btnTitle="Detail" onClick={() => onDetail(data.id)} />
                     <ActionDropdown
                         onAssign={() => onReassign(data.id, true)}
                         onReject={() => onFeedback(data.id, "reject")}
@@ -125,7 +125,7 @@ export const columns = (
                 </div>
                 : 
                 <div className="table-actions">
-                    <DetailButton onClick={() => onDetail(data.id)} />
+                    <Buttons label="" func="detail" btnTitle="Detail" onClick={() => onDetail(data.id)} />
                     <ActionDropdown
                         onAssign={() => onReassign(data.id, false)}
                         onReject={() => onFeedback(data.id, "reject")}

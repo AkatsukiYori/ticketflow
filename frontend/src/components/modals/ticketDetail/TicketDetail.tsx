@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { CancelButton, HeaderModalButton, TextAssignButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import Styles from "./ticketDetail.module.css";
 import { useApi } from "../../../hooks/useApi";
-import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
+import { Notifications } from "../../notifications/notification";
 import ReassignModal from "../reassign/ReassignTicket";
 
 type Props = {
@@ -31,7 +31,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
             const result = await callApi("get", `/users/get-user/${name}`);
             setUserID(result.id);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -42,11 +42,11 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
 
         try {
             const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            SuccessNotification({ message: res.message, variantType: "success" });  
+            Notifications({ message: res.message, variantType: "success", persist: false });  
             setIsAlreadyAssign(true);
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Somthing went wrong.", variantType: "error" });
+            Notifications({ message: "Somthing went wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -55,7 +55,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
             const res = await callApi("get", "/categories/get-all-categories");
             setCategory(res);
         } catch (error: any) {
-            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -101,7 +101,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                         <h2 style={{ margin: 0 }}>Ticket Detail</h2>
                         <p style={{ margin: 0 }}>#{data.ticket_no}</p>
                     </div>
-                    <HeaderModalButton onClose={onClose} label="X" />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <div className={Styles['modal-body-content']}>
@@ -197,9 +197,9 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                 </div>
                 <div className={Styles['modal-footer']}>
                     {userRole === "admin" && (
-                        <TextAssignButton onClick={handleSubmit} label={isAlreadyAssign ? "Re-assign" : "Apply"} />
+                        <Buttons label={isAlreadyAssign ? "Re-assign" : "Apply"} btnTitle={isAlreadyAssign ? "Re-assign" : "Apply"} onClick={handleSubmit} func="assign-label" />
                     )}
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </div>
 

@@ -4,7 +4,7 @@ import { InputText } from "../../../components/inputs/Input";
 import Logo from "../../../assets/logo.png";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorNotification } from "../../../components/notifications/notification";
+import { Notifications } from "../../../components/notifications/notification";
 import { AdminLogin } from "../../../api/authApi";
 
 export default function Login() {
@@ -32,11 +32,11 @@ export default function Login() {
                     navigate("/admin/dashboard");
                 }
             } else {
-                ErrorNotification({ message: response.message, variantType: "error" });
+                Notifications({ message: response.message, variantType: "error", persist: false });
             }
         } catch (error) {
             // console.log(error.message);
-            ErrorNotification({ message: "Gagal terhubung ke server.", variantType: "error" });
+            Notifications({ message: "Gagal terhubung ke server.", variantType: "error", persist: false });
         }
     }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { InputText } from "../../inputs/Input";
-import { SubmitButton, CancelButton, HeaderModalButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import Styles from "./categoryModal.module.css";
 
 type Props = {
@@ -57,7 +57,7 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
             <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-header']}>
                     <h2>{ mode === "create" ? "New Category" : "Edit Category" }</h2>
-                    <HeaderModalButton onClose={onClose} label="X" />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <label htmlFor="">Category Name <span style={{ color: "red" }}>*</span></label>
@@ -77,8 +77,8 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
                     )}
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <SubmitButton onClick={handleSave} label="Submit" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Submit" btnTitle="Submit" func="submit" onClick={handleSave} />
+                    <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </section>
         </section>

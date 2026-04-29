@@ -1,4 +1,4 @@
-.btn_add_desktop {
+.btn-add-desktop {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -9,35 +9,35 @@
     padding: 10px 16px;
 }
 
-.btn_add_mobile {
+.btn-add-mobile {
     display: none;
 }
 
-.btn_add_desktop:hover {
+.btn-add-desktop:hover {
     background-color: rgba(27, 73, 157, 1);
     border: none;
 }
 
-.btn_edit {
+.btn-edit {
     color: #f59e0b;
     background-color: transparent;
     transition: 0.3s;
     border: none;
 }
 
-.btn_delete {
+.btn-delete {
     color: #ef4444;
     background-color: transparent;
     transition: 0.3s;
     border: none;
 }
 
-.btn_edit:hover {
+.btn-edit:hover {
     background-color: #f59e0b30;
     transition: 0.3s;
 }
 
-.btn_delete:hover {
+.btn-delete:hover {
     background-color: #ef444430;
     transition: 0.3s;
 }

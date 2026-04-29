@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { NewButton, RefreshButton } from "../../../components/buttons/Button";
+import { Buttons } from "../../../components/buttons/Button";
 import { InputText } from "../../../components/inputs/Input";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./column";
@@ -7,7 +7,7 @@ import { columns } from "./column";
 import DataTables from "../../../components/datatables/DataTable";
 import DocumentationModal from "../../../components/modals/documentation/DocumentationModal";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
-import { ErrorNotification, InfoNotification, SuccessNotification } from "../../../components/notifications/notification";
+import { Notifications } from "../../../components/notifications/notification";
 
 import { useApi } from "../../../hooks/useApi";
 import { socket } from "../../../api/socket";
@@ -33,7 +33,7 @@ export default function Documentation() {
             const result = await callApi("get", "/documentation/get-all-documentation");
             setData(result);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "info" });
+            Notifications({ message: "Failed to fetch data.", variantType: "info", persist: false });
         }
     }, [callApi]);
 
@@ -52,7 +52,7 @@ export default function Documentation() {
     async function handleSubmit(data: any) {
         try {
             const res = await callApi("post", `/documentation/new-documentation`, data);
-            SuccessNotification({ message: res.message, variantType: "success", persist: false });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
         } catch (error: any) {
             const errorArr = error.response?.data?.error;
@@ -64,9 +64,9 @@ export default function Documentation() {
                 });
                 
                 setFieldError(formattedErrors);
-                InfoNotification({ message: "Please fill in all required fields.", variantType: "info" });
+                Notifications({ message: "Please fill in all required fields.", variantType: "info", persist: false });
             } else {
-                ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+                Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
     }
@@ -75,7 +75,7 @@ export default function Documentation() {
         try {
             const { id, ...payload } = data;
             const res = await callApi("put", `/documentation/update-documentation/${id}`, payload);
-            SuccessNotification({ message: res.message, variantType: "success", persist: false });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
             setFieldError({});
         } catch (error: any) {
@@ -88,9 +88,9 @@ export default function Documentation() {
                 });
                 
                 setFieldError(formattedErrors);
-                InfoNotification({ message: "Please fill missing columns.", variantType: "info" });
+                Notifications({ message: "Please fill missing columns.", variantType: "info", persist: false });
             } else {
-                ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+                Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
     }
@@ -100,11 +100,11 @@ export default function Documentation() {
 
         try {
             const res = await callApi("delete", `/documentation/delete-documentation/${id}`);
-            SuccessNotification({ message: res.message, variantType: "success", persist: false });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setConfirmOpen(false);
             setDeleteID(null);
         } catch (error) {
-            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -148,11 +148,11 @@ export default function Documentation() {
             <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <RefreshButton onClick={() => fetchDocumentation()} />
+                    <Buttons label="" func="refresh" onClick={() => fetchDocumentation()} btnTitle="Refresh" />
                 </section>
                 <section>
-                    <NewButton label="Documentation" func="add_desktop" onClick={handleModalCreate}></NewButton>
-                    <NewButton label="" func="add_mobile" onClick={handleModalCreate}></NewButton>
+                    <Buttons label="Documentation" func="add-desktop" onClick={handleModalCreate} btnTitle="New Documentation" />
+                    <Buttons label="" func="add-mobile" onClick={handleModalCreate} btnTitle="New Documentation" />
                 </section>
             </section>
             <section className={Styles['content-body']}>

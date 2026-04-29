@@ -1,4 +1,4 @@
-import { CancelButton, HeaderModalButton, SubmitButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import Styles from "../../../css/layouts/admin/modal.module.css";
 import { InputText } from "../../inputs/Input";
 import React, { useState } from "react";
@@ -27,7 +27,7 @@ export default function RatingModal({ open, ticketNo, onClose, onClick } : Props
                         <h2 style={{ margin: 0 }}>Rating</h2>
                         <p style={{ margin: 0 }}>No Tiket : #{ticketNo}</p>
                     </div>
-                    <HeaderModalButton onClose={onClose} label="X" />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <div className={Styles['rating']}>
@@ -55,8 +55,8 @@ export default function RatingModal({ open, ticketNo, onClose, onClick } : Props
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <SubmitButton onClick={() => onClick(ticketNo, pesan, rating)} label="Submit" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Submit" func="submit" btnTitle="Submit" onClick={() => onClick(ticketNo, pesan, rating)} />
+                    <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </section>
         </section>

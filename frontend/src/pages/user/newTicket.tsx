@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Styles from "../../css/layouts/user/home.module.css";
 import { useCallback, useEffect, useState } from "react";
-import { ErrorNotification, InfoNotification, SuccessNotification } from "../../components/notifications/notification";
+import { Notifications } from "../../components/notifications/notification";
 import { useApi } from "../../hooks/useApi";
 import { socket } from "../../api/socket";
 
@@ -24,7 +24,7 @@ export default function NewTicket() {
             const result = await callApi("get", "/categories/get-all-categories");
             setCategory(result);
         } catch (error: any) {
-            ErrorNotification({ message: "Gagal memgambil kategori.", variantType: "error" });
+            Notifications({ message: "Gagal memgambil kategori.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -69,7 +69,7 @@ export default function NewTicket() {
 
             if(Object.keys(errors).length > 0) {
                 setFieldError(errors);
-                InfoNotification({ message: "Mohon isi detail modul dan submodul IKB.", variantType: "info" });
+                Notifications({ message: "Mohon isi detail modul dan submodul IKB.", variantType: "info", persist: false });
                 return;
             }
         }
@@ -81,11 +81,10 @@ export default function NewTicket() {
             }
 
             const res = await callApi("post", `/tickets/new-ticket`, payload);
-            SuccessNotification({ message: `${res.message} ${res.ticketNo}`, variantType: "success", persist: true });
+            Notifications({ message: `${res.message} ${res.ticketNo}`, variantType: "success", persist: true });
             setForm(initialForm);
             setFieldError({});
         } catch (error: any) {
-            console.log(error);
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
@@ -96,9 +95,9 @@ export default function NewTicket() {
                 });
 
                 setFieldError(formattedErrors);
-                InfoNotification({ message: "Mohon lengkapi data yang wajib diisi.", variantType: "info" });
+                Notifications({ message: "Mohon lengkapi data yang wajib diisi.", variantType: "info", persist: false });
             }
-            ErrorNotification({ message: "Terjadi kesalahan.", variantType: "error" });
+            Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false });
         }
     }
 
@@ -334,8 +333,8 @@ export default function NewTicket() {
                     </div>
                 </section>
                 <section className={Styles['content-footer']}>
-                    <button type="submit" className="btn-submit-ticket">Buat Tiket</button>
-                    <button type="button" className="btn-cancel" onClick={back}>Kembali</button>
+                    <button type="submit" className="btn-submit-ticket" title="Buat Tiket">Buat Tiket</button>
+                    <button type="button" className="btn-cancel" onClick={back} title="Kembali">Kembali</button>
                 </section>
             </form>
         </main>

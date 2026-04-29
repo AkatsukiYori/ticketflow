@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RefreshButton } from "../../../components/buttons/Button";
+import { Buttons } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
-import { ErrorNotification, SuccessNotification } from "../../../components/notifications/notification";
+import { Notifications } from "../../../components/notifications/notification";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column";
 import TicketDetailModal from "../../../components/modals/ticketDetail/TicketDetail";
@@ -43,7 +43,7 @@ export default function Ticket() {
             const result = await callApi("get", `/tickets/get-all-ticket?status=${true}`);
             setData(result);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -54,7 +54,7 @@ export default function Ticket() {
             setUserId(result.id);
             setUserRole(result.role);
         } catch(error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -65,7 +65,7 @@ export default function Ticket() {
             setTicketDetail(res);
             setTicketNo(res.ticket_no);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [ticketId, callApi]);
 
@@ -128,10 +128,10 @@ export default function Ticket() {
     async function handleSubmit() {
         try {
             await callApi("put", `/tickets/re-open/${ticketNo}`);
-            SuccessNotification({ message: "Re-open ticket successfully.", variantType: "success" });
+            Notifications({ message: "Re-open ticket successfully.", variantType: "success", persist: false });
             setReOpenModal(false);
         } catch (error: any) {
-            ErrorNotification({ message: "", variantType: "error" });
+            Notifications({ message: "", variantType: "error", persist: false });
         }
     }
 
@@ -166,7 +166,7 @@ export default function Ticket() {
         <section className={Styles['main-content']}>
             <section className={Styles['top-table']}>
                 <section className={Styles['filter-ticket']}>
-                    <InputText type="text" name="search" id="search" placeholder="No ticket..." value={( table.getColumn("ticket_no")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value) } />
+                    <InputText type="text" name="search" id="search" placeholder="Ticket No..." value={( table.getColumn("ticket_no")?.getFilterValue() as string )} onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
                     <InputText type="text" name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
                     <SelectOptions
                         label="Filter status"
@@ -182,7 +182,7 @@ export default function Ticket() {
                             table.getColumn("status")?.setFilterValue(e.target.value) 
                         } />
                     <section>
-                        <RefreshButton onClick={() => fetchTicket()} />
+                        <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchTicket()} />
                     </section>
                 </section>
             </section>

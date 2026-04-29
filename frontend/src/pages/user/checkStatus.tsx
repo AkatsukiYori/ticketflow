@@ -1,5 +1,5 @@
 import Card from "../../components/card/Card";
-import { ErrorNotification, SuccessNotification } from "../../components/notifications/notification";
+import { Notifications } from "../../components/notifications/notification";
 import { useCallback, useEffect, useState } from "react";
 import { InputText } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
@@ -26,7 +26,6 @@ export default function CheckTicketStatus() {
     const [startMonth, setStartMonth] = useState("");
     const [endMonth, setEndMonth] = useState("");
     const [ticketId, setTicketId] = useState(0);
-    const [isRating, setIsRating] = useState("");
 
     const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
@@ -36,7 +35,7 @@ export default function CheckTicketStatus() {
             const res = await callApi("get", `tickets/get-all-ticket?status=${false}`);
             setData(res);
         } catch (error: any) {
-            ErrorNotification({ message: "Gagal mengambil data.", variantType: "error" });
+            Notifications({ message: "Gagal mengambil data.", variantType: "error", persist: false });
         }
     }, []);
 
@@ -68,20 +67,20 @@ export default function CheckTicketStatus() {
     async function handleOpenTicket() {
         try {
             const res = await callApi("put", `/tickets/re-open/${ticketNo}`);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setOpenTicket(false);
         } catch (error: any) {
-            ErrorNotification({ message: "Terjadi kesalahan.", variantType: "error" });
+            Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false });
         }
     }
 
     async function handleCloseTicket() {
         try {
             const res = await callApi("put", `/tickets/close-ticket/${ticketNo}`);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setConfirmModal(false);
         } catch (error: any) {
-            ErrorNotification({ message: "Terjadi Kesalahan", variantType: "error" })
+            Notifications({ message: "Terjadi Kesalahan", variantType: "error", persist: false })
         }
     }
 
@@ -94,10 +93,10 @@ export default function CheckTicketStatus() {
                 user_id: null
             }
             await callApi("put", `/tickets/feedback/${ticketNo}`, payload);
-            SuccessNotification({ message: "Respon berhasil dikirimkan.", variantType: "success" });
+            Notifications({ message: "Respon berhasil dikirimkan.", variantType: "success", persist: false });
             setOpen(false);
         } catch (error: any) {
-            ErrorNotification({ message: "Terjadi Kesalahan", variantType: "error" });
+            Notifications({ message: "Terjadi Kesalahan", variantType: "error", persist: false });
         }
     }
 
@@ -109,10 +108,10 @@ export default function CheckTicketStatus() {
             }
 
             const res = await callApi("post", `/tickets/rating/${ticketNo}`, payload);
-            SuccessNotification({ message: res.message, variantType: "success" });
+            Notifications({ message: res.message, variantType: "success", persist: false });
             setOpenRating(false);
         } catch (error: any) {
-            ErrorNotification({ message: "Terjadi kesalahan.", variantType: "error" })
+            Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false })
         }
     }
 
@@ -123,7 +122,7 @@ export default function CheckTicketStatus() {
                     const res = await callApi("get", `tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&title=${ticketSearch}&user=${userSearch}`);
                     setData(res);
                 } catch (error: any) {
-                    ErrorNotification({ message: "Gagal memfilter tiket.", variantType: "error" });
+                    Notifications({ message: "Gagal memfilter tiket.", variantType: "error", persist: false });
                 }
             };
             filterTicket();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { InputText } from "../../inputs/Input";
-import { SubmitButton, CancelButton, HeaderModalButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import Styles from "./responseModal.module.css";
 
 type Props = {
@@ -35,7 +35,7 @@ export default function ResponseModal({ open, onClose, onClick }: Props) {
             <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-header']}>
                     <h2>Respon</h2>
-                    <HeaderModalButton onClose={onClose} label="X" />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <label htmlFor="">Feedback <span style={{ color: "red" }}>*</span></label>
@@ -55,8 +55,8 @@ export default function ResponseModal({ open, onClose, onClick }: Props) {
                     )}
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <SubmitButton onClick={handleSubmit} label="Submit" />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label="Submit" func="submit" btnTitle="Submit" onClick={handleSubmit} />
+                    <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </section>
         </section>

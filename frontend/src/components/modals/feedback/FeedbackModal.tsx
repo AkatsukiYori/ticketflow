@@ -1,10 +1,9 @@
 import Styles from "./feedback.module.css";
-import { HeaderModalButton } from "../../buttons/Button";
-import { CancelButton, SubmitButton } from "../../buttons/Button";
+import { Buttons } from "../../buttons/Button";
 import { useCallback, useEffect, useState } from "react";
 import { InputText, CustomCheckbox } from "../../inputs/Input";
 import { useApi } from "../../../hooks/useApi";
-import { ErrorNotification, SuccessNotification } from "../../notifications/notification";
+import { Notifications } from "../../notifications/notification";
 
 type Props = {
     open: boolean;
@@ -45,7 +44,7 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
             const result = await callApi("get", `/users/get-user/${name}`);
             setUserId(result.id);
         } catch (error: any) {
-            ErrorNotification({ message: "Failed to fetch data.", variantType: "error" });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -66,15 +65,15 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         try {
             if(mode === "reject") {
                 const res = await callApi("put", `/tickets/reject-ticket/${ticket.ticket_no}`, payloadReject);
-                SuccessNotification({ message: res.message, variantType: "success" });
+                Notifications({ message: res.message, variantType: "success", persist: false });
             } else {
                 const res = await callApi("put", `/tickets/feedback/${ticket.ticket_no}`, payloadFeedback);
-                SuccessNotification({ message: res.message, variantType: "success" });
+                Notifications({ message: res.message, variantType: "success", persist: false });
             }
             handleClear();
             onClose();
         } catch (error: any) {
-            ErrorNotification({ message: "Something went wrong.", variantType: "error" });
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     }
 
@@ -100,7 +99,7 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
                         <h2 style={{ margin: 0 }}>{mode === "feedback" ? "Feedback" : "Reject Ticket" }</h2>
                         <p style={{ margin: 0 }}>Ticket No : #{ticket.ticket_no}</p>
                     </div>
-                    <HeaderModalButton onClose={onClose} />
+                    <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
                     <div style={{ width: "100%", textAlign: "left", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -134,8 +133,8 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <SubmitButton onClick={handleSubmit} label={mode === "reject" ? "Reject" : "Feedback"} />
-                    <CancelButton onClose={onClose} label="Cancel" />
+                    <Buttons label={mode === "reject" ? "Reject" : "Feedback"} func="submit" btnTitle="Submit" onClick={handleSubmit} />
+                    <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </div>
         </div>
