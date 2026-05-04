@@ -1,4 +1,5 @@
 import Styles from "./input.module.css";
+import Select, { type ActionMeta, type SingleValue } from "react-select";
 
 type Option = {
     label: string;
@@ -14,12 +15,16 @@ type Props = {
     style?: React.CSSProperties;
     value?: string;
     onChangeInput?: React.ChangeEventHandler<HTMLInputElement>;
-    onChangeSelect?: React.ChangeEventHandler<HTMLSelectElement>;
     onChangeTextArea?: React.ChangeEventHandler<HTMLTextAreaElement>;
     onChangeCheckbox?: (checked: boolean) => void;
     label?: string;
-    options?: Option[];
     checked?: boolean;
+    
+    // Select
+    onChangeSelect?: (newValue: SingleValue<Option>, actionMeta: ActionMeta<Option>) => void;
+    options?: Option[];
+    searchAble: boolean;
+    selectValue?: SingleValue<Option>;
 }
 
 export function InputText({ type, name, id, className, placeholder, style, value, onChangeInput } : Props) {
@@ -28,14 +33,50 @@ export function InputText({ type, name, id, className, placeholder, style, value
     );
 }
 
-export function SelectOptions({ label, value, options, name, id, onChangeSelect, className, style }: Props) {
+export function SelectOptions({ value, options, name, id, onChangeSelect, className, searchAble, placeholder, style }: Props) {
+    const selectedOption = options?.find(opt => opt.value === value) || null;
+    const customStyles = {
+        control: (provided: any) => ({
+            ...provided,
+            // Atur tinggi minimal dan tinggi total di sini
+            minHeight: '42px', 
+            height: '42px',
+            border: "1px solid #d1d1d1",
+            boxShadow: 'none',
+            '&:hover': {
+                borderColor: '#d1d1d1'
+            }
+        }),
+        valueContainer: (provided: any) => ({
+            ...provided,
+            height: '42px',
+            padding: '0 6px'
+        }),
+        input: (provided: any) => ({
+            ...provided,
+            margin: '0px',
+        }),
+        indicatorSeparator: (provided: any) => ({
+            display: 'none',
+        }),
+        indicatorsContainer: (provided: any) => ({
+            ...provided,
+            height: '42px',
+        }),
+    };
+
     return (
-        <select name={name} id={id} className={`${Styles['select-options']} || ${className || ""}`} value={value} onChange={onChangeSelect} style={style}>
-            <option value="">{ label }</option>
-            {options?.map((opt, index) => (
-                <option key={index} value={opt.value}>{opt.label}</option>
-            ))}
-        </select>
+        <Select
+            name={name}
+            id={id}
+            isSearchable={searchAble}
+            className={`${Styles['select-options']} || ${className || ""}`}
+            value={selectedOption}
+            onChange={onChangeSelect}
+            placeholder={placeholder}
+            options={options}
+            styles={customStyles}
+        />
     );
 }
 

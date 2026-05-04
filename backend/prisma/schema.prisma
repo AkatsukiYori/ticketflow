@@ -39,11 +39,12 @@ model Tickets {
   id              Int               @id @default(autoincrement())
   assign_to       Int?
   category_id     Int
+  department_id   Int?
+  member_id       Int?
   ticket_no       String            @db.VarChar(100)
   ticket_title    String            @db.VarChar(100)
   problem         String
   report_date     DateTime          @default(now())
-  department      String            @db.VarChar(100)
   location        String            @db.VarChar(50)
   priority        Priority?
   note            String?
@@ -52,7 +53,6 @@ model Tickets {
   closed_at       DateTime?
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
-  user            String            @db.VarChar(100)
   deleted_at      DateTime?
   estimate        DateTime?
   reject_at       DateTime?
@@ -64,6 +64,8 @@ model Tickets {
   log             Log[]
   fk_users_id     Users?            @relation(fields: [assign_to], references: [id])
   fk_category_id  Categories        @relation(fields: [category_id], references: [id])
+  fk_department   Department?       @relation(fields: [department_id], references: [id])
+  fk_member       Members?          @relation(fields: [member_id], references: [id])
   ticket_feedback TicketFeedback[]
   rating          Rating[]
 
@@ -98,17 +100,17 @@ model Images {
 }
 
 model Log {
-  id           Int      @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   ticket_id    Int
   user_id      Int?
-  status       String   @db.VarChar(100)
-  action_type  String   @db.VarChar(100)
-  log_date     DateTime @default(now())
+  status       String     @db.VarChar(100)
+  action_type  String     @db.VarChar(100)
+  log_date     DateTime   @default(now())
   description  String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-  fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
-  fk_user_id   Users?    @relation(fields: [user_id], references: [id])
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  fk_ticket_id Tickets    @relation(fields: [ticket_id], references: [id])
+  fk_user_id   Users?     @relation(fields: [user_id], references: [id])
 
   @@map("log")
 }
@@ -145,10 +147,31 @@ model Rating {
   ticket_id     Int
   score         Int
   note          String?
-  created_at    DateTime
+  created_at    DateTime  @default(now())
   fk_tickets_id Tickets   @relation(fields: [ticket_id], references: [id])
 
   @@map("rating")
+}
+
+model Members {
+  id              Int       @id @default(autoincrement())
+  username        String
+  active_status   Boolean   @default(true)
+  deleted_at      DateTime?
+  created_at      DateTime  @default(now())
+  tickets         Tickets[]
+
+  @@map("members")
+}
+
+model Department {
+  id          Int       @id @default(autoincrement())
+  name        String
+  deleted_at  DateTime?
+  created_at  DateTime  @default(now())
+  tickets     Tickets[]
+
+  @@map("department")
 }
 
 enum Location {

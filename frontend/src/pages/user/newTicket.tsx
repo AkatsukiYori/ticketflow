@@ -4,10 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { Notifications } from "../../components/notifications/notification";
 import { useApi } from "../../hooks/useApi";
 import { socket } from "../../api/socket";
+import { SelectOptions } from "../../components/inputs/Input";
 
 export default function NewTicket() {
     const navigate = useNavigate();
     const [category, setCategory] = useState<any[]>([]);
+    const [department, setDepartment] = useState<any[]>([]);
+    const [members, setMembers] = useState<any[]>([]);
     const [fieldError, setFieldError] = useState<{[key: string]: string}>({});
 
     const back = () => {
@@ -19,6 +22,21 @@ export default function NewTicket() {
     };
 
     const { callApi } = useApi();
+
+    const fetchData = useCallback(async () => {
+        try {
+            const [resDepartment, resMembers] = await Promise.all([
+                await callApi("get", "/department/get-all-department"),
+                await callApi("get", "/members/get-all-members"),
+            ]);
+    
+            setDepartment(resDepartment);
+            setMembers(resMembers);
+        } catch (error: any) {
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+        }
+    }, [callApi]);
+
     const fetchCategory = useCallback(async () => {
         try {
             const result = await callApi("get", "/categories/get-all-categories");
@@ -29,6 +47,10 @@ export default function NewTicket() {
     }, [callApi]);
 
     useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    useEffect(() => {
         fetchCategory();
 
         socket.on("category-change", () => {
@@ -37,23 +59,22 @@ export default function NewTicket() {
 
         return () => {
             socket.off("category-change");
-            socket.off("ticket-change");
         }
     }, [fetchCategory]);
 
     const initialForm = {
         ticket_title: "",
         problem: "",
-        department: "",
         location: "",
         priority: "",
         note: "",
         status: "pending",
-        category_id: "",
-        user: "",
         modul: "",
         sub_modul: "",
-        no_wa: ""
+        no_wa: "",
+        category_id: "",
+        deparment_id: "",
+        member_id: ""
     };
     const [form, setForm] = useState(initialForm);
     const selectedCategoryName = category.find(c => c.id == form.category_id)?.name.toLowerCase();
@@ -76,6 +97,9 @@ export default function NewTicket() {
         try {
             const payload = {
                 ...form,
+                department_id: parseInt(form.deparment_id),
+                member_id: parseInt(form.member_id),
+                category_id: parseInt(form.category_id),
                 modul: isIKB ? form.modul : undefined,
                 sub_modul: isIKB ? form.sub_modul : undefined
             }
@@ -88,7 +112,6 @@ export default function NewTicket() {
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
-                console.log(formattedErrors);
                 errorArr.forEach((err: any) => {
                     const fieldName = err.path[0];
                     formattedErrors[fieldName] = err.message;
@@ -112,21 +135,23 @@ export default function NewTicket() {
                     <div className={Styles['content-sub-body']}>
                         <div className={Styles['form']}>
                             <label htmlFor="">Nama Pengguna <span style={{ color: "red" }}>*</span></label>
-                            <input
-                                type="text"
-                                name="user"
-                                id="user"
-                                placeholder="Masukkan nama pengguna"
-                                value={form.user}
-                                onChange={(e) => {
-                                    setForm({ ...form, user: e.target.value });
-                                    clearError("user");
+                            <SelectOptions
+                                name="pengguna"
+                                id="pengguna"
+                                placeholder="Pilih Pengguna"
+                                searchAble={true}
+                                value={form.member_id}
+                                onChangeSelect={(e) => {
+                                    setForm({ ...form, member_id: e ? String(e.value) : "" });
+                                    clearError("member_id");
                                 }}
-                                style={{ borderColor: fieldError.user ? "red" : "" }}
-                                required
+                                options={members.map((e: any) => (
+                                    { label: e.username, value: String(e.id) }
+                                ))}
+                                style={{ borderColor: fieldError.member_id ? "red" : "" }}
                             />
-                            {fieldError.user && (
-                                <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.user}</span>
+                            {fieldError.member_id && (
+                                <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.member_id}</span>
                             )}
                         </div>
                         <div className={Styles['form']}>
@@ -149,19 +174,21 @@ export default function NewTicket() {
                             )}
                         </div>
                         <div className={Styles['form']}>
-                            <label htmlFor="">Department <span style={{ color: "red" }}>*</span></label>
-                            <input
-                                type="text"
+                            <label htmlFor="">Departemen <span style={{ color: "red" }}>*</span></label>
+                            <SelectOptions
                                 name="department"
                                 id="department"
-                                placeholder="Masukkan department"
-                                value={form.department}
-                                onChange={(e) => {
-                                    setForm({ ...form, department: e.target.value });
-                                    clearError("department");
+                                placeholder="Pilih Departemen"
+                                searchAble={true}
+                                value={form.deparment_id}
+                                onChangeSelect={(e) => {
+                                    setForm({ ...form, deparment_id: e ? String(e.value) : "" });
+                                    clearError("department_id");
                                 }}
-                                style={{ borderColor: fieldError.department ? "red" : "" }}
-                                required
+                                options={department.map((e: any) => (
+                                    { label: e.name, value: String(e.id) }
+                                ))}
+                                style={{ borderColor: fieldError.member_id ? "red" : "" }}
                             />
                             {fieldError.department && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.department}</span>
@@ -209,12 +236,19 @@ export default function NewTicket() {
                         </div>
                         <div className={Styles['form']}>
                             <label htmlFor="">Kategori <span style={{ color: "red" }}>*</span></label>
-                            <select
-                                name="category_id"
-                                id="category_id"
+                            <SelectOptions
+                                name="kategori"
+                                id="kategori"
+                                placeholder="Pilih Kategori"
+                                searchAble={true}
                                 value={form.category_id}
-                                onChange={(e) => {
-                                    const newID = e.target.value;
+                                onChangeSelect={(e) => {
+                                    if(!e) {
+                                        setForm({ ...form, category_id: "" })
+                                        return;
+                                    }
+
+                                    const newID = e.value;
                                     const newName = category.find(c => c.id == newID)?.name.toLowerCase();
 
                                     setForm({
@@ -234,14 +268,11 @@ export default function NewTicket() {
                                     }
                                     clearError("kategori");
                                 }}
-                                style={{ borderColor: fieldError.department ? "red" : "" }}
-                                required
-                            >
-                                <option value="">-- Pilih Kategori --</option>
-                                {category.map(e => (
-                                    <option key={e.id} value={e.id}>{e.name}</option>
+                                options={category.map((e: any) => (
+                                    { label: e.name, value: String(e.id) }
                                 ))}
-                            </select>
+                                style={{ borderColor: fieldError.member_id ? "red" : "" }}
+                            />
                             {fieldError.category_id && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.category_id}</span>
                             )}

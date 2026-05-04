@@ -24,10 +24,9 @@
 }
 
 .select-options {
-    height: 3.3em;
-    width: 20em;
+    font-size: 12px;
+    width: 100%;
     background-color: transparent;
-    border: 1px solid #d1d1d1;
     color: #374151;
     border-radius: 6px;
     box-sizing: border-box;
