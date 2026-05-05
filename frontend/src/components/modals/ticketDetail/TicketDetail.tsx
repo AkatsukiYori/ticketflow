@@ -13,16 +13,13 @@ type Props = {
 }
 
 export default function TicketDetailModal({ open, data, onClose, userRole }: Props) {
+    const { callApi } = useApi();
+    
     const [userID, setUserID] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const [isAlreadyAssign, setIsAlreadyAssign] = useState(
         data?.assign_to !== null && data?.assign_to !== undefined
     );
-    const [category, setCategory] = useState<any[]>([]);
-    const [categoryName, setCategoryName] = useState("");
-    const [isIKB, setIsIKB] = useState(false);
-
-    const { callApi } = useApi();
 
     const fetchUser = useCallback(async (name: string) => {
         if(!name) return;
@@ -50,15 +47,6 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
         }
     }
 
-    async function fetchCategory() {
-        try {
-            const res = await callApi("get", "/categories/get-all-categories");
-            setCategory(res);
-        } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
-        }
-    }
-
     const handleSubmit = () => {
         if(isAlreadyAssign) {
             setOpenModal(true);
@@ -68,31 +56,14 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
     }
 
     useEffect(() => {
-        if(open) {
-            fetchCategory();
-        }
-    }, [fetchCategory]);
-
-    useEffect(() => {
         const storedUsername = localStorage.getItem("username");
         if(storedUsername) {
             fetchUser(storedUsername);
         }
     }, [fetchUser]);
 
-    useEffect(() => {
-        const isAssign = data.assign_to !== null && data.assign_to !== undefined;
-        setIsAlreadyAssign(isAssign);
+    console.log(data);
 
-        if(category.length > 0 && data.category_id) {
-            const selectedCategory = category.find(c => c.id === data.category_id);
-
-            if(selectedCategory) {
-                setCategoryName(selectedCategory.name);
-                setIsIKB(selectedCategory.name.toLowerCase() === "ikb");
-            }
-        }
-    }, [category, data]);
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
@@ -125,7 +96,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </tr>
                                 <tr>
                                     <td>Status</td>
-                                    <td>{data.status}</td>
+                                    <td>{data.status?.split("_").map((word: String) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</td>
                                 </tr>
                                 <tr>
                                     <td>Priority</td>
@@ -141,7 +112,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <tbody>
                                 <tr>
                                     <td>User</td>
-                                    <td>{data.user}</td>
+                                    <td>{data.fk_member?.username}</td>
                                 </tr>
                                 <tr>
                                     <td>Whatsapp No</td>
@@ -149,7 +120,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </tr>
                                 <tr>
                                     <td>Department</td>
-                                    <td>{data.department}</td>
+                                    <td>{data.fk_department?.name}</td>
                                 </tr>
                                 <tr>
                                     <td>Location</td>
@@ -165,9 +136,9 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <tbody>
                                 <tr>
                                     <td>Category</td>
-                                    <td>{categoryName}</td>
+                                    <td>{data.fk_category_id?.name}</td>
                                 </tr>
-                                {isIKB && (
+                                {(data.fk_category_id?.name == "IKB" || data.fk_category_id?.name == "ikb")  && (
                                     <>
                                         <tr>
                                             <td>Modul</td>

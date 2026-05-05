@@ -7,11 +7,9 @@ type Ticket = {
     ticket_no: string;
     ticket_title: string;
     problem: string;
-    user: string;
     category_id: number;
     priority: string;
     report_date: Date;
-    department: string;
     location: string;
     status: string;
     assign_to?: number;
@@ -19,6 +17,10 @@ type Ticket = {
         id: number;
         username: string;
         role: string;
+    }
+    member_id?: number;
+    fk_member?: {
+        username: string;
     }
     closed_at: Date;
 }
@@ -91,8 +93,14 @@ export const columns = (
             );
         }
     }),
-    columnHelper.accessor("user", {
+    columnHelper.accessor("member_id", {
         header: "User",
+        cell: ({ row }) => {
+            const member = row.original.fk_member;
+            return member ?
+                member.username :
+                <span style={{ backgroundColor: "#F3F4F6", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#4B5563" }}>Missing User</span>
+        }
     }),
     columnHelper.accessor("assign_to", {
         header: "PIC",

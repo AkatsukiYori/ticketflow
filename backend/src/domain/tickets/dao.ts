@@ -10,6 +10,24 @@ function MakeDate() {
 export const GetTicketById = async (id: number) => {
     try {
         const data = await prisma.tickets.findFirst({
+            include: {
+                fk_member: {
+                    select: {
+                        username: true
+                    }
+                },
+                fk_department: {
+                    select: {
+                        name: true
+                    }
+                },
+                fk_category_id: {
+                    select: {
+                        name: true,
+                        id: true
+                    }
+                }
+            },
             where: {
                 id: id,
                 deleted_at: null
@@ -43,8 +61,17 @@ export const GetAllTicketDAO = async (filter: any) => {
     try {
         const data = await prisma.tickets.findMany({
             include: {
-                fk_users_id: true,
-                rating: true
+                rating: true,
+                fk_member: {
+                    select: {
+                        username: true
+                    }
+                },
+                fk_department: {
+                    select: {
+                        name: true
+                    }
+                }
             },
             where: whereClause,
             orderBy: {

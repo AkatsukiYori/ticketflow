@@ -162,6 +162,15 @@ export default function Ticket() {
             }
         }
     });
+
+    const filterOptions = [
+        { label: "All Status", value: "" },
+        { label: "Pending", value: "pending" },
+        { label: "On Progress", value: "on_progress" },
+        { label: "Completed", value: "completed" },
+        { label: "Reject", value: "reject" }
+    ];
+
     return (
         <section className={Styles['main-content']}>
             <section className={Styles['top-table']}>
@@ -169,18 +178,16 @@ export default function Ticket() {
                     <InputText type="text" name="search" id="search" placeholder="Ticket No..." value={( table.getColumn("ticket_no")?.getFilterValue() as string )} onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
                     <InputText type="text" name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
                     <SelectOptions
-                        label="Filter status"
                         name="filterInput"
                         id="filterInput"
-                        options={[
-                            { label: "Pending", value: "pending" },
-                            { label: "On Progress", value: "on_progress" },
-                            { label: "Completed", value: "completed" },
-                            { label: "Reject", value: "reject" }
-                        ]}
-                        onChangeSelect={(e) => 
-                            table.getColumn("status")?.setFilterValue(e.target.value) 
-                        } />
+                        placeholder="Filter Status"
+                        searchAble={false}
+                        value={table.getColumn("status")?.getFilterValue() as string}
+                        options={filterOptions}
+                        onChangeSelect={(e) => {
+                            table.getColumn("status")?.setFilterValue(e ? e.value : undefined) 
+                        }}
+                    />
                     <section>
                         <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchTicket()} />
                     </section>

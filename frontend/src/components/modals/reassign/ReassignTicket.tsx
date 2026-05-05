@@ -106,12 +106,13 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                         <div style={{ display: isReassign ? "block" : "none" }}>
                             <label htmlFor="">New PIC <span style={{ color: "red" }}>*</span></label>
                             <SelectOptions
-                                label="-- Choose PIC --"
                                 name="pic"
                                 id="pic"
+                                placeholder="Choose PIC"
+                                searchAble={true}
                                 value={pic}
                                 onChangeSelect={(e) => {
-                                    setPic(e.target.value);
+                                    setPic(e ? e.value : "");
                                     if(error.pic) setError(prev => ({ ...prev, pic: "" }));
                                 }}
                                 options={userData.map((e: any) => ({
@@ -127,12 +128,13 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                         <div>
                             <label htmlFor="">Priority <span style={{ color: "red" }}>*</span></label>
                             <SelectOptions
-                                label="-- Set Priority --"
                                 name="priority"
                                 id="priority"
+                                placeholder="Choose Priority"
+                                searchAble={false}
                                 value={priority}
                                 onChangeSelect={(e) => {
-                                    setPriority(e.target.value);
+                                    setPriority(e ? e.value : "");
                                     if(error.priority) setError(prev => ({ ...prev, priority: "" }));
                                 }}
                                 options={[

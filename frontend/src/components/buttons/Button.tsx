@@ -1,4 +1,4 @@
-import { Plus, Trash, Pencil, RefreshCcw, Info, UserCheck, UserPenIcon, FilterIcon } from "lucide-react";
+import { Plus, Trash, Pencil, RefreshCcw, Info } from "lucide-react";
 import "../../components/buttons/button.css";
 
 type Props = {
@@ -20,6 +20,8 @@ export function Buttons({ label, func, onClick, btnTitle }: Props) {
                 return <Pencil />;
             case "delete":
                 return <Trash />;
+            case "detail":
+                return <Info />;
             default:
                 return null;
             // case "new-ticket":

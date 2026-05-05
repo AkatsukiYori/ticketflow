@@ -283,11 +283,12 @@ export default function Dashboard() {
                     <h3 style={{ margin: 0 }}>Filter</h3>
                     <section className={Styles['filter-input']}>
                         <SelectOptions
-                            label="All Month"
                             name="filter_month"
                             id="filter_month"
+                            placeholder="All Month"
+                            searchAble={true}
                             value={filterMonth}
-                            onChangeSelect={(e) => setFilterMonth(e.target.value)}
+                            onChangeSelect={(e) => setFilterMonth(e ? e.value : "")}
                             options={[
                                 { label: "January", value: "0" },
                                 { label: "February", value: "1" },
@@ -304,11 +305,12 @@ export default function Dashboard() {
                             ]}
                         />
                         <SelectOptions
-                            label="All Year"
                             name="filter_year"
                             id="filter_year"
+                            placeholder="All Year"
+                            searchAble={true}
                             value={filterYear}
-                            onChangeSelect={(e) => setFilterYear(e.target.value)}
+                            onChangeSelect={(e) => setFilterYear(e ? e.value : "")}
                             options={dynamicYear}
                         />
                         <Buttons label="Filter" btnTitle="Filter" func="filter" onClick={() => setTriggerFilter(prev => prev + 1)} />

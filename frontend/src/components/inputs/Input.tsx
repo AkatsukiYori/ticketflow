@@ -23,8 +23,7 @@ type Props = {
     // Select
     onChangeSelect?: (newValue: SingleValue<Option>, actionMeta: ActionMeta<Option>) => void;
     options?: Option[];
-    searchAble: boolean;
-    selectValue?: SingleValue<Option>;
+    searchAble?: boolean;
 }
 
 export function InputText({ type, name, id, className, placeholder, style, value, onChangeInput } : Props) {
@@ -33,14 +32,18 @@ export function InputText({ type, name, id, className, placeholder, style, value
     );
 }
 
-export function SelectOptions({ value, options, name, id, onChangeSelect, className, searchAble, placeholder, style }: Props) {
-    const selectedOption = options?.find(opt => opt.value === value) || null;
+export function SelectOptions({ value, options, name, id, onChangeSelect, className, searchAble, placeholder }: Props) {
+    const selectedOption = typeof value === "string"
+        ? (options?.find(opt => opt.value === value) || null)
+        : (value || null);
+
     const customStyles = {
         control: (provided: any) => ({
             ...provided,
             // Atur tinggi minimal dan tinggi total di sini
             minHeight: '42px', 
             height: '42px',
+            width: "100%",
             border: "1px solid #d1d1d1",
             boxShadow: 'none',
             '&:hover': {
@@ -70,7 +73,7 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
             name={name}
             id={id}
             isSearchable={searchAble}
-            className={`${Styles['select-options']} || ${className || ""}`}
+            className={`${Styles['select-options']} ${className || ""}`}
             value={selectedOption}
             onChange={onChangeSelect}
             placeholder={placeholder}

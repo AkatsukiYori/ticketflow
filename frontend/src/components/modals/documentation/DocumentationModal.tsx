@@ -103,12 +103,13 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
                 <div className={Styles['modal-body']} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     <label htmlFor="">Category <span style={{ color: "red" }}>*</span></label>
                     <SelectOptions
-                        label="-- Choose Category --"
                         name="category"
                         id="category"
+                        placeholder="Choose Category"
+                        searchAble={true}
                         value={category}
                         onChangeSelect={(e) => {
-                            setCategory(e.target.value);
+                            setCategory(e ? e.value : "");
                             clearError("category_id");
                         }}
                         style={{ width: "100%", borderColor: error.category_id ? "red" : "" }}

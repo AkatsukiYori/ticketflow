@@ -2,7 +2,7 @@
 import { CheckCircle, CircleEllipsis, SigmaSquare, XCircle } from "lucide-react";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { SelectOptions } from "../../../components/inputs/Input";
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import DataTables from "../../../components/datatables/DataTable";
 import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -330,11 +330,12 @@ export default function Report() {
                     <h3 style={{ margin: 0 }}>Filter</h3>
                     <section className={Styles['filter-input']}>
                         <SelectOptions
-                            label="All Month"
                             name="filter"
                             id="filter"
+                            placeholder="All Month"
+                            searchAble={true}
                             value={filterMonth}
-                            onChangeSelect={(e) => setFilterMonth(e.target.value)}
+                            onChangeSelect={(e) => setFilterMonth(e ? e.value : "")}
                             options={[
                                 { label: "January", value: "0" },
                                 { label: "February", value: "1" },
@@ -351,19 +352,21 @@ export default function Report() {
                             ]}
                         />
                         <SelectOptions
-                            label="All Year"
                             name="filter"
                             id="filter"
+                            placeholder="All Year"
+                            searchAble={true}
                             value={filterYear}
-                            onChangeSelect={(e) => setFilterYear(e.target.value)}
+                            onChangeSelect={(e) => setFilterYear(e ? e.value : "")}
                             options={dynamicYear}
                         />
                         <SelectOptions
-                            label="Filter Category"
                             name="filter"
                             id="filter"
+                            placeholder="Filter Category"
+                            searchAble={true}
                             value={filterCategory}
-                            onChangeSelect={(e) => setFilterCategory(e.target.value)}
+                            onChangeSelect={(e) => setFilterCategory(e ? e.value : "")}
                             options={dataCategory.map((val: any) => (
                                 { label: val.name, value: val.id }
                             ))}
