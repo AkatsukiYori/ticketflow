@@ -147,14 +147,15 @@
 
 .content-body-left > .split-charts > .category-chart {
     width: 100%;
+    flex: 1;
 }
 
 .content-body-left > .split-charts > .department-chart {
     width: 100%;
+    flex: 3;
 }
 
-.content-body-left > .list-ticket {
-    /* flex: 1; */
+.list-ticket {
     width: 100%;
 }
 

@@ -62,8 +62,6 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
         }
     }, [fetchUser]);
 
-    console.log(data);
-
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>

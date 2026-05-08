@@ -201,6 +201,10 @@ export default function Dashboard() {
     const startYear = 2026;
     const currentYear = new Date().getFullYear();
     const dynamicYear = [];
+    dynamicYear.push({
+        label: "All Year",
+        value: ""
+    });
     for(let i = currentYear; i >= startYear; i--) {
         dynamicYear.push({
             label: i.toString(),
@@ -228,7 +232,7 @@ export default function Dashboard() {
                 pageSize: 10
             }
         }
-    })
+    });
 
     return (
         <section className={Styles['main-content']}>
@@ -290,6 +294,7 @@ export default function Dashboard() {
                             value={filterMonth}
                             onChangeSelect={(e) => setFilterMonth(e ? e.value : "")}
                             options={[
+                                { label: "All Month", value: "" },
                                 { label: "January", value: "0" },
                                 { label: "February", value: "1" },
                                 { label: "March", value: "2" },

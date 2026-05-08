@@ -132,7 +132,6 @@ export const ReOpenTicketServices = async (ticketNo: string) => {
 
 export const RatingServices = async (data: any) => {
     try {
-        // console.log(data);
         await TicketDAO.RatingDAO(data);
 
         return ({ message: "Terima kasih atas penilaian anda!" });

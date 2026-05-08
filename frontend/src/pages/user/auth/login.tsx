@@ -35,7 +35,6 @@ export default function Login() {
                 Notifications({ message: response.message, variantType: "error", persist: false });
             }
         } catch (error) {
-            // console.log(error.message);
             Notifications({ message: "Gagal terhubung ke server.", variantType: "error", persist: false });
         }
     }

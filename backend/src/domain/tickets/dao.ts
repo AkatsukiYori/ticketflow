@@ -134,6 +134,16 @@ export const GetAllTicketLogs = async () => {
                     select: {
                         username: true
                     }
+                },
+                fk_member: {
+                    select: {
+                        username: true
+                    }
+                },
+                fk_department: {
+                    select:  {
+                        name: true
+                    }
                 }
             },
             orderBy: {

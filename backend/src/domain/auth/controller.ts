@@ -6,7 +6,6 @@ export const LoginController = async (req: Request, res: Response) => {
     try {
         const data = req.body as LoginInput;
         const result = await LoginServices(data);
-        // console.log(result);
         if(result.status === "error") {
             res.status(500).json({ message: result.message });
         } else {

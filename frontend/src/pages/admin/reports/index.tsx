@@ -2,7 +2,7 @@
 import { CheckCircle, CircleEllipsis, SigmaSquare, XCircle } from "lucide-react";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { SelectOptions } from "../../../components/inputs/Input";
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import DataTables from "../../../components/datatables/DataTable";
 import { useApi } from "../../../hooks/useApi";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -10,6 +10,9 @@ import { Notifications } from "../../../components/notifications/notification";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { columns } from "./columns";
 import { Buttons } from "../../../components/buttons/Button";
+
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 
 export default function Report() {
@@ -19,6 +22,7 @@ export default function Report() {
     const [filterYear, setFilterYear] = useState(new Date().getFullYear().toString());
     const [filterCategory, setFilterCategory] = useState("");
     const [triggerFilter, setTriggerFilter] = useState(0);
+    const [filteredTicket, setFilteredTicket] = useState<any[]>([]);
     
     const [userData, setUserData] = useState<any[]>([]);
     const [dataCategory, setDataCategory] = useState([]);
@@ -43,6 +47,9 @@ export default function Report() {
         high: 0
     });
     const [pieChartCategory, setPieChartCategory] = useState<{name: string, value: number, fill: string}[]>([]);
+    const [monthlyTicketData, setMonthlyTicketData] = useState<{name: string, total: number, fill: string}[]>([]);
+    const [deptChartData, setDeptChartData] = useState<any[]>([]);
+    const colors = ["#1B499D", "#3B82F6", "#6366F1", "#8B5CF6", "#A855F7", "#C084FC"];
 
     const fetchTicket = useCallback(async () => {
         try {
@@ -92,13 +99,22 @@ export default function Report() {
                     reject: 0,
                     rate_sum: 0,
                     rate_count: 0,
-                    avg_rate: 0
+                    avg_rate: 0,
+                    score_1: 0,
+                    score_2: 0,
+                    score_3: 0,
+                    score_4: 0,
+                    score_5: 0
                 };
             });
 
             resCategory.forEach((category: any) => {
                 categoryMap[category.name] = 0;
-            })
+            });
+
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Dec"];
+            const chartData = months.map(m => ({ name: m, total: 0 }));
+            const departmentMap: Record<string, number> = {};
 
             const myTicket = resTicket.filter((ticket: any) => {
                 const ticketDate = new Date(ticket.report_date);
@@ -108,6 +124,8 @@ export default function Report() {
 
                 return isThisMonth && isThisYear && isDeleted;
             });
+
+            setFilteredTicket(myTicket);
             myTicket.forEach((ticket: any) => {
                 const status = ticket.status?.toLowerCase();
                 const prio = ticket.priority?.toLowerCase();
@@ -157,6 +175,16 @@ export default function Report() {
                 const user_id = ticket.assign_to;
                 if(userStateMap[user_id]) {
                     const user = userStateMap[user_id];
+
+                    if(Array.isArray(ticket.rating)) {
+                        ticket.rating.forEach((rate: any) => {
+                            const score = Number(rate.score);
+                            if(score >= 1 && score <= 5) {
+                                user[`score_${score}`]++;
+                            }
+                        })
+                    }
+
                     user.total++;
                     if(isClosed) {
                         user.closed++;
@@ -170,6 +198,17 @@ export default function Report() {
                         }
                     }
                 }
+
+                // Start Monthly Ticket Data
+                const date = new Date(ticket.report_date);
+                const monthIndex = date.getMonth();
+                chartData[monthIndex].total += 1;
+                // End Monthly Ticket Data
+
+                // Start Dept Chart Data
+                const deptName = ticket?.fk_department?.name || "Lainnnya";
+                departmentMap[deptName] = (departmentMap[deptName] || 0) + 1;
+                // End Dept Chart Data
             });
 
             const userRate = Object.values(userStateMap).map((rate: any) => {
@@ -182,8 +221,15 @@ export default function Report() {
             const formattedPieChartCategory = resCategory.map((category: any, index: number) => ({
                 name: category.name,
                 value: categoryMap[category.name],
-                fill: ["#1B499D", "#1fc068", "#EAB308", "#F97316", "#EF4444"][index % 5]
+                fill: colors[index % colors.length]
             }));
+
+            const formattedMonthlyTicketData = chartData.map((item, index) => ({
+                ...item,
+                fill: colors[index % colors.length]
+            }));
+
+            const formattedDeptData = Object.entries(departmentMap).map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
 
             const totalScore = rating.score_1 + rating.score_2 + rating.score_3 + rating.score_4 + rating.score_5;
             setCountRating({ ...rating, total: totalScore });
@@ -192,6 +238,8 @@ export default function Report() {
             setPieChartCategory(formattedPieChartCategory);
             setUserData(userRate);
             setDataCategory(resCategory);
+            setMonthlyTicketData(formattedMonthlyTicketData);
+            setDeptChartData(formattedDeptData);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
@@ -229,18 +277,16 @@ export default function Report() {
         { name: 'Mid', value: countPriority.mid || 0, fill: '#EAB308' },
         { name: 'High', value: countPriority.high || 0, fill: '#EF4444' },
     ];
-
-    const dataPieDepartment = [
-        { name: 'Low', value: countPriority.low || 0, fill: '#1b499d' },
-        { name: 'Mid', value: countPriority.mid || 0, fill: '#EAB308' },
-        { name: 'High', value: countPriority.high || 0, fill: '#EF4444' },
-    ];
     // End PieChart
 
     // Start Get Year
     const startYear = 2026;
     const currentYear = new Date().getFullYear();
     const dynamicYear = [];
+    dynamicYear.push({
+        label: "All Year",
+        value: ""
+    });
     for(let i = currentYear; i >= startYear; i--) {
         dynamicYear.push({
             label: i.toString(),
@@ -265,6 +311,187 @@ export default function Report() {
             }
         }
     });
+
+    // Start Export
+    const exportTicket = async (): Promise<void> => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Report Tickets");
+
+        worksheet.columns = [
+            { key: "username", width: 20 },
+            { key: "status", width: 20 },
+            { key: "handle_by", width: 20 },
+            { key: "ticket_no", width: 30 },
+            { key: "ticket_title", width: 40 },
+            { key: "category", width: 20 },
+            { key: "department", width: 30 },
+            { key: "problem", width: 100 },
+            { key: "priority", width: 20 },
+            { key: "location", width: 30 },
+            { key: "wa_no", width: 30 },
+            { key: "modul", width: 30 },
+            { key: "sub_modul", width: 30 },
+            { key: "note", width: 40 },
+            { key: "report_date", width: 30 },
+            { key: "estimate", width: 30 },
+            { key: "closed_at", width: 30 },
+            { key: "reopened_at", width: 30 },
+            { key: "rejected_at", width: 30 },
+            { key: "deleted_at", width: 30 },
+        ];
+
+        const titleRow = worksheet.getRow(1);
+        titleRow.values = ["Report Tickets"];
+        titleRow.font = { size: 16, bold: true };
+        worksheet.mergeCells("A1:S1");
+        
+        const dateRow = worksheet.getRow(2);
+        dateRow.values = [new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "2-digit",
+            timeZone: "Asia/Jakarta"
+        })];
+        worksheet.mergeCells("A2:S2");
+
+        const headerRow = worksheet.getRow(4);
+        headerRow.values = [
+            "User",
+            "Status",
+            "Handle By",
+            "Ticket No",
+            "Ticket Title",
+            "Category",
+            "Department",
+            "Problem",
+            "Priority",
+            "Location",
+            "Whatsapp No",
+            "Module",
+            "Sub Module",
+            "Note",
+            "Report Date",
+            "Estimate",
+            "Closed At",
+            "Reopened At",
+            "Rejected At",
+            "Deleted At",
+        ];
+
+        worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell, celNumber) => {
+                cell.alignment = { wrapText: true, vertical: "middle" }
+            })
+        });
+
+        headerRow.height = 25;
+        headerRow.eachCell((cell) => {
+            cell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: { argb: "1B499D" },
+            };
+            cell.font = {
+                bold: true,
+                color: { argb: "FFFFFF" }
+            };
+            cell.border = {
+                top: { style: "thin" },
+                left: { style: "thin" },
+                bottom: { style: "thin" },
+                right: { style: "thin" },
+            };
+            cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true }
+        });
+
+        filteredTicket.forEach((ticket) => {
+            worksheet.addRow({
+                username: ticket.fk_member?.username || "Unassigned",
+                status: (ticket.status.split("_").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")),
+                handle_by: ticket.fk_users_id?.username || "Unassigned",
+                ticket_no: ticket.ticket_no,
+                ticket_title: ticket.ticket_title,
+                category: ticket.fk_category_id?.name || "-",
+                department: ticket.fk_department?.name || "-",
+                problem: ticket.problem,
+                priority: ticket.priority.toUpperCase() || "-",
+                location: ticket.location || "-",
+                wa_no: ticket.no_wa || "-",
+                modul: ticket?.modul || "-",
+                sub_modul: ticket?.sub_modul || "-",
+                note: ticket?.note || "-",
+                report_date: new Date(ticket.report_date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":"),
+                estimate: ticket.estimate ? new Date(ticket.estimate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":") : "-",
+                closed_at: ticket.closed_at ? new Date(ticket.closed_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":") : "-",
+                reopened_at: ticket.reopened_at ? new Date(ticket.reopened_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":") : "-",
+                rejected_at: ticket.rejected_at ? new Date(ticket.rejected_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":") : "-",
+                deleted_at: ticket.deleted_at ? new Date(ticket.deleted_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "Asia/Jakarta"
+                }).replace(/\./g, ":") : "-"
+            });
+        });
+
+        console.log(filteredTicket);
+
+        worksheet.eachRow((row, rowNumber) => {
+            if(rowNumber > 4) {
+                row.eachCell((cell, cellNumber) => {
+                    cell.border = {
+                        top: { style: "thin" },
+                        left: { style: "thin" },
+                        bottom: { style: "thin" },
+                        right: { style: "thin" },
+                    };
+                    cell.alignment = { wrapText: true, vertical: "middle" }
+                })
+            }
+        })
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `Report-tickets-${new Date().getTime()}.xlsx`);
+    }
+    // End Expprt
 
     return (
         <section className={Styles['main-content']}>
@@ -337,6 +564,7 @@ export default function Report() {
                             value={filterMonth}
                             onChangeSelect={(e) => setFilterMonth(e ? e.value : "")}
                             options={[
+                                { label: "All Month", value: "" },
                                 { label: "January", value: "0" },
                                 { label: "February", value: "1" },
                                 { label: "March", value: "2" },
@@ -372,7 +600,7 @@ export default function Report() {
                             ))}
                         />
                         <Buttons label="Filter" func="filter" btnTitle="Filter" onClick={() => setTriggerFilter(prev => prev + 1)} />
-                        <button type="button">Download Excel</button>
+                        <Buttons label="Export Excel" func="export-excel" btnTitle="Export Excel" onClick={exportTicket} />
                     </section>
                 </section>
             </section>
@@ -381,9 +609,9 @@ export default function Report() {
                     <section className={Styles['ticket-chart']}>
                         <h3>Tickets</h3>
                         <section style={{ width: "100%", height: "350px" }}>
-                            {/* <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
-                                    data={barChartData}
+                                    data={monthlyTicketData}
                                     margin={{
                                         top: 20,
                                         right: 30,
@@ -397,12 +625,12 @@ export default function Report() {
                                     <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
 
                                     <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
-                                        {barChartData.map((entry, index) => (
+                                        {monthlyTicketData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.fill}></Cell>
                                         ))}
                                     </Bar>
                                 </BarChart>
-                            </ResponsiveContainer> */}
+                            </ResponsiveContainer>
                         </section>
                     </section>
                     <section className={Styles['split-charts']}>
@@ -438,43 +666,29 @@ export default function Report() {
                             <h3>Department</h3>
                             <section style={{ width: "100%", height: "350px" }}>
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
-                                        <Pie
-                                            data={dataPieDepartment}
-                                            dataKey="value" 
-                                            nameKey="name"
-                                            cx="50%"
-                                            cy="50%"
-                                            innerRadius="60%"
-                                            outerRadius="80%"
-                                            paddingAngle={5}
-                                            label={(entry) => entry.value}
-                                        >
-                                            {dataPieDepartment.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip 
-                                            contentStyle={{ borderRadius: '8px', border: 'none' }} 
-                                        />
-                                        <Legend iconType="circle" verticalAlign="bottom" />
-                                    </PieChart>
-                                </ResponsiveContainer>
+                                <BarChart
+                                    data={deptChartData}
+                                    margin={{
+                                        top: 20,
+                                        right: 30,
+                                        left: -20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3" vertical={false} stroke="#F0F0F0" />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                                    <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+
+                                    <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
+                                        {deptChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={colors[index % colors.length]}></Cell>
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
                             </section>
                         </section>
-                    </section>
-                    <section className={Styles['list-ticket']}>
-                        <h3>Users</h3>
-                        <DataTables
-                            table={table}
-                            style={{ height: "auto" }}
-                            customStyle={{
-                                thFirst: { width: "180px" },
-                                thLast: { width: "120px" },
-                                tdFirst: { width: "180px" },
-                                tdLast: { width: "120px" }
-                            }}
-                        />
                     </section>
                 </section>
                 <section className={Styles['content-body-right']}>
@@ -511,6 +725,19 @@ export default function Report() {
                         </section>
                     </section>
                 </section>
+            </section>
+            <section className={Styles['list-ticket']}>
+                <h3>Users</h3>
+                <DataTables
+                    table={table}
+                    style={{ height: "auto" }}
+                    customStyle={{
+                        thFirst: { width: "180px" },
+                        thLast: { width: "120px" },
+                        tdFirst: { width: "180px" },
+                        tdLast: { width: "120px" }
+                    }}
+                />
             </section>
         </section>
     );

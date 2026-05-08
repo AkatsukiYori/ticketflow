@@ -8,7 +8,6 @@ export const GetLogsByTicketDAO = async (ticketID: number) => {
                     fk_ticket_id: {
                         select: {
                             ticket_no: true,
-                            user: true,
                             report_date: true
                         }
                     },

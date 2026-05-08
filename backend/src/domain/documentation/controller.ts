@@ -71,14 +71,12 @@ export const DeleteDocumentationController = async (req: any, res: Response) => 
     const id = Number(req.params.id);
     try {
         const result = await Services.DeleteDocumentationServices(id);
-        console.log(result);
         if(req.io) {
             req.io.emit("documentation-change");
         }
 
         res.status(201).json(result);
     } catch (error: any) {
-        console.log(error);
         res.status(500).json({ message: "Something went wrong." });
     }
 }

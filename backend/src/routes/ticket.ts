@@ -7,7 +7,6 @@ const routerTicket: Router = Router();
 const upload = createUploader("tickets");
 
 // routerTicket.post("/test", upload.single("ticket_file"), (req, res) => {
-//   console.log(req.file);
 //   res.json({ ok: true });
 // });
 
