@@ -22,7 +22,7 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                         hour: "2-digit",
                         minute: "2-digit",
                         timeZone: "Asia/Jakarta"
-                    }).replaceAll(/\./g, ":").replaceAll(" pukul", ",")} - {data.user}</p>
+                    }).replaceAll(/\./g, ":").replaceAll(" pukul", ",")} - {data.fk_member?.username}</p>
                 </div>
                 <div className={Styles['card-body']}>
                     <div className={Styles['card-body-top']}>

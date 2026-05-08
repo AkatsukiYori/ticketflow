@@ -13,6 +13,19 @@ import LogsModal from "../../components/modals/logs/ViewLogs";
 import RatingModal from "../../components/modals/rating/RatingModal";
 
 export default function CheckTicketStatus() {
+    const { callApi } = useApi();
+    const date = new Date();
+    const getToday = () => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const getFirstDayOfMonth = () => {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`;
+    }
+
     const [open, setOpen] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [openTicket, setOpenTicket] = useState(false);
@@ -23,13 +36,12 @@ export default function CheckTicketStatus() {
     const [data, setData] = useState<any[]>([]);
     const [ticketSearch, setTicketSearch] = useState("");
     const [userSearch, setUserSearch] = useState("");
-    const [startMonth, setStartMonth] = useState("");
-    const [endMonth, setEndMonth] = useState("");
+    const [startMonth, setStartMonth] = useState(getFirstDayOfMonth());
+    const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
 
-    const selectedTicket = data.find(t => t.ticket_no === ticketNo);
+    const selectedTicket = data.find(t => t.ticket_no === ticketNo);    
 
-    const { callApi } = useApi();
     const fetchTicket = useCallback(async () => {
         try {
             const res = await callApi("get", `tickets/get-all-ticket?status=${false}`);
@@ -119,7 +131,7 @@ export default function CheckTicketStatus() {
         if((startMonth && endMonth) || ticketSearch || userSearch) {
             const filterTicket = async () => {
                 try {
-                    const res = await callApi("get", `tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&title=${ticketSearch}&user=${userSearch}`);
+                    const res = await callApi("get", `/tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}`);
                     setData(res);
                 } catch (error: any) {
                     Notifications({ message: "Gagal memfilter tiket.", variantType: "error", persist: false });

@@ -85,18 +85,23 @@ export const GetAllTicketDAO = async (filter: any) => {
 }
 
 export const FilterTicketDAO = async (filterData: any) => {
-    const { startMonth, endMonth, title, user } = filterData;
+    const { startMonth, endMonth, no, user } = filterData;
 
     const whereClause: any = {
         deleted_at: null,
     };
 
-    if(title) {
-        whereClause.ticket_title = { contains: title, mode: "insensitive" }
+    if(no) {
+        whereClause.ticket_no = { contains: no, mode: "insensitive" }
     }
 
     if(user) {
-        whereClause.user = { contains: user, mode: "insensitive" }
+        whereClause.fk_member = {
+            username: {
+                contains: user,
+                mode: "insensitive"
+            },
+        };
     }
 
     if(startMonth || endMonth) {
@@ -109,7 +114,23 @@ export const FilterTicketDAO = async (filterData: any) => {
 
     try {
         return await prisma.tickets.findMany({
-            where: whereClause
+            include: {
+                rating: true,
+                fk_member: {
+                    select: {
+                        username: true
+                    }
+                },
+                fk_department: {
+                    select: {
+                        name: true
+                    }
+                }
+            },
+            where: whereClause,
+            orderBy: {
+                report_date: "desc"
+            }
         });
     } catch (error: any) {
         throw new Error(error.message);
