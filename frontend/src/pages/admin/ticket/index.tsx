@@ -26,6 +26,7 @@ export default function Ticket() {
     const [userId, setUserId] = useState("");
     const [ticketNo, setTicketNo] = useState("");
     const [userRole, setUserRole] = useState("");
+    const [role, setRole] = useState("");
 
     const [isAssign, setIsAssign] = useState(false);
 
@@ -40,12 +41,12 @@ export default function Ticket() {
     const { callApi } = useApi();
     const fetchTicket = useCallback(async () => {
         try {
-            const result = await callApi("get", `/tickets/get-all-ticket?status=${true}`);
+            const result = await callApi("get", `/tickets/get-all-ticket?status=${true}&role=${role}`);
             setData(result);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
-    }, [callApi]);
+    }, [callApi, role]);
 
     const fetchUser = useCallback(async () => {
         if(!username) return;
@@ -96,6 +97,13 @@ export default function Ticket() {
             fetchTicketById();
         }
     }, [ticketId, fetchTicketById]);
+
+    useEffect(() => {
+        const storedRole = localStorage.getItem("role");
+        if(storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
 
     function handleModalDetail(id: number) {
         setTicketId(id);

@@ -128,7 +128,6 @@ export const columns = (
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
-                    
                     />
                 </div>
                 : 

@@ -43,37 +43,43 @@ export const GetTicketById = async (id: number) => {
 }
 
 export const GetAllTicketDAO = async (filter: any) => {
-    const { status } = filter;
+    const { status, role } = filter;
 
-    const whereClause: any = {
-        deleted_at: null
-    }
+    const whereClause: any[] = [
+        { deleted_at: null }
+    ]
 
-    const isAdmin = status === "true" || status === true;
+    const isAdmin = String(status) === "true";
 
     if(!isAdmin) {
-        whereClause.report_date = {
-            gte: new Date(MakeDate().getFullYear(), MakeDate().getMonth(), 1),
-            lte: new Date(MakeDate().getFullYear(), MakeDate().getMonth() + 1, 0)
-        }
+        whereClause.push({
+            report_date: {
+                gte: new Date(MakeDate().getFullYear(), MakeDate().getMonth(), 1),
+                lte: new Date(MakeDate().getFullYear(), MakeDate().getMonth() + 1, 0)
+            }
+        })
+    }
+
+    if(role === "ikb" || role === "IKB") {
+        whereClause.push({
+            fk_category_id: {
+                name: {
+                    contains: role,
+                    mode: "insensitive"
+                }
+            }
+        });
     }
 
     try {
         const data = await prisma.tickets.findMany({
             include: {
                 rating: true,
-                fk_member: {
-                    select: {
-                        username: true
-                    }
-                },
-                fk_department: {
-                    select: {
-                        name: true
-                    }
-                }
+                fk_member: { select: { username: true } },
+                fk_department: { select: { name: true } },
+                fk_category_id: { select: { name: true } }
             },
-            where: whereClause,
+            where: { AND: whereClause },
             orderBy: {
                 report_date: "desc"
             }

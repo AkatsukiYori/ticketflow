@@ -32,7 +32,8 @@ export const LoginServices = async (userData: LoginInput) => {
             message: "Login berhasil!",
             token: token,
             username: user.username,
-            location: user.location
+            location: user.location,
+            role: user.role
         });
     } catch (error: any) {
         throw new Error(error.message);
