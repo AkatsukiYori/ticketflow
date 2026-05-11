@@ -121,8 +121,9 @@ export default function Report() {
                 const isThisMonth = (!filterMonth || ticketDate.getMonth() === Number(filterMonth));
                 const isThisYear = (!filterYear || ticketDate.getFullYear() === Number(filterYear));
                 const isDeleted = ticket.deleted_at === null || ticket.deleted_at === undefined;
+                const isMatchCategory = filterCategory ? ticket.fk_category_id.name === filterCategory : true;
 
-                return isThisMonth && isThisYear && isDeleted;
+                return isThisMonth && isThisYear && isDeleted && isMatchCategory;
             });
 
             setFilteredTicket(myTicket);
@@ -471,8 +472,6 @@ export default function Report() {
             });
         });
 
-        console.log(filteredTicket);
-
         worksheet.eachRow((row, rowNumber) => {
             if(rowNumber > 4) {
                 row.eachCell((cell, cellNumber) => {
@@ -595,9 +594,13 @@ export default function Report() {
                             searchAble={true}
                             value={filterCategory}
                             onChangeSelect={(e) => setFilterCategory(e ? e.value : "")}
-                            options={dataCategory.map((val: any) => (
-                                { label: val.name, value: val.id }
-                            ))}
+                            options={[
+                                { label: "All Category", value: "" },
+                                ...dataCategory.map((val: any) => ({
+                                    label: val.name,
+                                    value: val.name
+                                }))  
+                            ]}
                         />
                         <Buttons label="Filter" func="filter" btnTitle="Filter" onClick={() => setTriggerFilter(prev => prev + 1)} />
                         <Buttons label="Export Excel" func="export-excel" btnTitle="Export Excel" onClick={exportTicket} />
