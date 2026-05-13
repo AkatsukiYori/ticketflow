@@ -13,7 +13,7 @@ type Props = {
     className? :string;
     placeholder?: string;
     style?: React.CSSProperties;
-    value?: string;
+    value?: any;
     onChangeInput?: React.ChangeEventHandler<HTMLInputElement>;
     onChangeTextArea?: React.ChangeEventHandler<HTMLTextAreaElement>;
     onChangeCheckbox?: (checked: boolean) => void;

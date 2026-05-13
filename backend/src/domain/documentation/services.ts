@@ -19,30 +19,18 @@ export const GetAllDocumentationServices = async () => {
     }
 }
 
-export const CreateDocumentationServices = async (data: DocumentationDTO.CreateDocumentationInput, file: Express.Multer.File | undefined) => {
+export const CreateDocumentationServices = async (data: any, attachment: number) => {
     try {
-        const fileData = file ? {
-            filename: file.filename,
-            file_path: file.path,
-            file_size: file.size,
-            file_types: file.mimetype
-        } : null;
-        await DAO.CreateDocumentationDAO(data, fileData);
+        await DAO.CreateDocumentationDAO(data, attachment);
         return ({ message: "Documentation Successful Created." });
     } catch (error: any) {
         throw new Error(error.message);
     }
 }
 
-export const UpdateDocumentationServices = async (id: number, data: DocumentationDTO.UpdateDocumentationInput, file: Express.Multer.File | undefined) => {
+export const UpdateDocumentationServices = async (id: number, data: any, attachment: number) => {
     try {
-        const fileData = file ? {
-            filename: file.filename,
-            file_path: file.path,
-            file_size: file.size,
-            file_types: file.mimetype
-        } : null;
-        await DAO.UpdateDocumentationDAO(data, id, fileData);
+        await DAO.UpdateDocumentationDAO(id, data, attachment);
         return ({ message: "Documentation Successful Updated." });
     } catch (error: any) {
         throw new Error(error.message);

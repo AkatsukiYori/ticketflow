@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import * as DocumentationDTO from "../../dtos/documentation/documentation_dto";
 import prisma from "../../prisma";
+import path from "path";
+import fs from "fs";
 
 export const GetDocumentationByIdDAO = async (id: number) => {
     try {
@@ -17,6 +19,13 @@ export const GetDocumentationByIdDAO = async (id: number) => {
 export const GetAllDocumentationDAO = async () => {
     try {
         const data = await prisma.documentation.findMany({
+            include: {
+                documentation_files: {
+                    select: {
+                        filename: true
+                    }
+                }
+            },
             orderBy: { created_at: "desc" }
         });
         return data;
@@ -25,7 +34,7 @@ export const GetAllDocumentationDAO = async () => {
     }
 }
 
-export const CreateDocumentationDAO = async (data: DocumentationDTO.CreateDocumentationInput, fileData: any) => {
+export const CreateDocumentationDAO = async (data: any, attachment: number) => {
     try {
         const filteredData = Object.fromEntries(
             Object.entries(data).filter(([_, v]) => v !== undefined)
@@ -38,14 +47,13 @@ export const CreateDocumentationDAO = async (data: DocumentationDTO.CreateDocume
                 }
             });
 
-            if(fileData) {
-                await tx.documentation_files.create({
+            if(attachment) {
+                await tx.documentation_files.update({
+                    where: {
+                        id: attachment
+                    },
                     data: {
-                        document_id: document.id,
-                        filename: fileData.filename,
-                        file_path: fileData.file_path,
-                        size: fileData.file_size,
-                        mimetypes: fileData.file_types
+                        document_id: document.id
                     }
                 });
             }
@@ -55,7 +63,7 @@ export const CreateDocumentationDAO = async (data: DocumentationDTO.CreateDocume
     }
 }
 
-export const UpdateDocumentationDAO = async (data: Partial<DocumentationDTO.UpdateDocumentationInput>, id: number, fileData: any) => {
+export const UpdateDocumentationDAO = async (id: number, data: Partial<DocumentationDTO.UpdateDocumentationInput>, fileData: any) => {
     try {
         const filteredData = Object.fromEntries(
             Object.entries(data).filter(([_, v]) => v !== undefined)
@@ -66,18 +74,6 @@ export const UpdateDocumentationDAO = async (data: Partial<DocumentationDTO.Upda
                 where: { id: id },
                 data: filteredData
             });
-
-            if(fileData) {
-                await tx.documentation_files.updateMany({
-                    where: { document_id: id },
-                    data: {
-                        filename: fileData.filename,
-                        file_path: fileData.file_path,
-                        size: fileData.file_size,
-                        mimetypes: fileData.file_types
-                    }
-                });
-            }
         });
     } catch (error: any) {
         throw new Error(error.message);
@@ -87,11 +83,30 @@ export const UpdateDocumentationDAO = async (data: Partial<DocumentationDTO.Upda
 export const DeleteDocumentationDAO = async (id: number) => {
     try {
         await prisma.$transaction(async (tx) => {
-            await tx.documentation_files.deleteMany({
+            const file = await tx.documentation_files.findUnique({
                 where: {
                     document_id: id
                 }
             });
+
+            if(file) {
+                const filePath = path.join(
+                    process.cwd(),
+                    "uploads",
+                    "documentation",
+                    file.filename
+                );
+
+                if(fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+
+                await tx.documentation_files.delete({
+                    where: {
+                        document_id: id
+                    }
+                });
+            }
 
             await tx.documentation.delete({
                 where: { id: id }

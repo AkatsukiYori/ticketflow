@@ -23,46 +23,49 @@ export const GetAllDocumentationController = async (req: Request, res: Response)
 }
 
 export const CreateDocumentationController = async (req: any, res: Response) => {
-    const data = req.body as DocumentationDTO.CreateDocumentationInput;
-    const file = req.file;
+    const { attachment, ...datas } = req.body as DocumentationDTO.CreateDocumentationInput;
+    const convertAttachment = Number(attachment)
+
     try {
-        const result = await Services.CreateDocumentationServices(data, file);
+        const result = await Services.CreateDocumentationServices(datas, convertAttachment);
         if(req.io) {
             req.io.emit("documentation-change");
         }
 
         res.status(201).json(result);
     } catch (error: any) {
-        if(file) {
-            try {
-                await unlinkFile(`uploads/documentation/${file.filename}`);
-            } catch (unlinkError: any) {
-                res.status(500).json({ message: "Something went wrong while uploading." });
-            }
-        }
+        console.log(error);
+        // if(file) {
+        //     try {
+        //         await unlinkFile(`uploads/documentation/${file.filename}`);
+        //     } catch (unlinkError: any) {
+        //         res.status(500).json({ message: "Something went wrong while uploading." });
+        //     }
+        // }
         res.status(500).json({ message: "Something went wrong." });
     }
 }
 
 export const UpdateDocumentationController = async (req: any, res: Response) => {
     const id = Number(req.params.id);
-    const data = req.body as DocumentationDTO.UpdateDocumentationInput;
-    const file = req.file;
+    const { attachment, ...datas } = req.body as DocumentationDTO.UpdateDocumentationInput;
+
     try {
-        const result = await Services.UpdateDocumentationServices(id, data, file);
+        const result = await Services.UpdateDocumentationServices(id, datas, Number(attachment));
         if(req.io) {
             req.io.emit("documentation-change");
         }
 
         res.status(201).json(result);
     } catch (error: any) {
-        if(file) {
-            try {
-                await unlinkFile(`uploads/documentation/${file.filename}`);
-            } catch (unlinkError: any) {
-                res.status(500).json({ message: "Something went wrong while uploading." })
-            }
-        }
+        console.log(error);
+        // if(file) {
+        //     try {
+        //         await unlinkFile(`uploads/documentation/${file.filename}`);
+        //     } catch (unlinkError: any) {
+        //         res.status(500).json({ message: "Something went wrong while uploading." })
+        //     }
+        // }
         res.status(500).json({ message: "Something went wrong." });
     }
 }

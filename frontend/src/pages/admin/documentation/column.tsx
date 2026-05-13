@@ -1,12 +1,17 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Buttons } from "../../../components/buttons/Button";
 import Styles from "../../../components/datatables/datatable.module.css";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 type Documentation = {
     id: number;
     category_id: number;
     title: string;
     description: string;
+    documentation_files: {
+        filename: string
+    };
 }
 
 const columnHelper = createColumnHelper<Documentation>();
@@ -25,6 +30,30 @@ export const columns = (
     }),
     columnHelper.accessor("description", {
         header: "Description"
+    }),
+    columnHelper.accessor((row) => (row.documentation_files), {
+        id: "documentation_files",
+        header: "Attachment",
+        cell: (info) => {
+            const file = info.getValue();
+            
+            if(!file) {
+                return <span>No File</span>
+            }
+
+            return (
+                <>
+                    <Zoom>
+                        <img
+                            src={`http://localhost:3000/uploads/documentation/${file.filename}`}
+                            alt="Attachment"
+                            width="auto"
+                            height={100}
+                        />
+                    </Zoom>
+                </>
+            );
+        }
     }),
     columnHelper.display({
         id: "actions",

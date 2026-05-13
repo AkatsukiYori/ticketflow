@@ -60,7 +60,7 @@ model Tickets {
   sub_modul       String?
   reopened_at     DateTime?
   no_wa           String?
-  images          Images[]
+  images          Images?
   log             Log[]
   fk_users_id     Users?            @relation(fields: [assign_to], references: [id])
   fk_category_id  Categories        @relation(fields: [category_id], references: [id])
@@ -86,15 +86,15 @@ model TicketFeedback {
 }
 
 model Images {
-  id           Int      @id @default(autoincrement())
-  ticket_id    Int
+  id           Int        @id @default(autoincrement())
+  ticket_id    Int?       @unique
   filename     String
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
   file_path    String
   mimetypes    String
   size         BigInt
-  fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
+  fk_ticket_id Tickets?   @relation(fields: [ticket_id], references: [id])
 
   @@map("images")
 }
@@ -123,21 +123,21 @@ model Documentation {
   created_at          DateTime              @default(now())
   updated_at          DateTime              @updatedAt
   fk_category_id      Categories            @relation(fields: [category_id], references: [id])
-  documentation_files Documentation_files[]
+  documentation_files Documentation_files?
 
   @@map("documentation")
 }
 
 model Documentation_files {
-  id             Int           @id @default(autoincrement())
-  document_id    Int
+  id             Int            @id @default(autoincrement())
+  document_id    Int?           @unique
   filename       String
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
   file_path      String
   mimetypes      String
   size           BigInt
-  fk_document_id Documentation @relation(fields: [document_id], references: [id])
+  fk_document_id Documentation? @relation(fields: [document_id], references: [id])
 
   @@map("documentation_files")
 }

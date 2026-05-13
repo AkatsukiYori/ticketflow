@@ -3,6 +3,7 @@ import Express, { Request, Response } from "express";
 import router from "./routes/main";
 import cors from "cors";
 import http from "http";
+import path from "path";
 import { Server } from "socket.io";
 
 const app = Express();
@@ -29,6 +30,7 @@ app.use(cors({
 }));
 app.use(Express.json());
 app.use("/api", router);
+app.use("/uploads", Express.static(path.join(process.cwd(), "uploads")));
 
 io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
