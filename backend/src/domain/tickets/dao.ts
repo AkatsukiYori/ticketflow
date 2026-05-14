@@ -11,22 +11,10 @@ export const GetTicketById = async (id: number) => {
     try {
         const data = await prisma.tickets.findFirst({
             include: {
-                fk_member: {
-                    select: {
-                        username: true
-                    }
-                },
-                fk_department: {
-                    select: {
-                        name: true
-                    }
-                },
-                fk_category_id: {
-                    select: {
-                        name: true,
-                        id: true
-                    }
-                }
+                fk_member: { select: { username: true } },
+                fk_department: { select: { name: true } },
+                fk_category_id: { select: { name: true, id: true } },
+                images: { select: { filename: true } }
             },
             where: {
                 id: id,
@@ -77,7 +65,7 @@ export const GetAllTicketDAO = async (filter: any) => {
                 rating: true,
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
-                fk_category_id: { select: { name: true } }
+                fk_category_id: { select: { name: true } },
             },
             where: { AND: whereClause },
             orderBy: {
@@ -182,7 +170,7 @@ export const GetAllTicketLogs = async () => {
     }
 }
 
-export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileData: any) => {
+export const CreateTicketDAO = async (data: any, attachment: number) => {
     try {
         const filteredData = Object.fromEntries(
             Object.entries(data).filter(([_, v]) => v !== undefined)
@@ -226,18 +214,11 @@ export const CreateTicketDAO = async (data: TicketDTO.CreateTicketInput, fileDat
                     sub_modul: isIKB ? (data.sub_modul ? data.sub_modul : null) : null
                 },
             });
-    
-            if(fileData) {
-                await tx.images.create({
-                    data: {
-                        ticket_id: ticket.id,
-                        filename: fileData.filename,
-                        file_path: fileData.file_path,
-                        size: fileData.file_size,
-                        mimetypes: fileData.file_types
-                    }
-                });
-            }
+
+            await tx.images.update({
+                where: { id: attachment },
+                data: { ticket_id: ticket.id }
+            });
 
             const logs = await tx.log.create({
                 data: {

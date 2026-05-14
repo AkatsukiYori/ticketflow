@@ -38,16 +38,9 @@ export const GetAllTicketLogs = async () => {
     }
 }
 
-export const CreateTicketServices = async (data: TicketBodyDTO.CreateTicketInput, file: Express.Multer.File | undefined) => {
+export const CreateTicketServices = async (data: any, attachment: number) => {
     try {
-        const fileData = file ? {
-            filename: file.filename,
-            file_path: file.path,
-            file_size: file.size,
-            file_types: file.mimetype
-        } : null;
-
-        const res = await TicketDAO.CreateTicketDAO(data, fileData);
+        const res = await TicketDAO.CreateTicketDAO(data, attachment);
         return ({ message: "Ticket berhasil dibuat : ", ticketNo: res.ticketNo, logStat: res.logStatus });
     } catch (error: any) {
         throw new Error(error.message);

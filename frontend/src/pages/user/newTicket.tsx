@@ -6,12 +6,17 @@ import { useApi } from "../../hooks/useApi";
 import { socket } from "../../api/socket";
 import { SelectOptions } from "../../components/inputs/Input";
 
+import { FileUpload } from "../../components/FileUpload";
+
 export default function NewTicket() {
+    const { callApi } = useApi();
+
     const navigate = useNavigate();
     const [category, setCategory] = useState<any[]>([]);
     const [department, setDepartment] = useState<any[]>([]);
     const [members, setMembers] = useState<any[]>([]);
     const [fieldError, setFieldError] = useState<{[key: string]: string}>({});
+    const [attachment, setAttachment] = useState("");
 
     const back = () => {
         navigate("/");
@@ -20,8 +25,6 @@ export default function NewTicket() {
     const clearError = (field: string) => {
         setFieldError(prev => ({ ...prev, [field]: "" }));
     };
-
-    const { callApi } = useApi();
 
     const fetchData = useCallback(async () => {
         try {
@@ -74,7 +77,8 @@ export default function NewTicket() {
         no_wa: "",
         category_id: "",
         deparment_id: "",
-        member_id: ""
+        member_id: "",
+        attachment: ""
     };
     const [form, setForm] = useState(initialForm);
     const selectedCategoryName = category.find(c => c.id == form.category_id)?.name.toLowerCase();
@@ -101,7 +105,8 @@ export default function NewTicket() {
                 member_id: parseInt(form.member_id),
                 category_id: parseInt(form.category_id),
                 modul: isIKB ? form.modul : undefined,
-                sub_modul: isIKB ? form.sub_modul : undefined
+                sub_modul: isIKB ? form.sub_modul : undefined,
+                attachment: attachment
             }
 
             const res = await callApi("post", `/tickets/new-ticket`, payload);
@@ -359,7 +364,15 @@ export default function NewTicket() {
                     <div className={Styles['content-sub-body']}>
                         <div className={Styles['form']}>
                             <label htmlFor="">Lampiran (Opsional)</label>
-                            <input type="file" name="lampiran" id="lampiran" />
+                            <FileUpload
+                                key={attachment}
+                                onUploadSuccess={(id) => setAttachment(id)}
+                                onRevert={() => setAttachment("")}
+                                module="tickets"
+                                mode="create"
+                                document=""
+                                fileName=""
+                            />
                         </div>
                     </div>
                 </section>

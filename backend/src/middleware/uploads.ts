@@ -2,15 +2,20 @@ import path from "path";
 import fs from "fs";
 import multer from "multer";
 
-export const createUploader = (folder: string) => {
-    const uploadPath = path.join("uploads", folder);
-    
-    if(!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    
+export const createUploader = () => {
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
+            const moduleName = req.body.module || "default";
+            const uploadPath = path.join(
+                process.cwd(),
+                "uploads",
+                moduleName
+            );
+
+            if(!fs.existsSync(uploadPath)) {
+                fs.mkdirSync(uploadPath, { recursive: true });
+            }
+
             cb(null, uploadPath);
         },
         filename: (req, file, cb) => {

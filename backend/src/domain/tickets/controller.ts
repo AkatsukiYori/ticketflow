@@ -45,10 +45,9 @@ export const GetAllTicketLogs = async (req: Request, res: Response) => {
 }
 
 export const CreateTicketController = async (req: any, res: Response) => {
-    const data = req.body as TicketDTO.CreateTicketInput;
-    const file = req.file;
+    const { attachment, ...datas } = req.body as TicketDTO.CreateTicketInput;
     try {
-        const { message, ticketNo, logStat } = await TicketServices.CreateTicketServices(data, file);
+        const { message, ticketNo, logStat } = await TicketServices.CreateTicketServices(datas, Number(attachment));
 
         if(req.io) {
             req.io.emit("ticket-change");
@@ -60,13 +59,14 @@ export const CreateTicketController = async (req: any, res: Response) => {
 
         res.status(201).json({ message, ticketNo });
     } catch (error: any) {
-        if(file) {
-            try {
-                await unlinkFile(`uploads/tickets/${file.filename}`);
-            } catch (unlinkError: any) {
-                res.status(500).json({ message: "Gagal menghapus file : " + unlinkError.message });
-            }
-        }
+        console.log(error);
+        // if(file) {
+        //     try {
+        //         await unlinkFile(`uploads/tickets/${file.filename}`);
+        //     } catch (unlinkError: any) {
+        //         res.status(500).json({ message: "Gagal menghapus file : " + unlinkError.message });
+        //     }
+        // }
 
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
     }

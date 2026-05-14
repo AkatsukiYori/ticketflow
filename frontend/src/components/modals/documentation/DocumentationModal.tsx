@@ -6,7 +6,6 @@ import { Notifications } from "../../notifications/notification";
 import { useApi } from "../../../hooks/useApi";
 import { socket } from "../../../api/socket";
 import { FileUpload } from "../../FileUpload";
-import { X } from "lucide-react";
 
 type Props = {
     open: boolean;

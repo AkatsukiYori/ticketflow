@@ -26,7 +26,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
         if(fileName) {
             setFile([
                 {
-                    source: `http://localhost:3000/uploads/documentation/${fileName}`,
+                    source: `http://localhost:3000/uploads/${module}/${fileName}`,
                     options: {
                         type: "local"
                     }
@@ -68,7 +68,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
                         },
                         cancelToken: source.token,
                     }).then((res) => {
-                        onUploadSuccess(res.data.filename);
+                        onUploadSuccess(res.data.id);
                         load(res.data.id);
                     }).catch((err) => {
                         error("Upload failed.");

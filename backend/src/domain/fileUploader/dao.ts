@@ -18,21 +18,21 @@ export const FileUploaderDAO = async (files: any, module: string, mode: string, 
 
             const moduleMap: any = {
                 documentation: tx.documentation_files,
-                ticket: tx.images
+                tickets: tx.images
             };
 
             const moduleName = moduleMap[module as keyof typeof moduleMap];
 
             if(moduleName) {
                 if(mode === "create") {
-                    return await tx.documentation_files.create({
+                    return await moduleName.create({
                         data: data
                     });
                 }
 
                 if(mode === "edit" || mode === "update") {
                     if(!document) return null;
-                    const checkFiles = await tx.documentation_files.findFirst({
+                    const checkFiles = await moduleName.findFirst({
                         where: {
                             document_id: document
                         }
@@ -48,7 +48,7 @@ export const FileUploaderDAO = async (files: any, module: string, mode: string, 
                             ...data,
                             document_id: document
                         }
-                        return await tx.documentation_files.create({
+                        return await moduleName.create({
                             data: newData
                         });
                     }

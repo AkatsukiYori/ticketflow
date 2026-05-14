@@ -5,6 +5,9 @@ import { useApi } from "../../../hooks/useApi";
 import { Notifications } from "../../notifications/notification";
 import ReassignModal from "../reassign/ReassignTicket";
 
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+
 type Props = {
     open: boolean;
     data: any;
@@ -98,8 +101,51 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </tr>
                                 <tr>
                                     <td>Priority</td>
-                                    <td>{data.priority}</td>
+                                    <td>{data.priority?.toUpperCase() || "-"}</td>
                                 </tr>
+                                <tr>
+                                    <td>Estimate</td>
+                                    <td>{new Date(data.estimate).toLocaleDateString("en-US", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        timeZone: "Asia/Jakarta"
+                                    }).replaceAll(/\./g, ":") || "-"}</td>
+                                </tr>
+                                {data.closed_at && (
+                                    <tr>
+                                        <td>Closed At</td>
+                                        <td>{new Date(data.closed_at).toLocaleDateString("en-US", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            timeZone: "Asia/Jakarta"
+                                        }).replaceAll(/\./g, ":")}</td>
+                                    </tr>
+                                )}
+                                {data.status === "reject" && (
+                                    <tr>
+                                        <td>Reject Reason</td>
+                                        <td>{data.status_reason}</td>
+                                    </tr>
+                                )}
+                                {data.repoened_at && (
+                                    <tr>
+                                        <td>Reopened At</td>
+                                        <td>{new Date(data.reopened_at).toLocaleDateString("en-US", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            timeZone: "Asia/Jakarta"
+                                        }).replaceAll(/\./g, ":")}</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -158,10 +204,26 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </tr>
                                 <tr>
                                     <td>Note</td>
-                                    <td>{data.note ? data.note : "-"}</td>
+                                    <td>{data.note || "-"}</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div className={Styles['modal-body-content']}>
+                        <h4>Attachment</h4>
+                        {data?.images?.filename ?
+                            <>
+                                <Zoom>
+                                    <img
+                                        src={`http://localhost:3000/uploads/tickets/${data?.images?.filename}`}
+                                        alt="Attachment"
+                                        width="100%"
+                                        height={400}
+                                    />
+                                </Zoom>
+                            </>
+                        : "No Attachment"}
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
