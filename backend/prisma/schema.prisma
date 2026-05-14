@@ -67,7 +67,7 @@ model Tickets {
   fk_department   Department?       @relation(fields: [department_id], references: [id])
   fk_member       Members?          @relation(fields: [member_id], references: [id])
   ticket_feedback TicketFeedback[]
-  rating          Rating[]
+  rating          Rating?
 
   @@map("tickets")
 }
@@ -144,7 +144,7 @@ model Documentation_files {
 
 model Rating {
   id            Int       @id @default(autoincrement())
-  ticket_id     Int
+  ticket_id     Int       @unique
   score         Int
   note          String?
   created_at    DateTime  @default(now())

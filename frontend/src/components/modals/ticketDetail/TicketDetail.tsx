@@ -7,6 +7,7 @@ import ReassignModal from "../reassign/ReassignTicket";
 
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { Star } from "lucide-react";
 
 type Props = {
     open: boolean;
@@ -224,6 +225,19 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </Zoom>
                             </>
                         : "No Attachment"}
+                    </div>
+
+                    <div className={Styles['modal-body-content']}>
+                        <h4>Rating</h4>
+                        {data?.rating?.score ? (
+                            <>
+                                {[1,2,3,4,5].map((star) => (
+                                    <span key={star}>
+                                        {star <= data?.rating?.score ? <Star color="#FFD166" fill="#FFD166" /> : <Star color="#FFD166" />}
+                                    </span>
+                                ))}
+                            </>
+                        ) : "No Rating"}
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>

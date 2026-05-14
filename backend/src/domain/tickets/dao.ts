@@ -14,7 +14,8 @@ export const GetTicketById = async (id: number) => {
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
                 fk_category_id: { select: { name: true, id: true } },
-                images: { select: { filename: true } }
+                images: { select: { filename: true } },
+                rating: { select: { score: true } }
             },
             where: {
                 id: id,
