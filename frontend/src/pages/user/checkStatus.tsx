@@ -40,7 +40,8 @@ export default function CheckTicketStatus() {
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
 
-    const selectedTicket = data.find(t => t.ticket_no === ticketNo);    
+	console.log(data);
+    const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
     const fetchTicket = useCallback(async () => {
         try {

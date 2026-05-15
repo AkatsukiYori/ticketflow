@@ -217,7 +217,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <>
                                 <Zoom>
                                     <img
-                                        src={`http://localhost:3000/uploads/tickets/${data?.images?.filename}`}
+                                        src={`/uploads/tickets/${data?.images?.filename}`}
                                         alt="Attachment"
                                         width="100%"
                                         height={400}

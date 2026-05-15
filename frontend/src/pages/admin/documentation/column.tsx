@@ -45,7 +45,7 @@ export const columns = (
                 <>
                     <Zoom>
                         <img
-                            src={`http://localhost:3000/uploads/documentation/${file.filename}`}
+                            src={`/uploads/documentation/${file.filename}`}
                             alt="Attachment"
                             width="auto"
                             height={100}

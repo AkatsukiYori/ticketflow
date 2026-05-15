@@ -26,7 +26,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
         if(fileName) {
             setFile([
                 {
-                    source: `http://localhost:3000/uploads/${module}/${fileName}`,
+                    source: `/uploads/${module}/${fileName}`,
                     options: {
                         type: "local"
                     }
@@ -62,7 +62,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
                     formData.append(fieldName, file, file.name);
                     
                     const source = axios.CancelToken.source();
-                    axios.post("http://localhost:3000/api/upload/file/", formData, {
+                    axios.post("/api/upload/file/", formData, {
                         onUploadProgress: (e) => {
                             if (e.total) progress(true, e.loaded, e.total);
                         },
@@ -77,7 +77,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
                     return { abort: () => { source.cancel(), abort(); } };
                 },
                 revert: async (uniqueFileId: any, load: any, error: any) => {
-                    await axios.delete(`http://localhost:3000/api/upload/revert`, { data: { id: uniqueFileId, document: document, module: module } }).then(() => {
+                    await axios.delete(`/api/upload/revert`, { data: { id: uniqueFileId, document: document, module: module } }).then(() => {
                         onRevert();
                         load();
                     }).catch(() => error("Failed to remove."));

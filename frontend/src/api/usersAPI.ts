@@ -1,4 +1,4 @@
-const API = "http://localhost:3000/api/users";
+const API = "/api/users";
 export const getUsers = async () => {
     try {
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:3000/api/tickets";
+const API = "/api/tickets";
 
 export const getTicketById = (id: number) => {
     return axios.get(`${API}/get-ticket/${id}`);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:3000/api/categories";
+const API = "/api/categories";
 
 export const getCategories = () => {
     return axios.get(`${API}/get-all-categories`);
