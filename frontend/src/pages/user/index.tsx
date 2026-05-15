@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Banner from "../../assets/mainImage.png";
+import Banner from "../../assets/mainImage.webp";
 import { Buttons } from "../../components/buttons/Button";
 import Styles from "../../css/layouts/user/home.module.css";
 

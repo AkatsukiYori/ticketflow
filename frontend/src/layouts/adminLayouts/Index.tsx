@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Navigate, Outlet, replace, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Styles from "../../css/layouts/admin/layouts.module.css";
 import { useCallback, useEffect, useState } from "react";
 import { Notifications } from "../../components/notifications/notification";

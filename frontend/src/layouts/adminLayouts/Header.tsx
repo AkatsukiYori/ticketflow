@@ -23,7 +23,7 @@ export default function Header({ toggleSidebar } : Props) {
     return (
         <header className={Styles['header']}>
             <section className={Styles['logo']}>
-                <img src={logo} alt="Logo" width="200dvw" />
+                <img src={logo} alt="Logo" width="200dvw" loading="lazy" />
                 <button type="button" className={Styles['btn-sidebar']} onClick={toggleSidebar}><List /></button>
             </section>
             <section className={Styles['section-profile']}>

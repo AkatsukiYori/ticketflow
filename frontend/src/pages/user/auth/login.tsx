@@ -1,5 +1,5 @@
 import StylesAuth from "./auth.module.css";
-import Banner from "../../../assets/mainImage.png";
+import Banner from "../../../assets/mainImage.webp";
 import { InputText } from "../../../components/inputs/Input";
 import Logo from "../../../assets/logo.png";
 import React, { useState } from "react";
