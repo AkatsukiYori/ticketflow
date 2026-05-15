@@ -9,7 +9,7 @@ import { socket } from "../../api/socket";
 import ResponseModal from "../../components/modals/response/ResponseModal";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 import ReopenModal from "../../components/modals/reopen/ReopenModal";
-import LogsModal from "../../components/modals/logs/ViewLogs";
+import LogsModal from "../../components/modals/log/ViewLogs";
 import RatingModal from "../../components/modals/rating/RatingModal";
 
 export default function CheckTicketStatus() {

@@ -9,10 +9,10 @@ import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTa
 import { columns } from "./column.tsx";
 import DataTables from "../../../components/datatables/DataTable.tsx";
 
-import LogsModal from "../../../components/modals/logs/ViewLogs.tsx";
+import LogsModal from "../../../components/modals/log/ViewLogs.tsx";
 import { socket } from "../../../api/socket.ts";
 
-export default function Category() {
+export default function Log() {
     const { callApi } = useApi();
 
     const [open, setOpen] = useState(false);
