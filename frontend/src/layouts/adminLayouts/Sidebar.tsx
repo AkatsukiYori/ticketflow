@@ -30,7 +30,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, user } : Props) {
                             <SidebarItem icon={Blocks} label="Category" to="/admin/category" onClick={closeSidebar} />
                             <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
                             <SidebarItem icon={ChartArea} label="Report & Statistic" to="/admin/report" onClick={closeSidebar} />
-                            <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
+                            <SidebarItem icon={Logs} label="Logs" to="/admin/log" onClick={closeSidebar} />
                         </>
                     ) : (
                         <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />

@@ -3,7 +3,7 @@ import Dashboard from "../pages/admin/dashboard";
 import Ticket from "../pages/admin/ticket";
 import Category from "../pages/admin/category";
 import Documentation from "../pages/admin/documentation";
-import Logs from "../pages/admin/logs";
+import Logs from "../pages/admin/log";
 import Report from "../pages/admin/reports";
 import AdminLayout from "../layouts/adminLayouts/Index";
 import ProtectedRouter from "./ProtectedRouter";
