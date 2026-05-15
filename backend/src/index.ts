@@ -9,10 +9,7 @@ import { Server } from "socket.io";
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://ticketflow.com",
-    "https://ticketflow.com",
-    "http://www.ticketflow.com",
-    "https://www.ticketflow.com",
+    "http://203.194.113.232:5173"
 ];
 
 const app = Express();
