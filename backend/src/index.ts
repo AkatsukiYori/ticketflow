@@ -6,13 +6,21 @@ import http from "http";
 import path from "path";
 import { Server } from "socket.io";
 
-const clientUrl = process.env.CLIENT_URL;
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://ticketflow.com",
+    "https://ticketflow.com",
+    "http://www.ticketflow.com",
+    "https://www.ticketflow.com",
+];
+
 const app = Express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: clientUrl,
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
         credentials: true,
         allowedHeaders: "Content-Type, Authorization"
@@ -25,7 +33,7 @@ app.use((req: any, _res, next) => {
 })
 
 app.use(cors({
-    origin: clientUrl,
+    origin: allowedOrigins,
     credentials: true,
     allowedHeaders: "Content-Type, Authorization"
 }));
