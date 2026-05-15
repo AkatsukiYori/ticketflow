@@ -6,12 +6,13 @@ import http from "http";
 import path from "path";
 import { Server } from "socket.io";
 
+const clientUrl = process.env.CLIENT_URL;
 const app = Express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: clientUrl,
         methods: ["GET", "POST"],
         credentials: true,
         allowedHeaders: "Content-Type, Authorization"
@@ -24,7 +25,7 @@ app.use((req: any, _res, next) => {
 })
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: clientUrl,
     credentials: true,
     allowedHeaders: "Content-Type, Authorization"
 }));
@@ -37,5 +38,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3000, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:3000`);
+    console.log(`Server running on port 3000`);
 });
