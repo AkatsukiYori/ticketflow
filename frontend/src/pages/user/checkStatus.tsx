@@ -133,7 +133,8 @@ export default function CheckTicketStatus() {
             const filterTicket = async () => {
                 try {
                     const res = await callApi("get", `/tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}`);
-                    setData(res);
+                    //setData(res);
+console.log(res);
                 } catch (error: any) {
                     Notifications({ message: "Gagal memfilter tiket.", variantType: "error", persist: false });
                 }
