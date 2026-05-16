@@ -40,13 +40,14 @@ export default function CheckTicketStatus() {
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
 
-	console.log(data);
     const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
     const fetchTicket = useCallback(async () => {
         try {
             const res = await callApi("get", `tickets/get-all-ticket?status=${false}`);
-            setData(res);
+
+            const safeData = Array.isArray(res) ? res : res?.data || [];
+            setData(safeData);
         } catch (error: any) {
             Notifications({ message: "Gagal mengambil data.", variantType: "error", persist: false });
         }
@@ -141,14 +142,12 @@ export default function CheckTicketStatus() {
             filterTicket();
         } else {
             fetchTicket();
-                socket.on("ticket-change", () => {
-                    fetchTicket();
-                });
+            socket.on("ticket-change", fetchTicket);
 
-                return () => {
-                    socket.off("ticket-change");
-                }
+            return () => {
+                socket.off("ticket-change");
             }
+        }
     }, [startMonth, endMonth, ticketSearch, userSearch, fetchTicket, callApi]);
 
     return (
