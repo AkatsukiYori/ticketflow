@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "/api/login";
+const API = import.meta.env.VITE_API_URL;
 export const AdminLogin = async (username: string, password: string) => {
     try {
         return await axios.post(`${API}`, {username, password});

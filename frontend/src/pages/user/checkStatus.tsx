@@ -14,6 +14,7 @@ import RatingModal from "../../components/modals/rating/RatingModal";
 
 export default function CheckTicketStatus() {
     const { callApi } = useApi();
+    
     const date = new Date();
     const getToday = () => {
         const year = date.getFullYear();
@@ -39,8 +40,6 @@ export default function CheckTicketStatus() {
     const [startMonth, setStartMonth] = useState(getFirstDayOfMonth());
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
-
-    const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
     const fetchTicket = useCallback(async () => {
         try {
@@ -149,6 +148,8 @@ export default function CheckTicketStatus() {
             }
         }
     }, [startMonth, endMonth, ticketSearch, userSearch, fetchTicket, callApi]);
+
+    const selectedTicket = data.find(t => t.ticket_no === ticketNo);
 
     return (
         <main className={Styles['main-content-status']}>
