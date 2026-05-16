@@ -14,7 +14,7 @@ import RatingModal from "../../components/modals/rating/RatingModal";
 
 export default function CheckTicketStatus() {
     const { callApi } = useApi();
-    
+
     const date = new Date();
     const getToday = () => {
         const year = date.getFullYear();

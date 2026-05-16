@@ -379,8 +379,8 @@ export default function Report() {
             "Deleted At",
         ];
 
-        worksheet.eachRow((row, rowNumber) => {
-            row.eachCell((cell, celNumber) => {
+        worksheet.eachRow((row, _rowNumber) => {
+            row.eachCell((cell, _celNumber) => {
                 cell.alignment = { wrapText: true, vertical: "middle" }
             })
         });
@@ -474,7 +474,7 @@ export default function Report() {
 
         worksheet.eachRow((row, rowNumber) => {
             if(rowNumber > 4) {
-                row.eachCell((cell, cellNumber) => {
+                row.eachCell((cell, _cellNumber) => {
                     cell.border = {
                         top: { style: "thin" },
                         left: { style: "thin" },
@@ -684,7 +684,7 @@ export default function Report() {
                                     <Tooltip cursor={{ fill: "#f8fafc" }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
 
                                     <Bar dataKey="total" radius={[ 4, 4, 0, 0 ]} barSize={30}>
-                                        {deptChartData.map((entry, index) => (
+                                        {deptChartData.map((_entry, index) => (
                                             <Cell key={`cell-${index}`} fill={colors[index % colors.length]}></Cell>
                                         ))}
                                     </Bar>

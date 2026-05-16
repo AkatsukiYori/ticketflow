@@ -54,7 +54,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
             acceptFileTypes={['image/png', 'image/jpg', 'image/jpeg']}
             labelFileTypeNotAllowed="File type not supported."
             server={{
-                process: (fieldName: string, file: any, metadata: any, load: any, error: any, progress: any, abort: any) => {
+                process: (fieldName: string, file: any, _metadata: any, load: any, error: any, progress: any, abort: any) => {
                     const formData = new FormData();
                     formData.append("module", module || "");
                     formData.append("mode", mode || "");
@@ -70,7 +70,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
                     }).then((res) => {
                         onUploadSuccess(res.data.id);
                         load(res.data.id);
-                    }).catch((err) => {
+                    }).catch((_err) => {
                         error("Upload failed.");
                     });
 

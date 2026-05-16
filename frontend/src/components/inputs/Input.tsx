@@ -59,7 +59,7 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
             ...provided,
             margin: '0px',
         }),
-        indicatorSeparator: (provided: any) => ({
+        indicatorSeparator: (_provided: any) => ({
             display: 'none',
         }),
         indicatorsContainer: (provided: any) => ({
@@ -83,7 +83,7 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
     );
 }
 
-export function TextArea({ name, id, placeholder, style, value, className, onChangeTextArea }: Props) {
+export function TextArea({ name, id, placeholder, style, value, onChangeTextArea }: Props) {
     return (
         <textarea name={name} id={id} placeholder={placeholder} value={value} onChange={onChangeTextArea} style={style} className={Styles['textarea-input']}></textarea>
     );
