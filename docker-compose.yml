@@ -38,22 +38,24 @@ services:
       - ticket-network
 
   react_db:
-    image: postgres:16
+    image: mysql:8
     container_name: ticketflow_react_db
     restart: always
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_USER: akatsukiyori
-      POSTGRES_PASSWORD: "yori!@#"
-      POSTGRES_DB: ticketflow
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ticketflow
+      MYSQL_USER: adminTicketFlow
+      MYSQL_PASSWORD: "flow!@#"
+
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     networks:
       - ticket-network
 
 volumes:
-  pg_data:
+  mysql_data:
 
 networks:
   ticket-network:

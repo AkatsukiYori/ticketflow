@@ -45,10 +45,11 @@ export const columns = (
                 <>
                     <Zoom>
                         <img
-                            src={`/uploads/documentation/${file.filename}`}
+                            src={`${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/documentation/${file.filename}`}
                             alt="Attachment"
                             width="auto"
                             height={100}
+                            style={{ objectFit: "contain" }}
                         />
                     </Zoom>
                 </>

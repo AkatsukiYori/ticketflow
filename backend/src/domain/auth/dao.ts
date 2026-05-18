@@ -7,7 +7,6 @@ export const LoginDAO = async (userData: LoginInput) => {
             where: {
                 username: {
                     equals: userData.username,
-                    mode: "insensitive"
                 }
             }
         });

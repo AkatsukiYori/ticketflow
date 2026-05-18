@@ -16,6 +16,7 @@ type Props = {
         description: string;
         category_id: string;
         documentation_files: {
+            id: string;
             filename: string;
         };
     };
@@ -31,9 +32,12 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
-    const [attachment, setAttachment] = useState("");
     const [dataCategory, setDataCategory] = useState<any[]>([]);
     const [error, setError] = useState<{ [key: string]: string }>({});
+    const [attachment, setAttachment] = useState<{
+        id: string,
+        filename: string
+    } | null>(null);
 
     const clearError = (field: string) => {
         setError(prev => ({ ...prev, [field]: "" }));
@@ -57,7 +61,7 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
         setTitle("");
         setDescription("");
         setCategory("");
-        setAttachment("");
+        setAttachment(null);
         setError({});
         onClose();
     }
@@ -81,12 +85,15 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
                 setTitle(data.title);
                 setDescription(data.description);
                 setCategory(data.category_id);
-                setAttachment(data?.documentation_files?.filename || "");
+                setAttachment({
+                    id: data?.documentation_files?.id,
+                    filename: data?.documentation_files?.filename || ""
+                });
             } else {
                 setTitle("");
                 setDescription("");
                 setCategory("");
-                setAttachment("");
+                setAttachment(null);
             }
         }
 
@@ -108,7 +115,7 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
             setTitle("");
             setDescription("");
             setCategory("");
-            setAttachment("");
+            setAttachment(null);
         } else {
             onUpdate({
                 id: data?.id,
@@ -179,8 +186,8 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
                     )}
                     <label htmlFor="">Attachment (Optional)</label>
                     <FileUpload
-                        onUploadSuccess={(id) => setAttachment(id)}
-                        onRevert={() => setAttachment("")}
+                        onUploadSuccess={(file) => setAttachment(file)}
+                        onRevert={() => setAttachment(null)}
                         module="documentation"
                         mode={mode}
                         document={data?.id || ""}

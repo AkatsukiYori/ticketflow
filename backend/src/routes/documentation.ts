@@ -4,7 +4,6 @@ import * as Controller from "../domain/documentation/controller";
 import { createUploader } from "../middleware/uploads";
 
 const routerDocumentation: Router = Router();
-const upload = createUploader("documentation");
 
 routerDocumentation.get("/get-documentation/:id", Middleware.GetDocumentationById, Controller.GetDocumentationByIDController);
 routerDocumentation.get("/get-all-documentation", Controller.GetAllDocumentationController);

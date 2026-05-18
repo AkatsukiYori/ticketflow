@@ -16,7 +16,10 @@ export default function NewTicket() {
     const [department, setDepartment] = useState<any[]>([]);
     const [members, setMembers] = useState<any[]>([]);
     const [fieldError, setFieldError] = useState<{[key: string]: string}>({});
-    const [attachment, setAttachment] = useState("");
+    const [attachment, setAttachment] = useState<{
+        id: string,
+        filename: string
+    } | null>(null);
 
     const back = () => {
         navigate("/");
@@ -106,7 +109,7 @@ export default function NewTicket() {
                 category_id: parseInt(form.category_id),
                 modul: isIKB ? form.modul : undefined,
                 sub_modul: isIKB ? form.sub_modul : undefined,
-                attachment: attachment
+                attachment: attachment?.id
             }
 
             const res = await callApi("post", `/tickets/new-ticket`, payload);
@@ -365,13 +368,12 @@ export default function NewTicket() {
                         <div className={Styles['form']}>
                             <label htmlFor="">Lampiran (Opsional)</label>
                             <FileUpload
-                                key={attachment}
-                                onUploadSuccess={(id) => setAttachment(id)}
-                                onRevert={() => setAttachment("")}
+                                onUploadSuccess={(file) => setAttachment(file)}
+                                onRevert={() => setAttachment(null)}
                                 module="tickets"
                                 mode="create"
                                 document=""
-                                fileName=""
+                                fileName={attachment?.filename || ""}
                             />
                         </div>
                     </div>

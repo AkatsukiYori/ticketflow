@@ -1,9 +1,19 @@
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+// const adapter = new PrismaMariaDb({
+//     ssl: false,
+//     host: process.env.DB_HOST!,
+//     port: Number(process.env.DB_PORT!),
+//     user: process.env.DB_USER!,
+//     password: process.env.DB_PASSWORD!,
+//     database: process.env.DB_NAME!,
+// });
+
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+
+const prisma = new PrismaClient({
+    adapter
+});
 
 export default prisma;

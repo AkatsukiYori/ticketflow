@@ -22,6 +22,7 @@ export const GetAllDocumentationDAO = async () => {
             include: {
                 documentation_files: {
                     select: {
+                        id: true,
                         filename: true
                     }
                 }

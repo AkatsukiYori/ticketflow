@@ -66,6 +66,8 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
         }
     }, [fetchUser]);
 
+    console.log(data);
+
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
@@ -217,10 +219,11 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <>
                                 <Zoom>
                                     <img
-                                        src={`/uploads/tickets/${data?.images?.filename}`}
+                                        src={`${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/tickets/${data?.images?.filename}`}
                                         alt="Attachment"
                                         width="100%"
                                         height={400}
+                                        style={{ objectFit: "contain" }}
                                     />
                                 </Zoom>
                             </>

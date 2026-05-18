@@ -73,7 +73,11 @@ export default function Documentation() {
 
     async function handleUpdate(data: any) {
         try {
-            const { id, ...payload } = data;
+            const { id, attachment: {id: attachmentID}, ...rest } = data;
+            const payload = {
+                ...rest,
+                attachmentID
+            }
             const res = await callApi("put", `/documentation/update-documentation/${id}`, payload);
             Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);

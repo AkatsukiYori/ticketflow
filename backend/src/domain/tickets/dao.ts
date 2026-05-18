@@ -54,7 +54,6 @@ export const GetAllTicketDAO = async (filter: any) => {
             fk_category_id: {
                 name: {
                     contains: role,
-                    mode: "insensitive"
                 }
             }
         });
@@ -87,14 +86,13 @@ export const FilterTicketDAO = async (filterData: any) => {
     };
 
     if(no) {
-        whereClause.ticket_no = { contains: no, mode: "insensitive" }
+        whereClause.ticket_no = { contains: no }
     }
 
     if(user) {
         whereClause.fk_member = {
             username: {
-                contains: user,
-                mode: "insensitive"
+                contains: user
             },
         };
     }
