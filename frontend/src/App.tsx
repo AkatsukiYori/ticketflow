@@ -6,7 +6,7 @@ import { SnackbarProvider } from "notistack";
 export default function App() {
   return (
     <SnackbarProvider maxSnack={3} autoHideDuration={3000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
-      <BrowserRouter>
+      <BrowserRouter basename="/ticketflow">
         <Routes>
           <Route path="/*" element={<UserRouter />} />
           <Route path="/admin/*" element={<AdminRouter />} />
