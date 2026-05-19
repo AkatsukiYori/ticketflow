@@ -29,17 +29,22 @@ export default function NewTicket() {
         setFieldError(prev => ({ ...prev, [field]: "" }));
     };
 
-    const fetchData = useCallback(async () => {
+    const fetchDepartment = useCallback(async () => {
         try {
-            const [resDepartment, resMembers] = await Promise.all([
-                await callApi("get", "/department/get-all-department"),
-                await callApi("get", "/members/get-all-members"),
-            ]);
+            const result = await callApi("get", "/department/get-all-department");
     
-            setDepartment(resDepartment);
-            setMembers(resMembers);
+            setDepartment(result);
         } catch (error: any) {
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+        }
+    }, [callApi]);
+
+    const fetchMembers = useCallback(async () => {
+        try {
+            const result = await callApi("get", "/members/get-all-members");
+            setMembers(result);
+        } catch (error: any) {
+            Notifications({ message: "Gagal mengambil pengguna", variantType: "error", persist: false });
         }
     }, [callApi]);
 
@@ -53,20 +58,36 @@ export default function NewTicket() {
     }, [callApi]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchDepartment();
+    }, [fetchDepartment]);
 
     useEffect(() => {
         fetchCategory();
 
-        socket.on("category-change", () => {
+        const handleCategoryChange = () => {
             fetchCategory();
-        });
+        }
+
+        socket.on("category-change", handleCategoryChange);
 
         return () => {
-            socket.off("category-change");
+            socket.off("category-change", handleCategoryChange);
         }
     }, [fetchCategory]);
+
+    useEffect(() => {
+        fetchMembers();
+
+        const handleMembersChange = () => {
+            fetchMembers();
+        }
+
+        socket.on("members-change", handleMembersChange);
+
+        return () => {
+            socket.off("members-change", handleMembersChange);
+        }
+    }, [fetchMembers]);
 
     const initialForm = {
         ticket_title: "",

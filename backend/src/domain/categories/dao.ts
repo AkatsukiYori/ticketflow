@@ -58,14 +58,13 @@ export const UpdateCategoriesDAO = async (data: Partial<CategoriesDTO.UpdateCate
 export const DeleteCategoriesDAO = async (id: number) => {
     try {
         await prisma.$transaction(async (tx) => {
-            await prisma.categories.update({
+            await tx.categories.update({
                 where: { id: id },
                 data: {
                     deleted_at: new Date()
                 }
-            })
+            });
         });
-
     } catch (error: any) {
         throw new Error(error.message);
     }

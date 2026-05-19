@@ -214,10 +214,12 @@ export const CreateTicketDAO = async (data: any, attachment: number) => {
                 },
             });
 
-            await tx.images.update({
-                where: { id: attachment },
-                data: { ticket_id: ticket.id }
-            });
+            if(attachment) {
+                await tx.images.update({
+                    where: { id: attachment },
+                    data: { ticket_id: ticket.id }
+                });
+            }
 
             const logs = await tx.log.create({
                 data: {

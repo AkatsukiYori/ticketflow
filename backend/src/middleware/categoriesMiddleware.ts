@@ -49,5 +49,6 @@ export const DeleteCategoriesMiddleware = (req: Request, res: Response, next: Ne
             message: "Invalid ID."
         });
     }
+    
     next();
 }

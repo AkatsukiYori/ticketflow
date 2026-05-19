@@ -1,62 +1,59 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { columns } from "./columns.tsx";
-import { InputText } from "../../../components/inputs/Input.tsx";
-import { Buttons } from "../../../components/buttons/Button.tsx";
-import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { useApi } from "../../../hooks/useApi.ts";
-import { socket } from "../../../api/socket.ts";
-
-import DataTables from "../../../components/datatables/DataTable";
-import CategoryModal from "../../../components/modals/category/CategoryModal.tsx";
-import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal.tsx";
-import { Notifications } from "../../../components/notifications/notification.tsx";
-
 import Styles from "../../../css/layouts/admin/layouts.module.css";
+import { InputText } from "../../../components/inputs/Input";
+import { Buttons } from "../../../components/buttons/Button";
+import DataTables from "../../../components/datatables/DataTable";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import MemberModal from "../../../components/modals/users/MemberModal";
+import { columns } from "./column";
+import { useApi } from "../../../hooks/useApi";
+import { Notifications } from "../../../components/notifications/notification";
+import { socket } from "../../../api/socket";
+import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
 
-export default function Category() {
-    // Open Modal
+export default function Members() {
     const { callApi } = useApi();
+
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    // Mode (new / edit) (untuk modal yang sama antara new dan edit)
     const [mode, setMode] = useState<"create" | "edit">("create");
-
-    // Data
     const [selected, setSelected] = useState<any>(null);
     const [data, setData] = useState<any[]>([]);
-    const [deleteID, setDeleteID] = useState<number | null>(null);
     const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
+    const [deleteID, setDeleteID] = useState<number | null>(null);
 
-    // Filter
     const [globalFilter, setGlobalFilter] = useState("");
 
-    const fetchCategories = useCallback(async () => {
+    const fetchUsers = useCallback(async () => {
         try {
-            const result = await callApi("get", "/categories/get-all-categories");
+            const result = await callApi("get", "/members/get-all-members");
             setData(result);
         } catch (error: any) {
-            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false })
         }
     }, [callApi]);
 
-    useEffect(() => {
-        fetchCategories();
+    function handleModalCreate() {
+        setMode("create");
+        setSelected("");
+        setOpen(true);
+    }
 
-        const handleCategoryChange = () => {
-            fetchCategories();
-        }
+    function handleModalUpdate(row: any) {
+        setMode("edit");
+        setSelected(row);
+        setOpen(true);
+    }
 
-        socket.on("category-change", handleCategoryChange);
-
-        return () => {
-            socket.off("category-change", handleCategoryChange);
-        }
-    }, [fetchCategories]);
+    function handleModalDelete(id: number) {
+        setConfirmOpen(true);
+        setDeleteID(id);
+    }
 
     async function handleSubmit(data: any) {
         try {
-            const res = await callApi("post", `/categories/new-categories`, data);
+            const res = await callApi("post", `/members/new-members`, data);
             Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
         } catch (error: any) {
@@ -78,7 +75,7 @@ export default function Category() {
 
     async function handleUpdate(data: any) {
         try {
-            const res = await callApi("put", `/categories/update-categories/${data.id}`, data);
+            const res = await callApi("put", `/members/update-members/${data.id}`, data);
             Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
             setFieldError({});
@@ -87,7 +84,7 @@ export default function Category() {
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
                 errorArr.forEach((err: any) => {
-                    const fieldName  = err.path[0];
+                    const fieldName = err.path[0];
                     formattedErrors[fieldName] = err.message;
                 });
 
@@ -103,30 +100,13 @@ export default function Category() {
         if(!id) return;
 
         try {
-            const res = await callApi("put", `/categories/delete-categories/${id}`);
+            const res = await callApi("put", `/members/delete-members/${id}`);
             Notifications({ message: res.message, variantType: "success", persist: false });
-            setConfirmOpen(false);
+            setConfirmOpen(true);
             setDeleteID(null);
         } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+            Notifications({ message: "Something went wrong.", variantType: "success", persist: false });
         }
-    }
-
-    function handleModalCreate() {
-        setMode("create");
-        setSelected(null);
-        setOpen(true);
-    }
-
-    function handleModalUpdate(row: any) {
-        setMode("edit");
-        setSelected(row);
-        setOpen(true);
-    }
-
-    function handleModalDelete(id: number) {
-        setConfirmOpen(true);
-        setDeleteID(id);
     }
 
     const getColumns = useMemo(() => columns(handleModalUpdate, handleModalDelete), []);
@@ -146,27 +126,56 @@ export default function Category() {
             }
         }
     });
-    
+
+    useEffect(() => {
+        fetchUsers();
+
+        const handleMembersChange = () => {
+            fetchUsers();
+        }
+
+        socket.on("members-change", handleMembersChange);
+
+        return () => {
+            socket.off("members-change", handleMembersChange);
+        }
+    }, [fetchUsers]);
+
     return (
         <section className={Styles['main-content']}>
             <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchCategories()} />
+                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchUsers()} />
                 </section>
                 <section>
-                    <Buttons label="New Category" func="add-desktop" onClick={handleModalCreate} btnTitle="New Category" />
-                    <Buttons label="" func="add-mobile" onClick={handleModalCreate} btnTitle="New Category" />
+                     <Buttons label="New User" func="add-desktop" btnTitle="New User" onClick={handleModalCreate} />
+                     <Buttons label="" func="add-mobile" btnTitle="New User" onClick={handleModalCreate} />
                 </section>
             </section>
             <section className={Styles['content-body']}>
-                <DataTables
-                    table={table}
-                />
+                <DataTables table={ table } />
             </section>
 
-            <CategoryModal open={open} mode={mode} data={selected} onClose={() => {setOpen(false); setFieldError({})}} onSubmit={handleSubmit} onUpdate={handleUpdate} validation={fieldError} />
-            <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={() => deleteID && handleDelete(deleteID)} isTicket={false} message="Deleted data is permanent and cannot be retrieved!" label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
+            <MemberModal
+                open={open}
+                mode={mode}
+                data={selected}
+                onClose={() => setOpen(false)}
+                onSubmit={handleSubmit}
+                onUpdate={handleUpdate}
+                validation={fieldError}
+            />
+            <ConfirmModal
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={() => deleteID && handleDelete(deleteID)}
+                isTicket={false}
+                message="Deleted data is permanent and cannot be retrieved!"
+                label="Are you sure?"
+                btnCancel="Cancel"
+                btnYes="Yes"
+            />
         </section>
     );
 }
