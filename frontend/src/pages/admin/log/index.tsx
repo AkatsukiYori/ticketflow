@@ -2,7 +2,7 @@ import { InputText } from "../../../components/inputs/Input.tsx";
 import { Buttons } from "../../../components/buttons/Button.tsx";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useApi } from "../../../hooks/useApi.ts";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column.tsx";
