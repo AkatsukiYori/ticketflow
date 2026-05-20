@@ -1,4 +1,4 @@
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.webp";
 import Styles from "../../css/layouts/user/layouts.module.css";
 
 export default function Header() {

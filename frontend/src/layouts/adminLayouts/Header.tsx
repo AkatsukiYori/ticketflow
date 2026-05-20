@@ -1,5 +1,5 @@
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import logo from "../../assets/logo2.svg";
+import logo from "../../assets/logo2.webp";
 import { List } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -23,7 +23,7 @@ export default function Header({ toggleSidebar } : Props) {
     return (
         <header className={Styles['header']}>
             <section className={Styles['logo']}>
-                <img src={logo} alt="Logo" width="200dvw" loading="lazy" />
+                <img src={logo} alt="Logo" width={300} loading="lazy" />
                 <button type="button" className={Styles['btn-sidebar']} onClick={toggleSidebar}><List /></button>
             </section>
             <section className={Styles['section-profile']}>
