@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Buttons } from "../../../components/buttons/Button";
 import DataTables from "../../../components/datatables/DataTable";
 import { InputText, SelectOptions } from "../../../components/inputs/Input";
@@ -12,37 +12,35 @@ import ReopenModal from "../../../components/modals/reopen/ReopenModal";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
-import { socket } from "../../../api/socket";
 import { FeedbackModal } from "../../../components/modals/feedback/FeedbackModal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Ticket() {
-    const [data, setData] = useState<any[]>([]);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [ticketId, setTicketId] = useState<number | null>(null);
-    const [ticketDetail, setTicketDetail] = useState<any[]>([]);
-    const [username, setUsername] = useState(() => {
-        return localStorage.getItem("username") || "";
-    });
-    const [userId, setUserId] = useState("");
-    const [ticketNo, setTicketNo] = useState("");
-    const [userRole, setUserRole] = useState("");
-    const [role, setRole] = useState("");
+    const { callApi } = useApi();
+    const queryClient = useQueryClient();
 
-    const [isAssign, setIsAssign] = useState(false);
-
+    // Modal
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [reassignOpen, setReassignOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [reOpenModal, setReOpenModal] = useState(false);
+
+    // Mode
     const [mode, setMode] = useState("");
+
+    // Data
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [ticketId, setTicketId] = useState<number | null>(null);
+    const [isAssign, setIsAssign] = useState(false);
     const [isReassign, setIsReassign] = useState(false);
 
-    const { callApi } = useApi();
+    const username = localStorage.getItem("username") || "";
+    const role = localStorage.getItem("role") || "";
+
     const fetchTicket = useCallback(async () => {
         try {
-            const result = await callApi("get", `/tickets/get-all-ticket?status=${true}&role=${role}`);
-            setData(result);
+            return await callApi("get", `/tickets/get-all-ticket?status=${true}&role=${role}`);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
@@ -51,59 +49,54 @@ export default function Ticket() {
     const fetchUser = useCallback(async () => {
         if(!username) return;
         try {
-            const result = await callApi("get", `/users/get-user/${username}`);
-            setUserId(result.id);
-            setUserRole(result.role);
+            return await callApi("get", `/users/get-user/${username}`);
         } catch(error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
-    }, [callApi]);
+    }, [callApi, username]);
 
     const fetchTicketById = useCallback(async () => {
         if(!ticketId) return;
         try {
-            const res = await callApi("get", `/tickets/get-ticket/${ticketId}`);
-            setTicketDetail(res);
-            setTicketNo(res.ticket_no);
+            return await callApi("get", `/tickets/get-ticket/${ticketId}`);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [ticketId, callApi]);
 
-    useEffect(() => {
-        const storedName = localStorage.getItem("username");
-        if(storedName) {
-            setUsername(storedName);
-        }
-    }, []);
+    const { data = [], isLoading, refetch, isFetching } = useQuery({
+        queryKey: ['ticket', role],
+        queryFn: fetchTicket,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60,
+        enabled: !!role
+    });
 
-    useEffect(() => {
-        fetchTicket();
-        if(username) {
-            fetchUser();
-        }
+    const { data: userData } = useQuery({
+        queryKey: ['users'],
+        queryFn: fetchUser,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60,
+        enabled: !!username
+    });
 
-        socket.on("ticket-change", () => {
-            fetchTicket();
-        });
+    const { data: ticketDetail } = useQuery({
+        queryKey: ['ticket-detail', ticketId],
+        queryFn: fetchTicketById,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60,
+        enabled: !!ticketId
+    });
 
-        return () => {
-            socket.off("ticket-change");
-        }
-    }, [fetchTicket, username, fetchUser]);
-
-    useEffect(() => {
-        if(ticketId) {
-            fetchTicketById();
-        }
-    }, [ticketId, fetchTicketById]);
-
-    useEffect(() => {
-        const storedRole = localStorage.getItem("role");
-        if(storedRole) {
-            setRole(storedRole);
-        }
-    }, []);
+    const userId = userData?.id || "";
+    const userRole = userData?.role || "";
+    const ticketNo = ticketDetail?.ticket_no || "";
 
     function handleModalDetail(id: number) {
         setTicketId(id);
@@ -133,14 +126,25 @@ export default function Ticket() {
         setTicketId(id);
     }
 
-    async function handleSubmit() {
-        try {
-            await callApi("put", `/tickets/re-open/${ticketNo}`);
+    const handleSubmitMutation = useMutation({
+        mutationFn: async () => {
+            return await callApi("put", `/tickets/re-open/${ticketNo}`);
+        },
+        onSuccess: (_res) => {
             Notifications({ message: "Re-open ticket successfully.", variantType: "success", persist: false });
             setReOpenModal(false);
-        } catch (error: any) {
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: (_error: any) => {
             Notifications({ message: "", variantType: "error", persist: false });
         }
+    })
+
+    async function handleSubmit() {
+        handleSubmitMutation.mutate();
     }
 
     const getColumns = useMemo(() => columns(
@@ -181,8 +185,8 @@ export default function Ticket() {
 
     return (
         <section className={Styles['main-content']}>
-            <section className={Styles['top-table']}>
-                <section className={Styles['filter-ticket']}>
+            <section className={Styles['conetent-header']}>
+                <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Ticket No..." value={( table.getColumn("ticket_no")?.getFilterValue() as string )} onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
                     <InputText type="text" name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
                     <SelectOptions
@@ -197,13 +201,20 @@ export default function Ticket() {
                         }}
                     />
                     <section>
-                        <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchTicket()} />
+                        <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                     </section>
                 </section>
+                <section className={Styles['content-body']}>
+                    {isFetching && !isLoading && (
+                        <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                            Refreshing...
+                        </section>
+                    )}
+                    <DataTables
+                        table={table}
+                    />
+                </section>
             </section>
-            <DataTables
-                table={table}
-            />
 
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} userRole={userRole} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />

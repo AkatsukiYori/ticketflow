@@ -1,9 +1,10 @@
 import Styles from "./feedback.module.css";
 import { Buttons } from "../../buttons/Button";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { InputText, CustomCheckbox } from "../../inputs/Input";
 import { useApi } from "../../../hooks/useApi";
 import { Notifications } from "../../notifications/notification";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
     open: boolean;
@@ -14,12 +15,14 @@ type Props = {
 }
 
 export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) => {
+    const { callApi } = useApi();
+    const queryClient = useQueryClient();
+
     const [reason, setReason] = useState("");
-    const [userId, setUserId] = useState("");
     const [error, setError] = useState<{ reason?: string; estimate?: string; }>({});
     const [isDoc, setIsDoc] = useState<boolean>(false);
 
-    const { callApi } = useApi();
+    const username = localStorage.getItem("username") || "";
 
     const validate = () => {
         const newError: { reason?: string; estimate?: string } = {};
@@ -37,18 +40,46 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         setIsDoc(false);
     }
 
-    const fetchUser = useCallback(async (name: string) => {
-        if(!name) return;
+    const fetchUser = async () => {
+        return await callApi("get", `/users/get-user/${username}`);
+    }
 
-        try {
-            const result = await callApi("get", `/users/get-user/${name}`);
-            setUserId(result.id);
-        } catch (error: any) {
-            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
+    const { data: userData } = useQuery({
+        queryKey: ['user'],
+        queryFn: fetchUser,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60,
+    })
+
+    const handleSubmitMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            if(mode === "reject") {
+                return await callApi("put", `/tickets/reject-ticket/${ticket?.ticket_no}`, payload);
+            } else {
+                return await callApi("put", `/tickets/feedback/${ticket?.ticket_no}`, payload);
+            }
+        },
+        onSuccess: (res) => {
+            Notifications({ message: res.message, variantType: "success", persist: false });
+            handleClear();
+            onClose();
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket-detail', ticket?.id]
+            })
+        },
+        onError: (_error: any) => {
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
-    }, [callApi]);
+    });
 
-    async function handleSubmit() {
+    function handleSubmit() {
         if(!validate()) return;
 
         const payloadReject = {
@@ -58,32 +89,16 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         const payloadFeedback = {
             reason: reason,
             role: "admin",
-            user_id: userId,
+            user_id: userData?.id,
             make_doc: isDoc
         }
 
-        try {
-            if(mode === "reject") {
-                const res = await callApi("put", `/tickets/reject-ticket/${ticket.ticket_no}`, payloadReject);
-                Notifications({ message: res.message, variantType: "success", persist: false });
-            } else {
-                const res = await callApi("put", `/tickets/feedback/${ticket.ticket_no}`, payloadFeedback);
-                Notifications({ message: res.message, variantType: "success", persist: false });
-            }
-            handleClear();
-            onClose();
-        } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+        if(mode === "reject") {
+            handleSubmitMutation.mutate(payloadReject);
+        } else {
+            handleSubmitMutation.mutate(payloadFeedback);
         }
     }
-
-    useEffect(() => {
-        const storedName = localStorage.getItem("username");
-        if(storedName) {
-            fetchUser(storedName);
-        }
-
-    }, [fetchUser]);
 
     useEffect(() => {
         if(open) {
@@ -91,13 +106,15 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         }
     }, [open]);
 
+    if(!open) return null;
+
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <div className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>
                 <div className={Styles['modal-header']}>
                     <div style={{ textAlign: "left" }}>
                         <h2 style={{ margin: 0 }}>{mode === "feedback" ? "Feedback" : "Reject Ticket" }</h2>
-                        <p style={{ margin: 0 }}>Ticket No : #{ticket.ticket_no}</p>
+                        <p style={{ margin: 0 }}>Ticket No : #{ticket?.ticket_no}</p>
                     </div>
                     <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>

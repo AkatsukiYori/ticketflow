@@ -49,14 +49,6 @@ export const CreateTicketController = async (req: any, res: Response) => {
     try {
         const { message, ticketNo, logStat } = await TicketServices.CreateTicketServices(datas, Number(attachment));
 
-        if(req.io) {
-            req.io.emit("ticket-change");
-
-            if(logStat) {
-                req.io.emit("logs-change");
-            }
-        }
-
         res.status(201).json({ message, ticketNo });
     } catch (error: any) {
         console.log(error);
@@ -79,10 +71,6 @@ export const UpdateTicketController = async (req: any, res: Response) => {
     try {
         const result = await TicketServices.UpdateTicketServices(id, data, file);
 
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
@@ -93,10 +81,6 @@ export const DeleteTicketController = async (req: any, res: Response) => {
     try {
         const id = Number(req.params.id);
         const result = await TicketServices.DeleteTicketServices(id);
-
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -111,10 +95,6 @@ export const AssignTicketController = async (req: any, res: Response) => {
 
         const result = await TicketServices.AssignTicketServices(ticketNo, Number(user_id), priority as any, estimate);
 
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Something went wrong : " + error.messaeg });
@@ -126,10 +106,6 @@ export const RejectTicketController = async (req: any, res: Response) => {
         const ticketNo = req.params.ticket_no;
         const reason = req.body.reason;
         const result = await TicketServices.RejectTicketServices(ticketNo, reason);
-
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
 
         res.status(201).json(result);
     }  catch (error: any) {
@@ -143,10 +119,6 @@ export const TicketFeedbackController = async (req: any, res: Response) => {
         const { role, reason, user_id, make_doc } = req.body;
         const result = await TicketServices.TicketFeedbackServices(ticketNo, reason, role, make_doc, user_id);
 
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Something went wrong : " + error.message });
@@ -158,10 +130,6 @@ export const ClosedTicketController = async (req: any, res: Response) => {
         const ticketNo = req.params.ticket_no;
         const result = await TicketServices.ClosedTicketServices(ticketNo);
 
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
@@ -172,10 +140,6 @@ export const ReOpenTicketController = async (req: any, res: Response) => {
     try {
         const ticket_no = req.params.ticket_no;
         const result = await TicketServices.ReOpenTicketServices(ticket_no);
-
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -190,10 +154,6 @@ export const RatingController = async (req: any, res: Response) => {
         const data = { ticket_no: ticket_no, ...raw_data };
 
         const result = await TicketServices.RatingServices(data);
-
-        if(req.io) {
-            req.io.emit("ticket-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {

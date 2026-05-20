@@ -52,6 +52,8 @@ export default function CategoryModal({ open, mode, data, onClose, onSubmit, onU
         }
     }
 
+    if(!open) return null;
+
     return (
         <section className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
             <section className={`${Styles['modal-popup']} ${open ? Styles['modal-popup-show'] : "hide"}`}>

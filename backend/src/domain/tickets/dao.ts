@@ -66,6 +66,7 @@ export const GetAllTicketDAO = async (filter: any) => {
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
                 fk_category_id: { select: { name: true } },
+                fk_users_id: { select: { username: true } }
             },
             where: { AND: whereClause },
             orderBy: {
@@ -99,8 +100,20 @@ export const FilterTicketDAO = async (filterData: any) => {
 
     if(startMonth || endMonth) {
         const dateFilter: any = {};
-        if(startMonth) dateFilter.gte = new Date(startMonth);
-        if(endMonth) dateFilter.lte = new Date(endMonth);
+
+        if(startMonth) {
+            const startDate = new Date(startMonth);
+            startDate.setHours(0, 0, 0, 0);
+
+            dateFilter.gte = startDate;
+        }
+
+        if(endMonth) {
+            const endDate = new Date(endMonth);
+            endDate.setHours(23, 59, 59, 999);
+
+            dateFilter.lte = endDate;
+        }
 
         whereClause.report_date = dateFilter;
     }

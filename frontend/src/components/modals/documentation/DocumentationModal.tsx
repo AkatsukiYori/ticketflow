@@ -4,7 +4,6 @@ import { InputText, TextArea, SelectOptions } from "../../inputs/Input";
 import Styles from "./documentationModal.module.css";
 import { Notifications } from "../../notifications/notification";
 import { useApi } from "../../../hooks/useApi";
-import { socket } from "../../../api/socket";
 import { FileUpload } from "../../FileUpload";
 
 type Props = {
@@ -77,9 +76,6 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
     useEffect(() => {
         fetchCategory();
 
-        const handleSocket = () => fetchCategory();
-        socket.on("category-change", handleSocket);
-
         if(open) {
             if(mode === "edit" && data) {
                 setTitle(data.title);
@@ -95,10 +91,6 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
                 setCategory("");
                 setAttachment(null);
             }
-        }
-
-        return () => {
-            socket.off("category-change", handleSocket);
         }
     }, [data, mode, open, fetchCategory]);
 

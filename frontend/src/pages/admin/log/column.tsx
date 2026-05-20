@@ -18,7 +18,7 @@ type Tickets = {
 const columnHelper = createColumnHelper<Tickets>();
 
 export const columns = (
-    onDetail: (ticket_id: number) => void,
+    onDetail: (id: number) => void,
 ) => [
     columnHelper.display({
         id: "no",

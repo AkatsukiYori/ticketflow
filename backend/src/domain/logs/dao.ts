@@ -20,9 +20,9 @@ export const GetLogsByTicketDAO = async (ticketID: number) => {
                 orderBy: {
                     log_date: "desc"
                 },
-                where: {
-                    ticket_id: ticketID
-                }
+                // where: {
+                //     ticket_id: ticketID
+                // }
             });
             return data;
         });

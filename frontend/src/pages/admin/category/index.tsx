@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { columns } from "./columns.tsx";
 import { InputText } from "../../../components/inputs/Input.tsx";
 import { Buttons } from "../../../components/buttons/Button.tsx";
+
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
 import { useApi } from "../../../hooks/useApi.ts";
-import { socket } from "../../../api/socket.ts";
 
 import DataTables from "../../../components/datatables/DataTable";
 import CategoryModal from "../../../components/modals/category/CategoryModal.tsx";
@@ -14,18 +16,21 @@ import { Notifications } from "../../../components/notifications/notification.ts
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 
 export default function Category() {
-    // Open Modal
     const { callApi } = useApi();
+    const queryClient = useQueryClient();
+
+    // Modal
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    // Mode (new / edit) (untuk modal yang sama antara new dan edit)
+    // Mode
     const [mode, setMode] = useState<"create" | "edit">("create");
 
     // Data
     const [selected, setSelected] = useState<any>(null);
-    const [data, setData] = useState<any[]>([]);
     const [deleteID, setDeleteID] = useState<number | null>(null);
+
+    // Validation
     const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
 
     // Filter
@@ -33,33 +38,40 @@ export default function Category() {
 
     const fetchCategories = useCallback(async () => {
         try {
-            const result = await callApi("get", "/categories/get-all-categories");
-            setData(result);
+            return await callApi("get", "/categories/get-all-categories");
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
-    useEffect(() => {
-        fetchCategories();
+    const { data = [], isLoading, refetch, isFetching } = useQuery({
+        queryKey: ["category"],
+        queryFn: fetchCategories,
+        refetchInterval: 5000,
+        staleTime: 1000 * 60,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true
+    });
 
-        const handleCategoryChange = () => {
-            fetchCategories();
-        }
+    const handleSubmitMutation = useMutation({
+        mutationFn: async (data: any) => {
+            return await callApi("post", `/categories/new-categories`, data);
+        },
+        onSuccess: (res) => {
+            Notifications({
+                message: res.message,
+                variantType: "success",
+                persist: false
+            });
 
-        socket.on("category-change", handleCategoryChange);
+            queryClient.invalidateQueries({
+                queryKey: ["category"]
+            });
 
-        return () => {
-            socket.off("category-change", handleCategoryChange);
-        }
-    }, [fetchCategories]);
-
-    async function handleSubmit(data: any) {
-        try {
-            const res = await callApi("post", `/categories/new-categories`, data);
-            Notifications({ message: res.message, variantType: "success", persist: false });
             setOpen(false);
-        } catch (error: any) {
+            setFieldError({});
+        },
+        onError: (error: any) => {
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
@@ -74,15 +86,27 @@ export default function Category() {
                 Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
+    });
+
+    function handleSubmit(data: any) {
+        handleSubmitMutation.mutate(data);
     }
 
-    async function handleUpdate(data: any) {
-        try {
-            const res = await callApi("put", `/categories/update-categories/${data.id}`, data);
+    const handleUpdateMutation = useMutation({
+        mutationFn: async (data: any) => {
+            return await callApi("put", `/categories/update-categories/${data.id}`, data);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
+
+            queryClient.invalidateQueries({
+                queryKey: ["category"]
+            });
+
             setOpen(false);
             setFieldError({});
-        } catch (error: any) {
+        },
+        onError: (error: any) => {
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
@@ -97,30 +121,47 @@ export default function Category() {
                 Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
+    })
+
+    function handleUpdate(data: any) {
+        handleUpdateMutation.mutate(data);
     }
+
+    const handleDeleteMutation = useMutation({
+        mutationFn: async (id: number) => {
+            return await callApi("put", `/categories/delete-categories/${id}`);
+        },
+        onSuccess: (res) => {
+            Notifications({ message: res.message, variantType: "success", persist: false });
+
+            queryClient.invalidateQueries({
+                queryKey: ["category"]
+            });
+
+            setConfirmOpen(false);
+            setDeleteID(null);
+        },
+        onError: (_error: any) => {
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+        }
+    })
 
     async function handleDelete(id: number) {
         if(!id) return;
-
-        try {
-            const res = await callApi("put", `/categories/delete-categories/${id}`);
-            Notifications({ message: res.message, variantType: "success", persist: false });
-            setConfirmOpen(false);
-            setDeleteID(null);
-        } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
-        }
+        handleDeleteMutation.mutate(id);
     }
 
     function handleModalCreate() {
         setMode("create");
         setSelected(null);
+        setFieldError({});
         setOpen(true);
     }
 
     function handleModalUpdate(row: any) {
         setMode("edit");
         setSelected(row);
+        setFieldError({});
         setOpen(true);
     }
 
@@ -129,7 +170,7 @@ export default function Category() {
         setDeleteID(id);
     }
 
-    const getColumns = useMemo(() => columns(handleModalUpdate, handleModalDelete), []);
+    const getColumns = useMemo(() => columns(handleModalUpdate, handleModalDelete), [handleModalUpdate, handleModalDelete]);
     const table = useReactTable({
         data,
         columns: getColumns,
@@ -152,7 +193,7 @@ export default function Category() {
             <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchCategories()} />
+                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                 </section>
                 <section>
                     <Buttons label="New Category" func="add-desktop" onClick={handleModalCreate} btnTitle="New Category" />
@@ -160,6 +201,11 @@ export default function Category() {
                 </section>
             </section>
             <section className={Styles['content-body']}>
+                {isFetching && !isLoading && (
+                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                        Refreshing...
+                    </section>
+                )}
                 <DataTables
                     table={table}
                 />

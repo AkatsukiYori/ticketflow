@@ -1,10 +1,10 @@
 import Styles from "./reassignTicket.module.css";
 import { Buttons } from "../../buttons/Button";
 import { useApi } from "../../../hooks/useApi";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Notifications } from "../../notifications/notification";
-import { socket } from "../../../api/socket";
 import { InputText, SelectOptions } from "../../inputs/Input";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
     open: boolean;
@@ -15,25 +15,26 @@ type Props = {
 }
 
 export default function ReassignModal({ open, onClose, data, isReassign, userId }: Props) {
-    const [userData, setUserData] = useState<any[]>([]);
+    const { callApi } = useApi();
+    const queryClient = useQueryClient();
+
     const [pic, setPic] = useState("");
     const [priority, setPriority] = useState("");
     const [estimate, setEstimate] = useState("");
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<{ pic?: string, priority?: any, estimate?: string }>({});
-
-    const { callApi } = useApi();
     
     const validate = () => {
         const newError: {pic?: string, priority?: any, estimate?: string} = {};
-        if(!pic.trim() && isReassign) {
+        if(!pic && isReassign) {
             newError.pic = "PIC cannot be empty.";
         }
 
-        if(!priority.trim()) {
+        if(!priority) {
             newError.priority = "Priority cannot be empty.";
         }
 
-        if(!estimate.trim()) {
+        if(!estimate) {
             newError.estimate = "Estimate cannot be empty.";
         }
 
@@ -48,48 +49,60 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
         setEstimate("");
     }
 
-    const fetchUser = useCallback(async () => {
-        try {
-            const res = await callApi("get", "/users/get-all-user");
-            setUserData(res);
-        } catch (error: any) {
-            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
-        }
-    }, []);
+    const fetchUser = async () => {
+        return await callApi("get", "/users/get-all-user");
+    }
+
+    const { data: userData = [] } = useQuery({
+        queryKey: ['user'],
+        queryFn: fetchUser,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    })
 
     useEffect(() => {
-        handleClear();
+        if(open) {
+            handleClear();
+        }
     }, [open]);
 
-    useEffect(() => {
-        fetchUser();
-        socket.on("user-change", () => {
-            fetchUser();
-        });
+    const handleSubmitMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            
+            return await callApi("put", `/tickets/assign/${data?.ticket_no}`, payload);
+        },
+        onSuccess: (res) => {
+            Notifications({ message: res.message, variantType: "success", persist: false });
+            handleClear();
+            onClose();
 
-        return () => {
-            socket.off("user-change");
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket-detail', data?.id]
+            });
+        },
+        onError: () => {
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
-    }, [fetchUser]);
+    });
 
-    async function handleSubmit() {
+    function handleSubmit() {
         if(!validate()) return;
-
+        setLoading(true);
         const payload = {
             user_id: pic ? pic : userId,
             priority: priority,
             estimate: estimate
         };
-
-        try {
-            const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            Notifications({ message: res.message, variantType: "success", persist: false });
-            handleClear();
-            onClose();
-        } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
-        }
+        handleSubmitMutation.mutate(payload);
     }
+
+    if(!open) return null;
 
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
@@ -97,7 +110,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                 <div className={Styles['modal-header']}>
                     <div>
                         <h2 style={{ margin: 0 }}>{isReassign ? "Re-assign Ticket" : "Assign Ticket"}</h2>
-                        <p style={{ margin: 0 }}>Ticket No : #{data.ticket_no}</p>
+                        <p style={{ margin: 0 }}>Ticket No : #{data?.ticket_no}</p>
                     </div>
                     <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
@@ -110,7 +123,13 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                                 id="pic"
                                 placeholder="Choose PIC"
                                 searchAble={true}
-                                value={pic}
+                                value={
+                                    pic ? {
+                                        value: pic,
+                                        label:
+                                            userData.find((u: any) => u.id === pic)?.username || ""
+                                    } : null
+                                }
                                 onChangeSelect={(e) => {
                                     setPic(e ? e.value : "");
                                     if(error.pic) setError(prev => ({ ...prev, pic: "" }));
@@ -132,7 +151,13 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                                 id="priority"
                                 placeholder="Choose Priority"
                                 searchAble={false}
-                                value={priority}
+                                value={
+                                    priority ? {
+                                        value: priority,
+                                        label: 
+                                            priority.charAt(0).toUpperCase() + priority.slice(1)
+                                    } : null
+                                }
                                 onChangeSelect={(e) => {
                                     setPriority(e ? e.value : "");
                                     if(error.priority) setError(prev => ({ ...prev, priority: "" }));
@@ -169,7 +194,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    <Buttons label="Assign" func="assign-label" btnTitle="Assign" onClick={handleSubmit} />
+                    <Buttons label={loading ? "Assigning..." : "Assign"} func="assign-label" btnTitle="Assign" onClick={handleSubmit} />
                     <Buttons label="Cancel" func="cancel" btnTitle="Cancel" onClick={onClose} />
                 </div>
             </div>

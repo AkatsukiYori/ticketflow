@@ -415,7 +415,7 @@ export default function Report() {
                 category: ticket.fk_category_id?.name || "-",
                 department: ticket.fk_department?.name || "-",
                 problem: ticket.problem,
-                priority: ticket.priority.toUpperCase() || "-",
+                priority: ticket?.priority?.toUpperCase() || "-",
                 location: ticket.location || "-",
                 wa_no: ticket.no_wa || "-",
                 modul: ticket?.modul || "-",

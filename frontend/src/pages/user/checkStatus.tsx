@@ -1,19 +1,20 @@
 import Card from "../../components/card/Card";
 import { Notifications } from "../../components/notifications/notification";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { InputText } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
 import { useApi } from "../../hooks/useApi";
-import { socket } from "../../api/socket";
 
 import ResponseModal from "../../components/modals/response/ResponseModal";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
 import ReopenModal from "../../components/modals/reopen/ReopenModal";
 import LogsModal from "../../components/modals/log/ViewLogs";
 import RatingModal from "../../components/modals/rating/RatingModal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CheckTicketStatus() {
     const { callApi } = useApi();
+    const queryClient = useQueryClient();
 
     const date = new Date();
     const getToday = () => {
@@ -34,23 +35,32 @@ export default function CheckTicketStatus() {
     const [openRating, setOpenRating] = useState(false);
 
     const [ticketNo, setTicketNo] = useState("");
-    const [data, setData] = useState<any[]>([]);
     const [ticketSearch, setTicketSearch] = useState("");
     const [userSearch, setUserSearch] = useState("");
     const [startMonth, setStartMonth] = useState(getFirstDayOfMonth());
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
 
-    const fetchTicket = useCallback(async () => {
-        try {
-            const res = await callApi("get", `tickets/get-all-ticket?status=${false}`);
+    const fetchTicket = async () => {
+        const isFiltering = ticketSearch || userSearch || startMonth || endMonth;
 
-            const safeData = Array.isArray(res) ? res : res?.data || [];
-            setData(safeData);
-        } catch (error: any) {
-            Notifications({ message: "Gagal mengambil data.", variantType: "error", persist: false });
-        }
-    }, []);
+        const url = isFiltering ?
+            `tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}` :
+            `tickets/get-all-ticket?status=${false}`;
+
+
+        const res = await callApi("get", url);
+        return Array.isArray(res) ? res : res?.data || [];
+    };
+
+    const { data = [] } = useQuery({
+        queryKey: ['ticket', startMonth, endMonth, ticketSearch, userSearch],
+        queryFn: fetchTicket,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    });
 
     const handleModalResponse = (ticketNo: string) => {
         setTicketNo(ticketNo);
@@ -77,79 +87,103 @@ export default function CheckTicketStatus() {
         setTicketNo(ticketNo);
     }
 
-    async function handleOpenTicket() {
-        try {
-            const res = await callApi("put", `/tickets/re-open/${ticketNo}`);
+    const handleOpenTicketMutation = useMutation({
+        mutationFn: async () => {
+            return await callApi("put", `/tickets/re-open/${ticketNo}`);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
             setOpenTicket(false);
-        } catch (error: any) {
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: (_error: any) => {
             Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false });
         }
+    })
+
+    function handleOpenTicket() {
+        handleOpenTicketMutation.mutate();
     }
 
-    async function handleCloseTicket() {
-        try {
-            const res = await callApi("put", `/tickets/close-ticket/${ticketNo}`);
+    const handleCloseTicketMutation = useMutation({
+        mutationFn: async () => {
+            return await callApi("put", `/tickets/close-ticket/${ticketNo}`);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
             setConfirmModal(false);
-        } catch (error: any) {
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: (_error: any) => {
             Notifications({ message: "Terjadi Kesalahan", variantType: "error", persist: false })
         }
+    })
+
+    function handleCloseTicket() {
+        handleCloseTicketMutation.mutate();
     }
 
-    async function handleResponTicket(responValue: string) {
-        try {
-            const payload = {
-                isAdmin: false,
-                reason: responValue,
-                role: "user",
-                user_id: null
-            }
-            await callApi("put", `/tickets/feedback/${ticketNo}`, payload);
+    const handleResponseTicketMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            return await callApi("put", `/tickets/feedback/${ticketNo}`, payload);
+        },
+        onSuccess: () => {
             Notifications({ message: "Respon berhasil dikirimkan.", variantType: "success", persist: false });
             setOpen(false);
-        } catch (error: any) {
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: () => {
             Notifications({ message: "Terjadi Kesalahan", variantType: "error", persist: false });
         }
+    })
+
+    function handleResponTicket(responValue: string) {
+        const payload = {
+            isAdmin: false,
+            reason: responValue,
+            role: "user",
+            user_id: null
+        }
+
+        handleResponseTicketMutation.mutate(payload);
     }
 
-    async function handleSubmitRating(ticketNo: string, pesan: string, rating: number) {
-        try {
-            const payload = {
-                score: rating,
-                note: pesan,
-            }
-
-            const res = await callApi("post", `/tickets/rating/${ticketNo}`, payload);
+    const handleSubmitRatingMutation = useMutation({
+        mutationFn: async ({ticketNo, payload}: { ticketNo: string, payload: any }) => {
+            return await callApi("post", `/tickets/rating/${ticketNo}`, payload);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
             setOpenRating(false);
-        } catch (error: any) {
-            Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false })
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: (_error: any) => {
+            Notifications({ message: "Terjadi   kesalahan.", variantType: "error", persist: false })
         }
+    })
+
+    function handleSubmitRating(_ticketNo: string, pesan: string, rating: number) {
+        const payload = {
+            score: rating,
+            note: pesan,
+        }
+
+        handleSubmitRatingMutation.mutate({ticketNo, payload});
     }
 
-    useEffect(() => {
-        if((startMonth && endMonth) || ticketSearch || userSearch) {
-            const filterTicket = async () => {
-                try {
-                    const res = await callApi("get", `/tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}`);
-                    setData(res);
-                } catch (error: any) {
-                    Notifications({ message: "Gagal memfilter tiket.", variantType: "error", persist: false });
-                }
-            };
-            filterTicket();
-        } else {
-            fetchTicket();
-            socket.on("ticket-change", fetchTicket);
-
-            return () => {
-                socket.off("ticket-change");
-            }
-        }
-    }, [startMonth, endMonth, ticketSearch, userSearch, fetchTicket, callApi]);
-
-    const selectedTicket = data.find(t => t.ticket_no === ticketNo);
+    const selectedTicket = data?.find((t: any) => t.ticket_no === ticketNo);
 
     return (
         <main className={Styles['main-content-status']}>
@@ -165,7 +199,7 @@ export default function CheckTicketStatus() {
                 </div>
             </section>
             <section className={Styles['content-body']}>
-                {data.map((ticket, index) => (
+                {data.map((ticket: any, index: number) => (
                     <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
                 ))}
             </section>

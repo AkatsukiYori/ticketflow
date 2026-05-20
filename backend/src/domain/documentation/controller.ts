@@ -28,9 +28,6 @@ export const CreateDocumentationController = async (req: any, res: Response) => 
 
     try {
         const result = await Services.CreateDocumentationServices(datas, convertAttachment);
-        if(req.io) {
-            req.io.emit("documentation-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -52,9 +49,6 @@ export const UpdateDocumentationController = async (req: any, res: Response) => 
 
     try {
         const result = await Services.UpdateDocumentationServices(id, datas, Number(attachment));
-        if(req.io) {
-            req.io.emit("documentation-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {
@@ -74,9 +68,6 @@ export const DeleteDocumentationController = async (req: any, res: Response) => 
     const id = Number(req.params.id);
     try {
         const result = await Services.DeleteDocumentationServices(id);
-        if(req.io) {
-            req.io.emit("documentation-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {

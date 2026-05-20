@@ -1,20 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import Styles from "../../css/layouts/user/home.module.css";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Notifications } from "../../components/notifications/notification";
 import { useApi } from "../../hooks/useApi";
-import { socket } from "../../api/socket";
 import { SelectOptions } from "../../components/inputs/Input";
 
 import { FileUpload } from "../../components/FileUpload";
+import { useQuery } from "@tanstack/react-query";
 
 export default function NewTicket() {
     const { callApi } = useApi();
 
     const navigate = useNavigate();
-    const [category, setCategory] = useState<any[]>([]);
-    const [department, setDepartment] = useState<any[]>([]);
-    const [members, setMembers] = useState<any[]>([]);
+
+    // Validation
     const [fieldError, setFieldError] = useState<{[key: string]: string}>({});
     const [attachment, setAttachment] = useState<{
         id: string,
@@ -29,65 +28,44 @@ export default function NewTicket() {
         setFieldError(prev => ({ ...prev, [field]: "" }));
     };
 
-    const fetchDepartment = useCallback(async () => {
-        try {
-            const result = await callApi("get", "/department/get-all-department");
-    
-            setDepartment(result);
-        } catch (error: any) {
-            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
-        }
-    }, [callApi]);
+    const fetchDepartment = async () => {
+        return await callApi("get", "/department/get-all-department");
+    };
 
-    const fetchMembers = useCallback(async () => {
-        try {
-            const result = await callApi("get", "/members/get-all-members");
-            setMembers(result);
-        } catch (error: any) {
-            Notifications({ message: "Gagal mengambil pengguna", variantType: "error", persist: false });
-        }
-    }, [callApi]);
+    const fetchMembers = async () => {
+        return await callApi("get", "/members/get-all-members");
+    };
 
-    const fetchCategory = useCallback(async () => {
-        try {
-            const result = await callApi("get", "/categories/get-all-categories");
-            setCategory(result);
-        } catch (error: any) {
-            Notifications({ message: "Gagal memgambil kategori.", variantType: "error", persist: false });
-        }
-    }, [callApi]);
+    const fetchCategory = async () => {
+        return await callApi("get", "/categories/get-all-categories");
+    };
 
-    useEffect(() => {
-        fetchDepartment();
-    }, [fetchDepartment]);
+    const { data: department = [] } = useQuery({
+        queryKey: ['department'],
+        queryFn: fetchDepartment,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    });
 
-    useEffect(() => {
-        fetchCategory();
+    const { data: members = [] } = useQuery({
+        queryKey: ['members'],
+        queryFn: fetchMembers,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    });
 
-        const handleCategoryChange = () => {
-            fetchCategory();
-        }
-
-        socket.on("category-change", handleCategoryChange);
-
-        return () => {
-            socket.off("category-change", handleCategoryChange);
-        }
-    }, [fetchCategory]);
-
-    useEffect(() => {
-        fetchMembers();
-
-        const handleMembersChange = () => {
-            fetchMembers();
-        }
-
-        socket.on("members-change", handleMembersChange);
-
-        return () => {
-            socket.off("members-change", handleMembersChange);
-        }
-    }, [fetchMembers]);
+    const { data: category = [] } = useQuery({
+        queryKey: ['category'],
+        queryFn: fetchCategory,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    });
 
     const initialForm = {
         ticket_title: "",
@@ -100,12 +78,12 @@ export default function NewTicket() {
         sub_modul: "",
         no_wa: "",
         category_id: "",
-        deparment_id: "",
+        department_id: "",
         member_id: "",
         attachment: ""
     };
     const [form, setForm] = useState(initialForm);
-    const selectedCategoryName = category.find(c => c.id == form.category_id)?.name.toLowerCase();
+    const selectedCategoryName = category.find((c: any) => c.id == form.category_id)?.name.toLowerCase();
     const isIKB = selectedCategoryName === "ikb";
 
     async function handleSubmit(e: React.FormEvent) {
@@ -125,7 +103,7 @@ export default function NewTicket() {
         try {
             const payload = {
                 ...form,
-                department_id: parseInt(form.deparment_id),
+                department_id: parseInt(form.department_id),
                 member_id: parseInt(form.member_id),
                 category_id: parseInt(form.category_id),
                 modul: isIKB ? form.modul : undefined,
@@ -148,6 +126,7 @@ export default function NewTicket() {
 
                 setFieldError(formattedErrors);
                 Notifications({ message: "Mohon lengkapi data yang wajib diisi.", variantType: "info", persist: false });
+                return;
             }
             Notifications({ message: "Terjadi kesalahan.", variantType: "error", persist: false });
         }
@@ -209,9 +188,9 @@ export default function NewTicket() {
                                 id="department"
                                 placeholder="Pilih Departemen"
                                 searchAble={true}
-                                value={form.deparment_id}
+                                value={form.department_id}
                                 onChangeSelect={(e) => {
-                                    setForm({ ...form, deparment_id: e ? String(e.value) : "" });
+                                    setForm({ ...form, department_id: e ? String(e.value) : "" });
                                     clearError("department_id");
                                 }}
                                 options={department.map((e: any) => (
@@ -278,7 +257,7 @@ export default function NewTicket() {
                                     }
 
                                     const newID = e.value;
-                                    const newName = category.find(c => c.id == newID)?.name.toLowerCase();
+                                    const newName = category.find((c: any) => c.id == newID)?.name?.toLowerCase();
 
                                     setForm({
                                         ...form,
@@ -361,7 +340,7 @@ export default function NewTicket() {
                                     setForm({ ...form, problem: e.target.value });
                                     clearError("problem");
                                 }}
-                                style={{ borderColor: fieldError.department ? "red" : "" }}
+                                style={{ borderColor: fieldError.problem ? "red" : "" }}
                                 required
                             ></textarea>
                             {fieldError.problem && (

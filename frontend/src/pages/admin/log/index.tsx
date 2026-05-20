@@ -2,54 +2,48 @@ import { InputText } from "../../../components/inputs/Input.tsx";
 import { Buttons } from "../../../components/buttons/Button.tsx";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Notifications } from "../../../components/notifications/notification.tsx";
+import { useCallback, useMemo, useState } from "react";
 import { useApi } from "../../../hooks/useApi.ts";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable, type ColumnFiltersState } from "@tanstack/react-table";
 import { columns } from "./column.tsx";
 import DataTables from "../../../components/datatables/DataTable.tsx";
 
 import LogsModal from "../../../components/modals/log/ViewLogs.tsx";
-import { socket } from "../../../api/socket.ts";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Log() {
     const { callApi } = useApi();
 
+    // Modal
     const [open, setOpen] = useState(false);
 
-    const [dataTicket, setDataTicket] = useState<any[]>([]);
-    const [ticketID, setTicketID] = useState(0);
+    // Data
+    const [ticketId, setTicketId] = useState<number | null>(null);
+
+    // Filters
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-    const fetchTicket = useCallback(async () => {
-        try {
-            const res = await callApi("get", "/tickets/get-all-ticket-logs");
-            setDataTicket(res);
-        } catch (error: any) {
-            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
-        }
-    }, []);
+    const fetchTicket = async () => {
+        return await callApi("get", "/tickets/get-all-ticket-logs");
+    };
 
-    function handleLogs(ticket_id: number) {
-        setTicketID(ticket_id);
+    const { data = [], refetch, isLoading, isFetching } = useQuery({
+        queryKey: ['ticket-logs'],
+        queryFn: fetchTicket,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60
+    });
+
+    function handleLogs(id: number) {
         setOpen(true);
+        setTicketId(id);
     }
-
-    useEffect(() => {
-        fetchTicket();
-
-        socket.on("ticket-change", () => {
-            fetchTicket();
-        });
-
-        return () => {
-            socket.off("ticket-change");
-        }
-    }, [fetchTicket]);
 
     const getColumns = useMemo(() => columns(handleLogs), []);
     const table = useReactTable({
-        data: dataTicket,
+        data,
         columns: getColumns,
         state: {
             columnFilters
@@ -67,7 +61,7 @@ export default function Log() {
 
     return (
         <section className={Styles['main-content']}>
-            <section className={Styles['top-table']}>
+            <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText
                         type="text"
@@ -76,17 +70,22 @@ export default function Log() {
                         placeholder="Ticket No..."
                         value={( table.getColumn("ticket_no")?.getFilterValue() as string )}
                         onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
-                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => fetchTicket()} />
+                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                 </section>
             </section>
-            <section className={Styles['table-container']}>
+            <section className={Styles['content-body']}>
+                {isFetching && !isLoading && (
+                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                        Refreshing...
+                    </section>
+                )}
                 <DataTables
                     table={table}
                 />
             </section>
             
             {open && (
-                <LogsModal open={open} onClose={() => setOpen(false)} ticketId={ticketID} />
+                <LogsModal open={open} onClose={() => setOpen(false)} ticketId={ticketId ?? undefined} />
             )}
         </section>
 

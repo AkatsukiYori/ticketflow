@@ -18,10 +18,6 @@ export const CreateCategoriesController = async (req: any, res: Response) => {
         const data = req.body as CategoriesBodyDTO.CreateCategoriesInput;
         const result = await Services.CreateCategoriesServices(data);
 
-        if(req.io) {
-            req.io.emit("category-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({
@@ -37,10 +33,6 @@ export const UpdateCategoriesController = async (req: any, res: Response) => {
         const data = req.body as CategoriesBodyDTO.UpdateCategoriesInput;
         const result = await Services.UpdateCategoriesServices(id, data);
 
-        if(req.io) {
-            req.io.emit("category-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({
@@ -53,10 +45,6 @@ export const DeleteCategoriesController = async (req: any, res: Response) => {
     try {
         const id = Number(req.params.id);
         const result = await Services.DeleteCategoriesServices(id);
-
-        if(req.io) {
-            req.io.emit("category-change");
-        }
 
         res.status(201).json(result);
     } catch (error: any) {

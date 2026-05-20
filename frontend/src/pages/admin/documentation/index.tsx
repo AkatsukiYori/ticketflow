@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Buttons } from "../../../components/buttons/Button";
 import { InputText } from "../../../components/inputs/Input";
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
@@ -10,51 +10,63 @@ import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
 import { Notifications } from "../../../components/notifications/notification";
 
 import { useApi } from "../../../hooks/useApi";
-import { socket } from "../../../api/socket";
 
 import Styles from "../../../css/layouts/admin/layouts.module.css";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Documentation() {
     const { callApi } = useApi();
+    const queryClient = useQueryClient();
+
+    // Modal
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
+    // Mode
     const [mode, setMode] = useState<"create" | "edit">("create");
 
-    const [data, setData] = useState<any[]>([]);
+    // Data
     const [selected, setSelected] = useState<any>(null);
     const [deleteID, setDeleteID] = useState<number | null>(null);
+
+    // Validation
     const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
     
+    // Filter
     const [globalFilter, setGlobalFilter] = useState("");
 
     const fetchDocumentation = useCallback(async () => {
         try {
-            const result = await callApi("get", "/documentation/get-all-documentation");
-            setData(result);
+            return await callApi("get", "/documentation/get-all-documentation");
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "info", persist: false });
         }
     }, [callApi]);
 
-    useEffect(() => {
-        fetchDocumentation();
-        socket.on("documentation-change", () => {
-            fetchDocumentation();
-        });
+    const { data = [], isLoading, refetch, isFetching } = useQuery({
+        queryKey: ['documentation'],
+        queryFn: fetchDocumentation,
+        refetchInterval: 5000,
+        staleTime: 1000 * 60,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true 
+    });
 
-        return () => {
-            socket.off("documentation-change");
-        }
-    }, [fetchDocumentation]);
-
-
-    async function handleSubmit(data: any) {
-        try {
-            const res = await callApi("post", `/documentation/new-documentation`, data);
+    const handleSubmitMutation = useMutation({
+        mutationFn: async (data: any) => {
+            return await callApi("post", `/documentation/new-documentation`, data);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
+
+            queryClient.invalidateQueries({
+                queryKey: ['documentation']
+            });
+
             setOpen(false);
-        } catch (error: any) {
+            setFieldError({});
+        },
+        onError: (error: any) => {
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
@@ -69,20 +81,32 @@ export default function Documentation() {
                 Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
+    });
+
+    function handleSubmit(data: any) {
+        handleSubmitMutation.mutate(data);
     }
 
-    async function handleUpdate(data: any) {
-        try {
+    const handleUpdateMutation = useMutation({
+        mutationFn: async (data: any) => {
             const { id, attachment: {id: attachmentID}, ...rest } = data;
             const payload = {
                 ...rest,
                 attachmentID
             }
-            const res = await callApi("put", `/documentation/update-documentation/${id}`, payload);
+            return await callApi("put", `/documentation/update-documentation/${id}`, payload);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
+
+            queryClient.invalidateQueries({
+                queryKey: ['documentation']
+            });
+
             setOpen(false);
             setFieldError({});
-        } catch (error: any) {
+        },
+        onError: (error: any) => {
             const errorArr = error.response?.data?.error;
             if(Array.isArray(errorArr)) {
                 const formattedErrors: { [key: string]: string } = {};
@@ -97,19 +121,34 @@ export default function Documentation() {
                 Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
             }
         }
+    })
+
+    function handleUpdate(data: any) {
+        handleUpdateMutation.mutate(data);
     }
 
-    async function handleDelete(id: number) {
-        if(!id) return;
-
-        try {
-            const res = await callApi("delete", `/documentation/delete-documentation/${id}`);
+    const handleDeleteMutation = useMutation({
+        mutationFn: async (id: number) => {
+            return await callApi("delete", `/documentation/delete-documentation/${id}`);
+        },
+        onSuccess: (res) => {
             Notifications({ message: res.message, variantType: "success", persist: false });
+
+            queryClient.invalidateQueries({
+                queryKey: ['documentation']
+            });
+
             setConfirmOpen(false);
             setDeleteID(null);
-        } catch (error) {
+        },
+        onError: (_error: any) => {
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
+    })
+
+    function handleDelete(id: number) {
+        if(!id) return;
+        handleDeleteMutation.mutate(id);
     }
 
     function handleModalCreate() {
@@ -152,7 +191,7 @@ export default function Documentation() {
             <section className={Styles['content-header']}>
                 <section className={Styles['filter']}>
                     <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <Buttons label="" func="refresh" onClick={() => fetchDocumentation()} btnTitle="Refresh" />
+                    <Buttons label="" func="refresh" onClick={() => refetch()} btnTitle="Refresh" />
                 </section>
                 <section>
                     <Buttons label="Documentation" func="add-desktop" onClick={handleModalCreate} btnTitle="New Documentation" />
@@ -160,6 +199,11 @@ export default function Documentation() {
                 </section>
             </section>
             <section className={Styles['content-body']}>
+                {isFetching && !isLoading && (
+                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                        Refreshing...
+                    </section>
+                )}
                 <DataTables
                     table={table}
                 />

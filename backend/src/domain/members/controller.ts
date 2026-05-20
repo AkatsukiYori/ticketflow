@@ -17,10 +17,6 @@ export const CreateMemberController = async (req: any, res: Response) => {
         const data = req.body as MembersDTO.CreateMembersInput;
         const result = await Services.CreateMembersServices(data);
 
-        if(req.io) {
-            req.io.emit("members-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Something went wrong." });
@@ -34,10 +30,6 @@ export const UpdateMemberController = async (req: any, res: Response) => {
         const data = req.body as MembersDTO.UpdateMembersInput;
         const result = await Services.UpdateMembersServices(data, id);
 
-        if(req.io) {
-            req.io.emit("members-change");
-        }
-
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: "Something went wrong." });
@@ -46,12 +38,8 @@ export const UpdateMemberController = async (req: any, res: Response) => {
 
 export const DeleteMemberController = async (req: any, res: Response) => {
     try {
-        const id = Number(req.body.params);
-        const result = Services.DeleteMembersServices(id);
-
-        if(req.io) {
-            req.io.emit("members-change");
-        }
+        const id = Number(req.params.id);
+        const result = await Services.DeleteMembersServices(id);
 
         res.status(201).json(result);
     } catch (error: any) {

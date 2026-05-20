@@ -21,9 +21,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
     
     const [userID, setUserID] = useState("");
     const [openModal, setOpenModal] = useState(false);
-    const [isAlreadyAssign, setIsAlreadyAssign] = useState(
-        data?.assign_to !== null && data?.assign_to !== undefined
-    );
+    const isAlreadyAssign = data?.assign_to !== null && data?.assign !== undefined;
 
     const fetchUser = useCallback(async (name: string) => {
         if(!name) return;
@@ -44,7 +42,6 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
         try {
             const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
             Notifications({ message: res.message, variantType: "success", persist: false });  
-            setIsAlreadyAssign(true);
             onClose();
         } catch (error: any) {
             Notifications({ message: "Somthing went wrong.", variantType: "error", persist: false });
@@ -66,7 +63,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
         }
     }, [fetchUser]);
 
-    console.log(data);
+    if(!open) return null;
 
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>
@@ -74,7 +71,7 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                 <div className={Styles['modal-header']}>
                     <div>
                         <h2 style={{ margin: 0 }}>Ticket Detail</h2>
-                        <p style={{ margin: 0 }}>#{data.ticket_no}</p>
+                        <p style={{ margin: 0 }}>#{data?.ticket_no}</p>
                     </div>
                     <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
@@ -85,11 +82,11 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <tbody>
                                 <tr>
                                     <td>Ticket No</td>
-                                    <td>{data.ticket_no}</td>
+                                    <td>{data?.ticket_no}</td>
                                 </tr>
                                 <tr>
                                     <td>Date</td>
-                                    <td>{new Date(data.report_date).toLocaleDateString("en-US", {
+                                    <td>{new Date(data?.report_date).toLocaleDateString("en-US", {
                                         day: "2-digit",
                                         month: "long",
                                         year: "numeric",
@@ -100,27 +97,27 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                 </tr>
                                 <tr>
                                     <td>Status</td>
-                                    <td>{data.status?.split("_").map((word: String) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</td>
+                                    <td>{data?.status?.split("_").map((word: String) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</td>
                                 </tr>
                                 <tr>
                                     <td>Priority</td>
-                                    <td>{data.priority?.toUpperCase() || "-"}</td>
+                                    <td>{data?.priority?.toUpperCase() || "-"}</td>
                                 </tr>
                                 <tr>
                                     <td>Estimate</td>
-                                    <td>{new Date(data.estimate).toLocaleDateString("en-US", {
+                                    <td>{data?.estimate ? new Date(data?.estimate).toLocaleDateString("en-US", {
                                         day: "2-digit",
                                         month: "long",
                                         year: "numeric",
                                         hour: "2-digit",
                                         minute: "2-digit",
                                         timeZone: "Asia/Jakarta"
-                                    }).replaceAll(/\./g, ":") || "-"}</td>
+                                    }).replaceAll(/\./g, ":") : "-"}</td>
                                 </tr>
-                                {data.closed_at && (
+                                {data?.closed_at && (
                                     <tr>
                                         <td>Closed At</td>
-                                        <td>{new Date(data.closed_at).toLocaleDateString("en-US", {
+                                        <td>{new Date(data?.closed_at).toLocaleDateString("en-US", {
                                             day: "2-digit",
                                             month: "long",
                                             year: "numeric",
@@ -130,16 +127,16 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                                         }).replaceAll(/\./g, ":")}</td>
                                     </tr>
                                 )}
-                                {data.status === "reject" && (
+                                {data?.status === "reject" && (
                                     <tr>
                                         <td>Reject Reason</td>
-                                        <td>{data.status_reason}</td>
+                                        <td>{data?.status_reason}</td>
                                     </tr>
                                 )}
-                                {data.repoened_at && (
+                                {data?.repoened_at && (
                                     <tr>
                                         <td>Reopened At</td>
-                                        <td>{new Date(data.reopened_at).toLocaleDateString("en-US", {
+                                        <td>{new Date(data?.reopened_at).toLocaleDateString("en-US", {
                                             day: "2-digit",
                                             month: "long",
                                             year: "numeric",
@@ -159,19 +156,19 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <tbody>
                                 <tr>
                                     <td>User</td>
-                                    <td>{data.fk_member?.username}</td>
+                                    <td>{data?.fk_member?.username}</td>
                                 </tr>
                                 <tr>
                                     <td>Whatsapp No</td>
-                                    <td>{data.no_wa}</td>
+                                    <td>{data?.no_wa}</td>
                                 </tr>
                                 <tr>
                                     <td>Department</td>
-                                    <td>{data.fk_department?.name}</td>
+                                    <td>{data?.fk_department?.name}</td>
                                 </tr>
                                 <tr>
                                     <td>Location</td>
-                                    <td>{data.location}</td>
+                                    <td>{data?.location}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -183,31 +180,31 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                             <tbody>
                                 <tr>
                                     <td>Category</td>
-                                    <td>{data.fk_category_id?.name}</td>
+                                    <td>{data?.fk_category_id?.name}</td>
                                 </tr>
-                                {(data.fk_category_id?.name == "IKB" || data.fk_category_id?.name == "ikb")  && (
+                                {(data?.fk_category_id?.name == "IKB" || data?.fk_category_id?.name == "ikb")  && (
                                     <>
                                         <tr>
                                             <td>Modul</td>
-                                            <td>{data.modul}</td>
+                                            <td>{data?.modul}</td>
                                         </tr>
                                         <tr>
                                             <td>Sub Modul</td>
-                                            <td>{data.sub_modul}</td>
+                                            <td>{data?.sub_modul}</td>
                                         </tr>
                                     </>
                                 )}
                                 <tr>
                                     <td>Ticket Title</td>
-                                    <td>{data.ticket_title}</td>
+                                    <td>{data?.ticket_title}</td>
                                 </tr>
                                 <tr>
                                     <td>Problem</td>
-                                    <td>{data.problem}</td>
+                                    <td>{data?.problem}</td>
                                 </tr>
                                 <tr>
                                     <td>Note</td>
-                                    <td>{data.note || "-"}</td>
+                                    <td>{data?.note || "-"}</td>
                                 </tr>
                             </tbody>
                         </table>
