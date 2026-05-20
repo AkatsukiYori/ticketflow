@@ -47,9 +47,7 @@ export default function Category() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ["category"],
         queryFn: fetchCategories,
-        refetchInterval: 5000,
-        staleTime: 1000 * 60,
-        refetchIntervalInBackground: true,
+        staleTime: Infinity,
         refetchOnWindowFocus: true
     });
 

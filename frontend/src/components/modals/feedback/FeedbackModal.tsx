@@ -47,10 +47,8 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
     const { data: userData } = useQuery({
         queryKey: ['user'],
         queryFn: fetchUser,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
     })
 
     const handleSubmitMutation = useMutation({

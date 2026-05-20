@@ -1,7 +1,7 @@
 import StylesAuth from "./auth.module.css";
 import Banner from "../../../assets/mainImage.webp";
 import { InputText } from "../../../components/inputs/Input";
-import Logo from "../../../assets/logo.png";
+import Logo from "../../../assets/logo.svg";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Notifications } from "../../../components/notifications/notification";

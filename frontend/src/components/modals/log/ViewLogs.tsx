@@ -28,20 +28,16 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
     const { data: logsData = [] } = useQuery({
         queryKey: ['logs', ticketId],
         queryFn: fetchLogs,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!ticketId
     });
 
     const { data: ticketData = [] } = useQuery({
         queryKey: ['ticket', ticketId],
         queryFn: fetchTicket,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!ticketId
     });
 

@@ -30,10 +30,8 @@ export default function Log() {
     const { data = [], refetch, isLoading, isFetching } = useQuery({
         queryKey: ['ticket-logs'],
         queryFn: fetchTicket,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60
+        staleTime: Infinity
     });
 
     function handleLogs(id: number) {

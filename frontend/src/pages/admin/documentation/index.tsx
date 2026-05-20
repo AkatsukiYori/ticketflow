@@ -46,9 +46,7 @@ export default function Documentation() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ['documentation'],
         queryFn: fetchDocumentation,
-        refetchInterval: 5000,
-        staleTime: 1000 * 60,
-        refetchIntervalInBackground: true,
+        staleTime: Infinity,
         refetchOnWindowFocus: true 
     });
 

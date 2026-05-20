@@ -56,10 +56,8 @@ export default function CheckTicketStatus() {
     const { data = [] } = useQuery({
         queryKey: ['ticket', startMonth, endMonth, ticketSearch, userSearch],
         queryFn: fetchTicket,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60
+        staleTime: Infinity
     });
 
     const handleModalResponse = (ticketNo: string) => {

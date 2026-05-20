@@ -67,30 +67,24 @@ export default function Ticket() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ['ticket', role],
         queryFn: fetchTicket,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!role
     });
 
     const { data: userData } = useQuery({
         queryKey: ['users'],
         queryFn: fetchUser,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!username
     });
 
     const { data: ticketDetail } = useQuery({
         queryKey: ['ticket-detail', ticketId],
         queryFn: fetchTicketById,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!ticketId
     });
 

@@ -56,10 +56,8 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     const { data: userData = [] } = useQuery({
         queryKey: ['user'],
         queryFn: fetchUser,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60
+        staleTime: Infinity
     })
 
     useEffect(() => {

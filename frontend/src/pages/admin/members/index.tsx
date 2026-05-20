@@ -43,10 +43,8 @@ export default function Members() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ['users'],
         queryFn: fetchUsers,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60
+        staleTime: Infinity
     });
 
     function handleModalCreate() {

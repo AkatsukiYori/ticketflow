@@ -31,10 +31,8 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
     const { data: userData } = useQuery({
         queryKey: ["user", username],
         queryFn: fetchUser,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
+        staleTime: Infinity,
         enabled: !!username
     });
 

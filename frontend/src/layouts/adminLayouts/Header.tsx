@@ -1,5 +1,5 @@
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import logo from "../../assets/logo2.png";
+import logo from "../../assets/logo2.svg";
 import { List } from "lucide-react";
 import { useEffect, useState } from "react";
 
