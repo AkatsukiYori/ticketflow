@@ -51,7 +51,7 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                     {data.closed_at && data.status === "completed" ?
                         <>
                             <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><LockOpenIcon size={18} /> Buka Ticket</button>
-                            {data.rating.length === 0 ? (
+                            {!data.rating ? (
                                 <button type="button" className={Styles['btn-rating']} onClick={() => onClickRating(data.ticket_no)}><Star size={18} /> Rating</button>
                             ) : (
                                 <></>
