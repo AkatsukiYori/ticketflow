@@ -16,7 +16,6 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
         if(!ticketId) return [];
         const res = await callApi("get", `/logs/get-logs-by-ticket/${ticketId}`);
 
-        console.log(res);
         return Array.isArray(res) ? res : [];
     }
 

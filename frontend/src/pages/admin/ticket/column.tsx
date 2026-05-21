@@ -105,7 +105,6 @@ export const columns = (
     columnHelper.accessor("assign_to", {
         header: "PIC",
         cell: ({ row }) => {
-            console.log(row.original);
             const user = row.original.fk_users_id;
             return user ? <span style={{ backgroundColor: "#DBEAFE", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#1E40AF" }}>{user.username}</span>
             : <span style={{ backgroundColor: "#F3F4F6", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#4B5563" }}>Not Assigned</span>

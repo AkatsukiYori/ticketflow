@@ -22,7 +22,6 @@ export const FileUploaderController = async (req: Request, res: Response) => {
 
 export const FileRevertController = async (req: Request, res: Response) => {
     try {
-        console.log(req.body);
         const { document, module } = req.body;
         const result = await Services.FileRevertServices(document, module);
 

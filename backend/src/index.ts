@@ -15,20 +15,6 @@ const allowedOrigins = [
 const app = Express();
 const server = http.createServer(app);
 
-const io = new Server(server, {
-    cors: {
-        origin: allowedOrigins,
-        methods: ["GET", "POST"],
-        credentials: true,
-        allowedHeaders: "Content-Type, Authorization"
-    }
-});
-
-app.use((req: any, _res, next) => {
-    req.io = io;
-    next();
-})
-
 app.use(cors({
     origin: allowedOrigins,
     credentials: true,
@@ -37,10 +23,6 @@ app.use(cors({
 app.use(Express.json());
 app.use("/api", router);
 app.use("/uploads", Express.static(path.join(process.cwd(), "uploads")));
-
-io.on("connection", (socket) => {
-    console.log("Client connected:", socket.id);
-});
 
 server.listen(3000, '0.0.0.0', () => {
     console.log(`Server running on port 3000`);

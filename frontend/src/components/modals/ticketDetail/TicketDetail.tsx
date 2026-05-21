@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Buttons } from "../../buttons/Button";
 import Styles from "./ticketDetail.module.css";
 import { useApi } from "../../../hooks/useApi";
-import { Notifications } from "../../notifications/notification";
+// import { Notifications } from "../../notifications/notification";
 import ReassignModal from "../reassign/ReassignTicket";
 
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
     open: boolean;
@@ -16,52 +17,50 @@ type Props = {
     userRole?: string;
 }
 
-export default function TicketDetailModal({ open, data, onClose, userRole }: Props) {
+export default function TicketDetailModal({ open, data, onClose }: Props) {
     const { callApi } = useApi();
     
-    const [userID, setUserID] = useState("");
     const [openModal, setOpenModal] = useState(false);
-    const isAlreadyAssign = data?.assign_to !== null && data?.assign !== undefined;
+    // const isAlreadyAssign = data?.assign_to !== null && data?.assign !== undefined;
+    const username = localStorage.getItem("username") || "";
 
-    const fetchUser = useCallback(async (name: string) => {
-        if(!name) return;
+    const fetchUser = async () => {
+            return await callApi("get", `/users/get-user/${username}`);
+    };
 
-        try {
-            const result = await callApi("get", `/users/get-user/${name}`);
-            setUserID(result.id);
-        } catch (error: any) {
-            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
-        }
-    }, [callApi]);
+    const { data: userData = [] } = useQuery({
+        queryKey: ['user'],
+        queryFn: fetchUser,
+        refetchOnWindowFocus: true,
+        staleTime: Infinity
+    });
 
-    async function handleUpdate() {
-        const payload = {
-            user_id: userID
-        };
+    // const handleUpdateMutation = useMutation({
+    //     mutationFn: async (payload: any) => {
+    //         return await callApi("put", `/tickets/assign/${data.ticket_no}`, payload)
+    //     },
+    //     onSuccess: (res) => {
+    //         Notifications({ message: res.message, variantType: "success", persist: false });  
+    //         onClose();
+    //     },
+    //     onError: (_error: any) => {
+    //         Notifications({ message: "Somthing went wrong.", variantType: "error", persist: false });
+    //     }
+    // })
 
-        try {
-            const res = await callApi("put", `/tickets/assign/${data.ticket_no}`, payload);
-            Notifications({ message: res.message, variantType: "success", persist: false });  
-            onClose();
-        } catch (error: any) {
-            Notifications({ message: "Somthing went wrong.", variantType: "error", persist: false });
-        }
-    }
+    // function handleUpdate() {
+    //     const payload = {
+    //         user_id: userData?.id
+    //     };
+    // }
 
-    const handleSubmit = () => {
-        if(isAlreadyAssign) {
-            setOpenModal(true);
-        } else {
-            handleUpdate();
-        }
-    }
-
-    useEffect(() => {
-        const storedUsername = localStorage.getItem("username");
-        if(storedUsername) {
-            fetchUser(storedUsername);
-        }
-    }, [fetchUser]);
+    // const handleSubmit = () => {
+    //     if(isAlreadyAssign) {
+    //         setOpenModal(true);
+    //     } else {
+    //         handleUpdate();
+    //     }
+    // }
 
     if(!open) return null;
 
@@ -241,14 +240,14 @@ export default function TicketDetailModal({ open, data, onClose, userRole }: Pro
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    {userRole === "admin" && (
+                    {/* {userRole === "admin" && (
                         <Buttons label={isAlreadyAssign ? "Re-assign" : "Apply"} btnTitle={isAlreadyAssign ? "Re-assign" : "Apply"} onClick={handleSubmit} func="assign-label" />
-                    )}
+                    )} */}
                     <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </div>
 
-            <ReassignModal open={openModal} onClose={() => setOpenModal(false)} data={data} isReassign={true} userId={userID} />
+            <ReassignModal open={openModal} onClose={() => setOpenModal(false)} data={data} isReassign={true} userId={userData?.id} />
         </div>
     );
 }
