@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { Navigate, useRoutes } from "react-router-dom";
 import Dashboard from "../pages/admin/dashboard";
 import Ticket from "../pages/admin/ticket";
 import Category from "../pages/admin/category";
@@ -8,6 +8,7 @@ import Report from "../pages/admin/reports";
 import AdminLayout from "../layouts/adminLayouts/Index";
 import ProtectedRouter from "./ProtectedRouter";
 import Members from "../pages/admin/members/index";
+import TicketIKB from "../pages/admin/ticket_ikb/index";
 
 export default function AdminRouter() {
     const routes = useRoutes([
@@ -19,10 +20,12 @@ export default function AdminRouter() {
                 </ProtectedRouter>
             ),
             children: [
+                { index: true, element: <Navigate to="/dashboard" replace /> },
                 { path: "dashboard", element: <Dashboard /> },
                 { path: "ticket", element: <Ticket /> },
+                { path: "ticket-ikb", element: <TicketIKB /> },
                 { path: "category", element: <Category /> },
-                { path: "Users", element: <Members /> },
+                { path: "users", element: <Members /> },
                 { path: "documentation", element: <Documentation /> },
                 { path: "report", element: <Report /> },
                 { path: "logs", element: <Logs /> },

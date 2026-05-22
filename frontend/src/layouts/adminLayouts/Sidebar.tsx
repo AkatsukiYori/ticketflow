@@ -1,6 +1,6 @@
 import SidebarItem from "../../components/sidebar/SidebarItem";
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, LogOut, Users2 } from "lucide-react";
+import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, LogOut, Users2, TicketsIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
@@ -27,6 +27,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, user } : Props) {
                         <>
                             <SidebarItem icon={LayoutDashboardIcon} label="Dashboard" to="/admin/dashboard" onClick={closeSidebar} />
                             <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
+                            <SidebarItem icon={TicketsIcon} label="IKB" to="/admin/ticket-ikb" onClick={closeSidebar} />
                             <SidebarItem icon={Blocks} label="Category" to="/admin/category" onClick={closeSidebar} />
                             <SidebarItem icon={Users2} label="Users" to="/admin/users" onClick={closeSidebar} />
                             <SidebarItem icon={FileExclamationPointIcon} label="Documentation" to="/admin/documentation" onClick={closeSidebar} />
@@ -34,7 +35,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, user } : Props) {
                             <SidebarItem icon={Logs} label="Logs" to="/admin/logs" onClick={closeSidebar} />
                         </>
                     ) : (
-                        <SidebarItem icon={Ticket} label="Ticket" to="/admin/ticket" onClick={closeSidebar} />
+                        <SidebarItem icon={Ticket} label="IKB" to="/admin/ticket-ikb" onClick={closeSidebar} />
                     )}
                     <SidebarItem icon={LogOut} label="Logout" to="#" onClick={() => setIsLogoutOpen(true)} />
                 </section>

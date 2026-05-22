@@ -170,6 +170,7 @@ export default function NewTicket() {
                                 }}
                                 style={{ borderColor: fieldError.no_wa ? "red" : "" }}
                                 required
+                                autoComplete="off"
                             />
                             {fieldError.no_wa && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.no_wa}</span>
@@ -210,6 +211,7 @@ export default function NewTicket() {
                                 }}
                                 style={{ borderColor: fieldError.department ? "red" : "" }}
                                 required
+                                autoComplete="off"
                             />
                             {fieldError.location && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.location}</span>
@@ -231,6 +233,7 @@ export default function NewTicket() {
                                 }}
                                 style={{ borderColor: fieldError.ticket_title ? "red" : "" }}
                                 required
+                                autoComplete="off"
                             />
                             {fieldError.ticket_title && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.ticket_title}</span>
@@ -295,6 +298,7 @@ export default function NewTicket() {
                                         }}
                                         style={{ borderColor: fieldError.modul ? "red" : "" }}
                                         required
+                                        autoComplete="off"
                                     />
                                     {fieldError.modul && (
                                         <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.modul}</span>
@@ -314,6 +318,7 @@ export default function NewTicket() {
                                         }}
                                         style={{ borderColor: fieldError.sub_modul ? "red" : "" }}
                                         required
+                                        autoComplete="off"
                                     />
                                     {fieldError.sub_modul && (
                                         <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.sub_modul}</span>
@@ -336,6 +341,7 @@ export default function NewTicket() {
                                 }}
                                 style={{ borderColor: fieldError.problem ? "red" : "" }}
                                 required
+                                autoComplete="off"
                             ></textarea>
                             {fieldError.problem && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.problem}</span>
@@ -355,6 +361,7 @@ export default function NewTicket() {
                                     setForm({ ...form, note: e.target.value });
                                     clearError("note");
                                 }}
+                                autoComplete="off"
                             />
                         </div>
                     </div>

@@ -79,6 +79,32 @@ export const GetAllTicketDAO = async (filter: any) => {
     }
 }
 
+export const GetAllIKBTicketDAO = async () => {
+    try {
+        const data = await prisma.tickets.findMany({
+            include: {
+                fk_member: { select: { username: true } },
+                fk_department: { select: { name: true } },
+                fk_category_id: { select: { name: true } },
+                fk_users_id: { select: { username: true } }
+            },
+            where: {
+                fk_category_id: {
+                    name: {
+                        equals: "IKB"
+                    }
+                }
+            },
+            orderBy: {
+                report_date: "desc"
+            }
+        });
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const FilterTicketDAO = async (filterData: any) => {
     const { startMonth, endMonth, no, user } = filterData;
 

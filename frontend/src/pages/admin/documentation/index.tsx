@@ -185,30 +185,32 @@ export default function Documentation() {
     });
 
     return (
-        <section className={Styles['main-content']}>
-            <section className={Styles['content-header']}>
-                <section className={Styles['filter']}>
-                    <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <Buttons label="" func="refresh" onClick={() => refetch()} btnTitle="Refresh" />
-                </section>
-                <section>
-                    <Buttons label="Documentation" func="add-desktop" onClick={handleModalCreate} btnTitle="New Documentation" />
-                    <Buttons label="" func="add-mobile" onClick={handleModalCreate} btnTitle="New Documentation" />
-                </section>
-            </section>
-            <section className={Styles['content-body']}>
-                {isFetching && !isLoading && (
-                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
-                        Refreshing...
+        <>
+            <section className={Styles['main-content']}>
+                <section className={Styles['content-header']}>
+                    <section className={Styles['filter']}>
+                        <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
+                        <Buttons label="" func="refresh" onClick={() => refetch()} btnTitle="Refresh" />
                     </section>
-                )}
-                <DataTables
-                    table={table}
-                />
+                    <section>
+                        <Buttons label="Documentation" func="add-desktop" onClick={handleModalCreate} btnTitle="New Documentation" />
+                        <Buttons label="" func="add-mobile" onClick={handleModalCreate} btnTitle="New Documentation" />
+                    </section>
+                </section>
+                <section className={Styles['content-body']}>
+                    {isFetching && !isLoading && (
+                        <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                            Refreshing...
+                        </section>
+                    )}
+                    <DataTables
+                        table={table}
+                    />
+                </section>
             </section>
-
+            
             <DocumentationModal open={open} mode={mode} data={selected} onClose={() => {setOpen(false); setFieldError({})}} onSubmit={handleSubmit} onUpdate={handleUpdate} validation={fieldError} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={() => deleteID && handleDelete(deleteID)} isTicket={false} message="Deleted data is permanent and cannot be retrieved!" label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
-        </section>
+        </>
     );
 }

@@ -28,7 +28,7 @@ type Props = {
 
 export function InputText({ type, name, id, className, placeholder, style, value, onChangeInput } : Props) {
     return (
-        <input type={type} name={name} id={id} value={value} onChange={onChangeInput} className={`${Styles['text-input']} ${className || ""}`} placeholder={placeholder} style={style} />
+        <input type={type} name={name} id={id} value={value} onChange={onChangeInput} className={`${Styles['text-input']} ${className || ""}`} placeholder={placeholder} style={style} autoComplete="off" />
     );
 }
 

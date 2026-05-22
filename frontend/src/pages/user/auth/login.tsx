@@ -65,7 +65,7 @@ export default function Login() {
                         </div>
                         <div className={StylesAuth['content-footer']}>
                             <button type="submit">Masuk</button>
-                            <a href="#" style={{ textDecoration: "none", color: "rgb(27, 73, 157)" }}>Lupa Password ?</a>
+                            <a href="/" style={{ textDecoration: "none", color: "#EF4444" }}>Kembali Ke Halaman Utama</a>
                         </div>
                     </form>
                 </section>

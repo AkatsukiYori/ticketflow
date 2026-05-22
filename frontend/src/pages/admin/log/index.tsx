@@ -58,34 +58,35 @@ export default function Log() {
     });
 
     return (
-        <section className={Styles['main-content']}>
-            <section className={Styles['content-header']}>
-                <section className={Styles['filter']}>
-                    <InputText
-                        type="text"
-                        name="search"
-                        id="search"
-                        placeholder="Ticket No..."
-                        value={( table.getColumn("ticket_no")?.getFilterValue() as string )}
-                        onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
-                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
-                </section>
-            </section>
-            <section className={Styles['content-body']}>
-                {isFetching && !isLoading && (
-                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
-                        Refreshing...
+        <>
+            <section className={Styles['main-content']}>
+                <section className={Styles['content-header']}>
+                    <section className={Styles['filter']}>
+                        <InputText
+                            type="text"
+                            name="search"
+                            id="search"
+                            placeholder="Ticket No..."
+                            value={( table.getColumn("ticket_no")?.getFilterValue() as string )}
+                            onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
+                        <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                     </section>
-                )}
-                <DataTables
-                    table={table}
-                />
+                </section>
+                <section className={Styles['content-body']}>
+                    {isFetching && !isLoading && (
+                        <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                            Refreshing...
+                        </section>
+                    )}
+                    <DataTables
+                        table={table}
+                    />
+                </section>     
             </section>
             
             {open && (
                 <LogsModal open={open} onClose={() => setOpen(false)} ticketId={ticketId ?? undefined} />
             )}
-        </section>
-
+        </>
     );
 }

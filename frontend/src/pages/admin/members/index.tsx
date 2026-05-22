@@ -179,24 +179,26 @@ export default function Members() {
     });
 
     return (
-        <section className={Styles['main-content']}>
-            <section className={Styles['content-header']}>
-                <section className={Styles['filter']}>
-                    <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
-                    <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
-                </section>
-                <section>
-                     <Buttons label="New User" func="add-desktop" btnTitle="New User" onClick={handleModalCreate} />
-                     <Buttons label="" func="add-mobile" btnTitle="New User" onClick={handleModalCreate} />
-                </section>
-            </section>
-            <section className={Styles['content-body']}>
-                {isFetching && !isLoading && (
-                    <section style={{ fontSize: "12px", marginBottom: "10px" }}>
-                        Refreshing...
+        <>
+            <section className={Styles['main-content']}>
+                <section className={Styles['content-header']}>
+                    <section className={Styles['filter']}>
+                        <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
+                        <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                     </section>
-                )}
-                <DataTables table={ table } />
+                    <section>
+                        <Buttons label="New User" func="add-desktop" btnTitle="New User" onClick={handleModalCreate} />
+                        <Buttons label="" func="add-mobile" btnTitle="New User" onClick={handleModalCreate} />
+                    </section>
+                </section>
+                <section className={Styles['content-body']}>
+                    {isFetching && !isLoading && (
+                        <section style={{ fontSize: "12px", marginBottom: "10px" }}>
+                            Refreshing...
+                        </section>
+                    )}
+                    <DataTables table={ table } />
+                </section>
             </section>
 
             <MemberModal
@@ -218,6 +220,6 @@ export default function Members() {
                 btnCancel="Cancel"
                 btnYes="Yes"
             />
-        </section>
+        </>
     );
 }

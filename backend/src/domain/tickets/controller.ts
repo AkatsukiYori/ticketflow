@@ -44,6 +44,17 @@ export const GetAllTicketLogs = async (req: Request, res: Response) => {
     }
 }
 
+export const GetAllIKBTicketController = async (req: Request, res: Response) => {
+    try {
+        const result = await TicketServices.GetAllIKBTicketServices();
+
+        res.status(200).json(result);
+    } catch (error: any) {
+        console.log(error);
+        res.status(500).json({ message: "Something went wrong." });
+    }
+}
+
 export const CreateTicketController = async (req: any, res: Response) => {
     const { attachment, ...datas } = req.body as TicketDTO.CreateTicketInput;
     try {

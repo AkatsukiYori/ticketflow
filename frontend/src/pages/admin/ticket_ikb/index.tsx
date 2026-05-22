@@ -15,7 +15,7 @@ import { useApi } from "../../../hooks/useApi";
 import { FeedbackModal } from "../../../components/modals/feedback/FeedbackModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export default function Ticket() {
+export default function TicketIKB() {
     const { callApi } = useApi();
     const queryClient = useQueryClient();
 
@@ -40,7 +40,7 @@ export default function Ticket() {
 
     const fetchTicket = useCallback(async () => {
         try {
-            return await callApi("get", `/tickets/get-all-ticket?status=${true}&role=${role}`);
+            return await callApi("get", `/tickets/get-all-ticket-ikb`);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
@@ -65,7 +65,7 @@ export default function Ticket() {
     }, [ticketId, callApi]);
 
     const { data = [], isLoading, refetch, isFetching } = useQuery({
-        queryKey: ['ticket', role],
+        queryKey: ['ticket'],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
         staleTime: Infinity,
@@ -177,6 +177,8 @@ export default function Ticket() {
         { label: "Reject", value: "reject" }
     ];
 
+    // console.log(data);
+
     return (
         <>
             <section className={Styles['main-content']}>
@@ -211,7 +213,7 @@ export default function Ticket() {
                     />
                 </section>
             </section>
-            
+
             <TicketDetailModal open={open} data={ticketDetail} onClose={() => setOpen(false)} userRole={userRole} />
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
             <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} isReassign={isReassign} userId={userId} />
