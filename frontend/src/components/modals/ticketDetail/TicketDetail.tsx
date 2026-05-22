@@ -14,7 +14,6 @@ type Props = {
     open: boolean;
     data: any;
     onClose: () => void;
-    userRole?: string;
 }
 
 export default function TicketDetailModal({ open, data, onClose }: Props) {
@@ -34,33 +33,6 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
         refetchOnWindowFocus: true,
         staleTime: Infinity
     });
-
-    // const handleUpdateMutation = useMutation({
-    //     mutationFn: async (payload: any) => {
-    //         return await callApi("put", `/tickets/assign/${data.ticket_no}`, payload)
-    //     },
-    //     onSuccess: (res) => {
-    //         Notifications({ message: res.message, variantType: "success", persist: false });  
-    //         onClose();
-    //     },
-    //     onError: (_error: any) => {
-    //         Notifications({ message: "Somthing went wrong.", variantType: "error", persist: false });
-    //     }
-    // })
-
-    // function handleUpdate() {
-    //     const payload = {
-    //         user_id: userData?.id
-    //     };
-    // }
-
-    // const handleSubmit = () => {
-    //     if(isAlreadyAssign) {
-    //         setOpenModal(true);
-    //     } else {
-    //         handleUpdate();
-    //     }
-    // }
 
     if(!open) return null;
 
@@ -240,9 +212,6 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>
-                    {/* {userRole === "admin" && (
-                        <Buttons label={isAlreadyAssign ? "Re-assign" : "Apply"} btnTitle={isAlreadyAssign ? "Re-assign" : "Apply"} onClick={handleSubmit} func="assign-label" />
-                    )} */}
                     <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </div>

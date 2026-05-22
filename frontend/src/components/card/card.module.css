@@ -1,13 +1,27 @@
 .card-content {
-    /* border-bottom: 1px solid #f1f1f1; */
-    padding: 16px 32px;
     border: 2px solid #f1f1f1;
+    padding: 16px 32px;
     border-radius: 8px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.card-content > .card-header {
+.card-content > .card-content-left > .card-header {
     display: flex;
     align-items: center;
+}
+
+.card-content > .card-content-right button {
+    background-color: transparent;
+    color: #1a4f9198;
+    border: none;
+    cursor: pointer;
+}
+
+.card-content > .card-content-right button:hover {
+    color: #1a4f91;
 }
 
 .card-body .card-body-top {
