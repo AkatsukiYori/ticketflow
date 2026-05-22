@@ -42,8 +42,8 @@ model Tickets {
   department_id   Int?
   member_id       Int?
   ticket_no       String           @db.VarChar(100)
-  ticket_title    String           @db.VarChar(100)
-  problem         String           @db.VarChar(300)
+  ticket_title    String           @db.VarChar(20)
+  problem         String           @db.VarChar(500)
   report_date     DateTime         @default(now())
   location        String           @db.VarChar(50)
   priority        Priority?

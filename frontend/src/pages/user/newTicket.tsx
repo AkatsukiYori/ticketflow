@@ -233,8 +233,10 @@ export default function NewTicket() {
                                 }}
                                 style={{ borderColor: fieldError.ticket_title ? "red" : "" }}
                                 required
+                                maxLength={20}
                                 autoComplete="off"
                             />
+                            <small>{form.ticket_title.length}/20</small>
                             {fieldError.ticket_title && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.ticket_title}</span>
                             )}
@@ -342,7 +344,9 @@ export default function NewTicket() {
                                 style={{ borderColor: fieldError.problem ? "red" : "" }}
                                 required
                                 autoComplete="off"
+                                maxLength={500}
                             ></textarea>
+                            <small>{form.problem.length}/500</small>
                             {fieldError.problem && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.problem}</span>
                             )}
