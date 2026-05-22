@@ -205,7 +205,7 @@ export default function CheckTicketStatus() {
                     </>
                 ) : (
                     <>
-                        <p><center>Belum ada ticket.</center></p>
+                        <p style={{ textAlign: "center" }}>Belum ada ticket.</p>
                     </>
                 )}
             </section>

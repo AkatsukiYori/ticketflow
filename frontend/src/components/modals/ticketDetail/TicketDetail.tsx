@@ -1,14 +1,9 @@
-import { useState } from "react";
 import { Buttons } from "../../buttons/Button";
 import Styles from "./ticketDetail.module.css";
-import { useApi } from "../../../hooks/useApi";
-// import { Notifications } from "../../notifications/notification";
-import ReassignModal from "../reassign/ReassignTicket";
 
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { Star } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
 type Props = {
     open: boolean;
@@ -17,23 +12,6 @@ type Props = {
 }
 
 export default function TicketDetailModal({ open, data, onClose }: Props) {
-    const { callApi } = useApi();
-    
-    const [openModal, setOpenModal] = useState(false);
-    // const isAlreadyAssign = data?.assign_to !== null && data?.assign !== undefined;
-    const username = localStorage.getItem("username") || "";
-
-    const fetchUser = async () => {
-            return await callApi("get", `/users/get-user/${username}`);
-    };
-
-    const { data: userData = [] } = useQuery({
-        queryKey: ['user'],
-        queryFn: fetchUser,
-        refetchOnWindowFocus: true,
-        staleTime: Infinity
-    });
-
     if(!open) return null;
 
     return (
@@ -150,6 +128,10 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                         <table>
                             <tbody>
                                 <tr>
+                                    <td>Ticket Title</td>
+                                    <td>{data?.ticket_title}</td>
+                                </tr>
+                                <tr>
                                     <td>Category</td>
                                     <td>{data?.fk_category_id?.name}</td>
                                 </tr>
@@ -165,10 +147,6 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                                         </tr>
                                     </>
                                 )}
-                                <tr>
-                                    <td>Ticket Title</td>
-                                    <td>{data?.ticket_title}</td>
-                                </tr>
                                 <tr>
                                     <td>Problem</td>
                                     <td>{data?.problem}</td>
@@ -215,8 +193,6 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                     <Buttons label="Cancel" btnTitle="Cancel" func="cancel" onClick={onClose} />
                 </div>
             </div>
-
-            <ReassignModal open={openModal} onClose={() => setOpenModal(false)} data={data} isReassign={true} userId={userData?.id} />
         </div>
     );
 }

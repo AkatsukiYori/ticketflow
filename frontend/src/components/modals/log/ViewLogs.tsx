@@ -56,8 +56,8 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
                     <div className={Styles['modal-body-content']}>
                         {logsData.length > 0 ? (
                             <>
-                                {logsData.map((value: any) => (
-                                    <div className={Styles['time-line']}>
+                                {logsData.map((value: any, index: number) => (
+                                    <div key={index} className={Styles['time-line']}>
                                         <span className={Styles['circle-logs']}></span>
                                         <div className={Styles['time-line-content']}>
                                             <p>

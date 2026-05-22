@@ -32,7 +32,7 @@ export const GetTicketById = async (id: number) => {
 }
 
 export const GetAllTicketDAO = async (filter: any) => {
-    const { status, role } = filter;
+    const { status } = filter;
 
     const whereClause: any[] = [
         { deleted_at: null }
@@ -49,15 +49,27 @@ export const GetAllTicketDAO = async (filter: any) => {
         })
     }
 
-    if(role === "ikb" || role === "IKB") {
-        whereClause.push({
-            fk_category_id: {
-                name: {
-                    contains: role,
+    whereClause.push({
+        NOT: {
+            OR: [
+                {
+                    fk_category_id: {
+                        name: {
+                            contains: "IKB"
+                        }
+                    }
+                },
+                {
+                    fk_category_id: {
+                        name: {
+                            contains: "ikb"
+                        }
+                    },
                 }
-            }
-        });
-    }
+
+            ]
+        }
+    })
 
     try {
         const data = await prisma.tickets.findMany({
@@ -148,16 +160,9 @@ export const FilterTicketDAO = async (filterData: any) => {
         return await prisma.tickets.findMany({
             include: {
                 rating: true,
-                fk_member: {
-                    select: {
-                        username: true
-                    }
-                },
-                fk_department: {
-                    select: {
-                        name: true
-                    }
-                }
+                fk_member: { select: { username: true } },
+                fk_department: { select: { name: true } },
+                fk_category_id: { select: { name: true } }
             },
             where: whereClause,
             orderBy: {
@@ -173,31 +178,11 @@ export const GetAllTicketLogs = async () => {
     try {
         return await prisma.tickets.findMany({
             include: {
-                rating: {
-                    select: {
-                        score: true
-                    }
-                },
-                fk_category_id: {
-                    select: {
-                        name: true
-                    }
-                },
-                fk_users_id: {
-                    select: {
-                        username: true
-                    }
-                },
-                fk_member: {
-                    select: {
-                        username: true
-                    }
-                },
-                fk_department: {
-                    select:  {
-                        name: true
-                    }
-                }
+                rating: { select: { score: true } },
+                fk_category_id: { select: { name: true } },
+                fk_users_id: { select: { username: true } },
+                fk_member: { select: { username: true } },
+                fk_department: { select:  { name: true } }
             },
             orderBy: {
                 report_date: 'desc'
