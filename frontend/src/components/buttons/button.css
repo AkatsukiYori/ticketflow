@@ -197,6 +197,23 @@
     background-color: rgba(27, 73, 157, 1);
 }
 
+.btn-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: transparent;
+    color: #1B499D;
+    border: 1px solid #1B499D;
+    transition: background-color 0.3s;
+}
+
+.btn-home:hover {
+    background-color: #1B499D15;
+}
+
 @media (max-width: 768px) {
     .btn_add_mobile {
         display: flex;

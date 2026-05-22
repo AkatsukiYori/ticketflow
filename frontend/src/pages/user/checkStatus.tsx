@@ -197,9 +197,17 @@ export default function CheckTicketStatus() {
                 </div>
             </section>
             <section className={Styles['content-body']}>
-                {data.map((ticket: any, index: number) => (
-                    <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
-                ))}
+                {data.length > 0 ? (
+                    <>
+                        {data.map((ticket: any, index: number) => (
+                            <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        <p><center>Belum ada ticket.</center></p>
+                    </>
+                )}
             </section>
 
             <ResponseModal open={open} onClose={() => setOpen(false)} onClick={handleResponTicket} />

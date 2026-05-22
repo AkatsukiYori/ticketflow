@@ -1,5 +1,5 @@
 import Styles from "./card.module.css";
-import { X, MessageCircleMore, LockOpenIcon, LogsIcon, Star } from "lucide-react";
+import { X, MessageCircleMore, LockOpenIcon, LogsIcon, Star, Dot } from "lucide-react";
 
 type Props = {
     data: any,
@@ -15,14 +15,14 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
         <div className={Styles['card']} style={{ width: "100%" }}>
             <div className={Styles['card-content']}>
                 <div className={Styles['card-header']}>
-                    <p style={{ fontSize: 14, margin: 0 }}>#{data.ticket_no} - {new Date(data.report_date).toLocaleString("id-ID", {
+                    <p style={{ fontSize: 14, margin: 0 }}>#{data.ticket_no} <span style={{ display: "inline-flex", alignItems: "center" }}><Dot size={10}/></span> {new Date(data.report_date).toLocaleString("id-ID", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
                         timeZone: "Asia/Jakarta"
-                    }).replaceAll(/\./g, ":").replaceAll(" pukul", ",")} - {data.fk_member?.username}</p>
+                    }).replaceAll(/\./g, ":").replaceAll(" pukul", ",")} <span style={{ display: "inline-flex", alignItems: "center" }}><Dot size={10}/></span> {data.fk_member?.username}</p>
                 </div>
                 <div className={Styles['card-body']}>
                     <div className={Styles['card-body-top']}>
@@ -41,9 +41,11 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                                 : <></>
                              }
                         </div>
-                        {/* <div>
-                            <div className="circle" style={{ backgroundColor: data.priority === "low" ? "limegreen" : "red" }}></div><span style={{ marginLeft: "-8px" }}>{data.priority.charAt(0).toUpperCase() + data.priority.slice(1)}</span>
-                        </div> */}
+                        {data.priority && (
+                            <>
+                                <div className="circle" style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: data.priority === "low" ? "limegreen" : data.priority === "mid" ? "orange" : "red" }}></div><span style={{ marginLeft: "-8px", fontSize: "16px" }}>{data.priority.charAt(0).toUpperCase() + data?.priority.slice(1)}</span>
+                            </>
+                        )}
                     </div>
                     <p style={{ margin: 0 }}>{data.problem}</p>
                 </div>

@@ -1,7 +1,13 @@
 .card-content {
-    border-bottom: 1px solid #f1f1f1;
-    padding-bottom: 16px;
-    margin-top: 16px;
+    /* border-bottom: 1px solid #f1f1f1; */
+    padding: 16px 32px;
+    border: 2px solid #f1f1f1;
+    border-radius: 8px;
+}
+
+.card-content > .card-header {
+    display: flex;
+    align-items: center;
 }
 
 .card-body .card-body-top {
@@ -17,12 +23,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.card-body .circle {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
 }
 
 /* Start: Card Footer */
@@ -65,13 +65,13 @@
 }
 
 .card-footer > .btn-open-ticket {
-    background-color: rgba(27, 73, 157, 0.2);
+    background-color: rgba(157, 179, 226, 0.2);
     color: rgba(27, 73, 157, 1);
     transition: background 0.3s;
 }
 
 .card-footer > .btn-open-ticket:hover {
-    background-color: rgba(27, 73, 157, 0.3);
+    background-color: rgba(84, 135, 230, 0.3);
 }
 
 .card-footer > .btn-logs {

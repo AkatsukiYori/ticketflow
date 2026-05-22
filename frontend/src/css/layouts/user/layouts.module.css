@@ -23,27 +23,12 @@
     gap: 16px;
 }
 
-.section-right button {
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 10px;
-    display: flex;
-}
-
 .btn-icon {
     display: none;
 }
 
 .btn-text {
     display: inline;
-}
-
-.section-right button {
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 8px;
-    background-color: #1B499D;
-    border: none;
 }
 
 @media (max-width: 767px) {

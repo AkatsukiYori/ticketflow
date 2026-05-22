@@ -39,6 +39,11 @@
     background-color: transparent;
     color: #1B499D;
     border: 1px solid #1B499D;
+    transition: background-color 0.3s;
+}
+
+.actions button:nth-child(2):hover {
+    background-color: #1B499D15;
 }
 /* End Index */
 
