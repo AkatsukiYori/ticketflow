@@ -13,7 +13,8 @@ const columnHelper = createColumnHelper<Tickets>();
 
 export const columns = () => [
     columnHelper.accessor("ticket_no", {
-        header: "Ticket No"
+        header: "Ticket No",
+        size: 100
     }),
     columnHelper.accessor("ticket_title", {
         header: "Ticket Title"
@@ -21,19 +22,19 @@ export const columns = () => [
     columnHelper.accessor(row => new Date(row.report_date), {
         id: "report_date",
         header: "Report Date",
+        size: 60,
         cell: ({ getValue }) => {
             return getValue<Date>().toLocaleString("en-US", {
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
                 timeZone: "Asia/Jakarta"
-            }).replaceAll(/\./g, ":");
+            });
         }
     }),
     columnHelper.accessor("status", {
         header: "Status",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
             const statusStyle: React.CSSProperties = {

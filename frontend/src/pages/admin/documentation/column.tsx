@@ -23,17 +23,21 @@ export const columns = (
     columnHelper.display({
         id: "no",
         header: "No",
+        size: 10,
         cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor("title", {
-        header: "Title"
+        header: "Title",
+        size: 200
     }),
     columnHelper.accessor("description", {
-        header: "Description"
+        header: "Description",
+        size: 400
     }),
-    columnHelper.accessor((row) => (row.documentation_files), {
+    columnHelper.accessor((row) => row.documentation_files, {
         id: "documentation_files",
         header: "Attachment",
+        size: 150,
         cell: (info) => {
             const file = info.getValue();
             
@@ -59,6 +63,7 @@ export const columns = (
     columnHelper.display({
         id: "actions",
         header: "Actions",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
 

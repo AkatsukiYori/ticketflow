@@ -347,7 +347,7 @@ export const DeleteTicketDAO = async (id: number) => {
     }
 }
 
-export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any, estimate?: Date) => {
+export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any, point_status?: string, estimate?: Date) => {
     try {
         await prisma.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -363,7 +363,8 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number, priority
                         estimate: estimate ? new Date(estimate) : null,
                         assign_to: userId,
                         status: "on_progress",
-                        priority: priority
+                        priority: priority,
+                        ikb_status_point: point_status ? point_status: null
                     }
                 });
 

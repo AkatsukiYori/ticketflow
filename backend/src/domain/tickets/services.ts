@@ -84,9 +84,9 @@ export const DeleteTicketServices = async (id: number) => {
     }
 }
 
-export const AssignTicketServices = async (ticketNo: string, userId: number, priority: any, estimate: Date) => {
+export const AssignTicketServices = async (ticketNo: string, userId: number, priority: any, estimate: Date, point_status: string) => {
     try {
-        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority, estimate);
+        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority, point_status, estimate);
 
         return ({ message: "Ticket Successful Assigned." });
     } catch (error: any) {

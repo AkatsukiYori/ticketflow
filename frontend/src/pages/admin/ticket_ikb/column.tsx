@@ -23,6 +23,7 @@ type Ticket = {
         username: string;
     }
     closed_at: Date;
+    ikb_status_point: string;
 }
 
 const columnHelper = createColumnHelper<Ticket>();
@@ -38,31 +39,34 @@ export const columns = (
     columnHelper.display({
         id: "no",
         header: "No",
+        size: 10,
         cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor(row => new Date(row.report_date), {
         id: "report_date",
         header: "Date",
         sortingFn: "datetime",
+        size: 50,
         cell: ({ getValue }) => {
             return getValue<Date>().toLocaleString("en-US", {
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
                 timeZone: "Asia/Jakarta"
-            }).replaceAll(/\./g, ":");
+            });
         }
     }),
     columnHelper.accessor("ticket_no", {
         header: "Ticket No",
+        size: 100
     }),
     columnHelper.accessor("ticket_title", {
         header: "Ticket Title",
+        size: 100
     }),
     columnHelper.accessor("status", {
         header: "Status",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
             const statusStyle: React.CSSProperties = {
@@ -93,26 +97,45 @@ export const columns = (
             );
         }
     }),
-    columnHelper.accessor("member_id", {
-        header: "User",
+    columnHelper.accessor("ikb_status_point", {
+        header: "Status Point",
+        size: 60,
         cell: ({ row }) => {
-            const member = row.original.fk_member;
-            return member ?
-                member.username :
-                <span style={{ backgroundColor: "#F3F4F6", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#4B5563" }}>Missing User</span>
+            const data = row.original;
+            const statusPointStyle: React.CSSProperties = {
+                padding: "8px",
+                borderRadius: "8px",
+                fontSize: "12px"
+            }
+            const getStatusPoint = () => {
+                return data.ikb_status_point === "additional" ?
+                    <span style={{ ...statusPointStyle, backgroundColor:"#BBF7D0" }}>Additional</span>
+                :
+                    <span style={{ ...statusPointStyle, backgroundColor:"#a1c6eb" }}>Bugs</span>
+            }
+            return (
+                <>
+                    {getStatusPoint()}
+                </>
+            );
         }
     }),
-    columnHelper.accessor("assign_to", {
-        header: "PIC",
+    columnHelper.accessor("problem", {
+        header: "Problem",
+        size: 400,
         cell: ({ row }) => {
-            const user = row.original.fk_users_id;
-            return user ? <span style={{ backgroundColor: "#DBEAFE", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#1E40AF" }}>{user.username}</span>
-            : <span style={{ backgroundColor: "#F3F4F6", padding: "8px", borderRadius: "8px", fontSize: "12px", color: "#4B5563" }}>Not Assigned</span>
+            const data = row.original.problem;
+            return (
+                <>
+                    <span style={{ textAlign: "left" }}>{data}</span>
+                </>
+            )
         }
     }),
     columnHelper.display({
         id: "actions",
         header: "Actions",
+        size: 50,
         cell: ({ row }) => {
             const data = row.original;
             return (

@@ -38,6 +38,7 @@ export const columns = (
     columnHelper.display({
         id: "no",
         header: "No",
+        size: 10,
         cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor(row => new Date(row.report_date), {
@@ -49,10 +50,8 @@ export const columns = (
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
                 timeZone: "Asia/Jakarta"
-            }).replaceAll(/\./g, ":");
+            });
         }
     }),
     columnHelper.accessor("ticket_no", {
@@ -113,6 +112,7 @@ export const columns = (
     columnHelper.display({
         id: "actions",
         header: "Actions",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
             return (

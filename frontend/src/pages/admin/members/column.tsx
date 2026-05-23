@@ -16,14 +16,17 @@ export const columns = (
     columnHelper.display({
         id: "no",
         header: "No",
+        size: 10,
         cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor("username", {
-        header: "Username"
+        header: "Username",
+        size: 800
     }),
     columnHelper.display({
         id: "actions",
         header: "Actions",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
 

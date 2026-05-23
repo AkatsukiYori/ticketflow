@@ -58,7 +58,7 @@ export const GetAllIKBTicketController = async (req: Request, res: Response) => 
 export const CreateTicketController = async (req: any, res: Response) => {
     const { attachment, ...datas } = req.body as TicketDTO.CreateTicketInput;
     try {
-        const { message, ticketNo, logStat } = await TicketServices.CreateTicketServices(datas, Number(attachment));
+        const { message, ticketNo } = await TicketServices.CreateTicketServices(datas, Number(attachment));
 
         res.status(201).json({ message, ticketNo });
     } catch (error: any) {
@@ -102,9 +102,9 @@ export const DeleteTicketController = async (req: any, res: Response) => {
 export const AssignTicketController = async (req: any, res: Response) => {
     try {
         const ticketNo = req.params.ticket_no;
-        const { user_id, priority, estimate } = req.body;
+        const { user_id, priority, estimate, point_status } = req.body;
 
-        const result = await TicketServices.AssignTicketServices(ticketNo, Number(user_id), priority as any, estimate);
+        const result = await TicketServices.AssignTicketServices(ticketNo, Number(user_id), priority as any, estimate, point_status);
 
         res.status(201).json(result);
     } catch (error: any) {

@@ -8,7 +8,7 @@ type Props = {
     customStyle?: any
 }
 
-export default function DataTables({ table, style, customStyle }: Props) {
+export default function DataTables({ table, style }: Props) {
     return (
         <section>
             <section className={Styles['table']}>
@@ -16,18 +16,14 @@ export default function DataTables({ table, style, customStyle }: Props) {
                     <thead>
                         {table.getHeaderGroups().map((headerGroup: any) => (
                             <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header: any, index: number) => {
-                                    const isFirst = index === 0;
-                                    const isLast = index === headerGroup.headers.length - 1;
-
+                                {headerGroup.headers.map((header: any, _index: number) => {
                                     return (
                                         <th
                                             key={header.id}
                                             className={Styles['data-th']}
                                             style={{
                                                 textAlign: "center",
-                                                verticalAlign: "center",
-                                                width: isFirst ? (customStyle?.thFirst.width || "40px") : isLast ? (customStyle?.thLast.width || "100px") : "auto"
+                                                width: header.getSize()
                                             }}
                                         >
                                             {flexRender(header.column.columnDef.header, header.getContext())}
@@ -48,10 +44,7 @@ export default function DataTables({ table, style, customStyle }: Props) {
                         ) : (
                             table.getRowModel().rows.map((row: any) => (
                                 <tr key={row.id}>
-                                    {row.getVisibleCells().map((cell: any, index: number) => {
-                                        const isFirst = index === 0;
-                                        const isLast = index === row.getVisibleCells().length - 1;
-
+                                    {row.getVisibleCells().map((cell: any, _index: number) => {
                                         return (
                                             <td
                                                 data-label={cell.column.columnDef.header}
@@ -59,7 +52,7 @@ export default function DataTables({ table, style, customStyle }: Props) {
                                                 className={Styles['data-td']}
                                                 style={{
                                                     textAlign: "center",
-                                                    width: isFirst ? (customStyle?.tdFirst.width || "40px") : isLast ? (customStyle?.tdLast.width || "100px") : "auto"
+                                                    width: cell.column.getSize()
                                                 }}
                                             >
                                                 <div key={cell.id} className={Styles['cell-row']}>

@@ -23,10 +23,12 @@ export const columns = (
     columnHelper.display({
         id: "no",
         header: "No",
+        size: 10,
         cell: ({ row }) => row.index + 1
     }),
     columnHelper.accessor("member_id", {
         header: "User",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original.fk_member;
             return data ?
@@ -35,10 +37,12 @@ export const columns = (
         }
     }),
     columnHelper.accessor("ticket_no", {
-        header: "Ticket No"
+        header: "Ticket No",
+        size: 100
     }),
     columnHelper.accessor("ticket_title", {
-        header: "Ticket Title"
+        header: "Ticket Title",
+        size: 100
     }),
     columnHelper.accessor(row => new Date(row.report_date), {
         id: "report_date",
@@ -56,6 +60,7 @@ export const columns = (
     }),
     columnHelper.accessor("status", {
         header: "Status",
+        size: 60,
         cell: ({ row }) => {
             const data = row.original;
             const statusStyle: React.CSSProperties = {
@@ -91,6 +96,7 @@ export const columns = (
     columnHelper.display({
         id: "actions",
         header: "Actions",
+        size: 40,
         cell: ({ row }) => {
             const data = row.original;
 

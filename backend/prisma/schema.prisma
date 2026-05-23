@@ -36,38 +36,39 @@ model Categories {
 }
 
 model Tickets {
-  id              Int              @id @default(autoincrement())
-  assign_to       Int?
-  category_id     Int
-  department_id   Int?
-  member_id       Int?
-  ticket_no       String           @db.VarChar(100)
-  ticket_title    String           @db.VarChar(20)
-  problem         String           @db.VarChar(500)
-  report_date     DateTime         @default(now())
-  location        String           @db.VarChar(50)
-  priority        Priority?
-  note            String?          @db.VarChar(200)
-  status          TicketStatus     @default(pending)
-  status_reason   String?          @db.VarChar(100)
-  closed_at       DateTime?
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  deleted_at      DateTime?
-  estimate        DateTime?
-  reject_at       DateTime?
-  modul           String?          @db.VarChar(100)
-  sub_modul       String?          @db.VarChar(100)
-  reopened_at     DateTime?
-  no_wa           String?          @db.VarChar(20)
-  images          Images?
-  log             Log[]
-  rating          Rating?
-  ticket_feedback TicketFeedback[]
-  fk_users_id     Users?           @relation(fields: [assign_to], references: [id])
-  fk_category_id  Categories       @relation(fields: [category_id], references: [id])
-  fk_department   Department?      @relation(fields: [department_id], references: [id])
-  fk_member       Members?         @relation(fields: [member_id], references: [id])
+  id                Int              @id @default(autoincrement())
+  assign_to         Int?
+  category_id       Int
+  department_id     Int?
+  member_id         Int?
+  ticket_no         String           @db.VarChar(100)
+  ticket_title      String           @db.VarChar(20)
+  problem           String           @db.VarChar(500)
+  report_date       DateTime         @default(now())
+  location          String           @db.VarChar(50)
+  priority          Priority?
+  note              String?          @db.VarChar(200)
+  status            TicketStatus     @default(pending)
+  status_reason     String?          @db.VarChar(100)
+  closed_at         DateTime?
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  deleted_at        DateTime?
+  estimate          DateTime?
+  reject_at         DateTime?
+  modul             String?          @db.VarChar(100)
+  sub_modul         String?          @db.VarChar(100)
+  reopened_at       DateTime?
+  no_wa             String?          @db.VarChar(20)
+  ikb_status_point  String?          @db.VarChar(20)
+  images            Images?
+  log               Log[]
+  rating            Rating?
+  ticket_feedback   TicketFeedback[]
+  fk_users_id       Users?           @relation(fields: [assign_to], references: [id])
+  fk_category_id    Categories       @relation(fields: [category_id], references: [id])
+  fk_department     Department?      @relation(fields: [department_id], references: [id])
+  fk_member         Members?         @relation(fields: [member_id], references: [id])
 
   @@index([assign_to], map: "tickets_assign_to_fkey")
   @@index([category_id], map: "tickets_category_id_fkey")

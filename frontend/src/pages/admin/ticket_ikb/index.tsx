@@ -177,6 +177,12 @@ export default function TicketIKB() {
         { label: "Reject", value: "reject" }
     ];
 
+    const filterStatusPoint = [
+        { label: "All Status Point", value: "" },
+        { label: "Additional", value: "additional" },
+        { label: "Bugs", value: "bugs" }
+    ];
+
     // console.log(data);
 
     return (
@@ -184,7 +190,6 @@ export default function TicketIKB() {
             <section className={Styles['main-content']}>
                 <section className={Styles['content-header']}>
                     <section className={Styles['filter']}>
-                        <InputText type="text" name="search" id="search" placeholder="Ticket No..." value={( table.getColumn("ticket_no")?.getFilterValue() as string )} onChangeInput={(e) => table.getColumn("ticket_no")?.setFilterValue(e.target.value)} />
                         <InputText type="text" name="search" id="search" placeholder="Ticket title..." value={( table.getColumn("ticket_title")?.getFilterValue() as string) } onChangeInput={(e) => table.getColumn("ticket_title")?.setFilterValue(e.target.value) } />
                         <SelectOptions
                             name="filterInput"
@@ -195,6 +200,17 @@ export default function TicketIKB() {
                             options={filterOptions}
                             onChangeSelect={(e) => {
                                 table.getColumn("status")?.setFilterValue(e ? e.value : undefined) 
+                            }}
+                        />
+                        <SelectOptions
+                            name="filterInput"
+                            id="filterInput"
+                            placeholder="Filter Status Point"
+                            searchAble={false}
+                            value={table.getColumn("ikb_status_point")?.getFilterValue() as string}
+                            options={filterStatusPoint}
+                            onChangeSelect={(e) => {
+                                table.getColumn("ikb_status_point")?.setFilterValue(e ? e.value : undefined) 
                             }}
                         />
                         <section>

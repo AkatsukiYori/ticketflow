@@ -22,10 +22,11 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     const [priority, setPriority] = useState("");
     const [estimate, setEstimate] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<{ pic?: string, priority?: any, estimate?: string }>({});
+    const [pointStatus, setPointStatus] = useState("");
+    const [error, setError] = useState<{ pic?: string, priority?: any, estimate?: string, pointStatus?: string }>({});
     
     const validate = () => {
-        const newError: {pic?: string, priority?: any, estimate?: string} = {};
+        const newError: {pic?: string, priority?: any, estimate?: string, pointStatus?: string} = {};
         if(!pic && isReassign) {
             newError.pic = "PIC cannot be empty.";
         }
@@ -38,6 +39,10 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             newError.estimate = "Estimate cannot be empty.";
         }
 
+        if(!pointStatus) {
+            newError.pointStatus = "Point status cannot be empty.";
+        }
+
         setError(newError);
         return Object.keys(newError).length === 0;
     }
@@ -47,6 +52,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
         setPic("");
         setPriority("");
         setEstimate("");
+        setPointStatus("");
     }
 
     const fetchUser = async () => {
@@ -90,12 +96,14 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     });
 
     function handleSubmit() {
+        console.log("in");
         if(!validate()) return;
         setLoading(true);
         const payload = {
             user_id: pic ? pic : userId,
             priority: priority,
-            estimate: estimate
+            estimate: estimate,
+            point_status: pointStatus
         };
         handleSubmitMutation.mutate(payload);
     }
@@ -189,6 +197,31 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{error.estimate}</span>
                             )}
                         </div>
+                        {(data?.fk_category_id.name === "IKB" || data?.fk_category_id.name === "ikb") && (
+                            <div>
+                                <label htmlFor="">Point Status <span style={{ color: "red" }}>*</span></label>
+                                <SelectOptions
+                                    name="point_status"
+                                    id="point_status"
+                                    placeholder="Choose Point Status"
+                                    searchAble={false}
+                                    value={
+                                        pointStatus ? {
+                                            value: pointStatus,
+                                            label: pointStatus
+                                        } : null
+                                    }
+                                    onChangeSelect={(e) => {
+                                        setPointStatus(e ? e.value : "");
+                                        if(error.pointStatus) setError(prev => ({ ...prev, pointStatus: "" }))
+                                    }}
+                                    options={[
+                                        { label: "Additional", value: "additional" },
+                                        { label: "Bugs", value: "bugs" }
+                                    ]}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className={Styles['modal-footer']}>

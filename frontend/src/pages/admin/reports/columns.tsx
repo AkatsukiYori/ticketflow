@@ -18,36 +18,47 @@ const columnHelper = createColumnHelper<Users>();
 
 export const columns = () => [
     columnHelper.accessor("username", {
-        header: "Username"
+        header: "Username",
+        size: 100
     }),
     columnHelper.accessor("total", {
-        header: "Total Ticket"
+        header: "Total Ticket",
+        size: 60
     }),
     columnHelper.accessor("on_progress", {
-        header: "On Progress"
+        header: "On Progress",
+        size: 60
     }),
     columnHelper.accessor("closed", {
-        header: "Closed"
+        header: "Closed",
+        size: 60
     }),
     columnHelper.accessor("reject", {
-        header: "Reject"
+        header: "Reject",
+        size: 60
     }),
     columnHelper.accessor("score_1", {
-        header: "Score 1"
+        header: "Score 1",
+        size: 60
     }),
     columnHelper.accessor("score_2", {
-        header: "Score 2"
+        header: "Score 2",
+        size: 60
     }),
     columnHelper.accessor("score_3", {
-        header: "Score 3"
+        header: "Score 3",
+        size: 60
     }),
     columnHelper.accessor("score_4", {
-        header: "Score 4"
+        header: "Score 4",
+        size: 60
     }),
     columnHelper.accessor("score_5", {
-        header: "Score 5"
+        header: "Score 5",
+        size: 60
     }),
     columnHelper.accessor("avg_rate", {
-        header: "AVG Rate"
+        header: "AVG Rate",
+        size: 60
     }),
 ]
