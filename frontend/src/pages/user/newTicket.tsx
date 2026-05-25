@@ -344,9 +344,9 @@ export default function NewTicket() {
                                 style={{ borderColor: fieldError.problem ? "red" : "" }}
                                 required
                                 autoComplete="off"
-                                maxLength={500}
+                                maxLength={1000}
                             ></textarea>
-                            <small>{form.problem.length}/500</small>
+                            <small>{form.problem.length}/1000</small>
                             {fieldError.problem && (
                                 <span style={{ color: "red", fontSize: "12px", marginTop: "-4px" }}>{fieldError.problem}</span>
                             )}
