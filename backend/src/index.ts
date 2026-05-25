@@ -21,9 +21,9 @@ app.use(cors({
     allowedHeaders: "Content-Type, Authorization"
 }));
 app.use(Express.json());
-app.use("/api", router);
-app.use("/uploads", Express.static(path.join(process.cwd(), "uploads")));
+app.use("/api-ticketflow", router);
+app.use("/api-ticketflow/uploads", Express.static(path.join(process.cwd(), "uploads")));
 
-server.listen(3000, '0.0.0.0', () => {
-    console.log(`Server running on port 3000`);
+server.listen(8001, '0.0.0.0', () => {
+    console.log(`Server running on port 8001`);
 });
