@@ -65,7 +65,7 @@ export default function Login() {
                         </div>
                         <div className={StylesAuth['content-footer']}>
                             <button type="submit">Masuk</button>
-                            <a href="/" style={{ textDecoration: "none", color: "#EF4444" }}>Kembali Ke Halaman Utama</a>
+                            <a href="/ticketflow/" style={{ textDecoration: "none", color: "#EF4444" }}>Kembali Ke Halaman Utama</a>
                         </div>
                     </form>
                 </section>
