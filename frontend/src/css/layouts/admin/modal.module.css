@@ -39,6 +39,10 @@
 
 .modal-body {
     margin: 20px 0;
+    overflow: visible;
+}
+
+.scrollable {
     max-height: 600px;
     overflow-y: auto;
 }

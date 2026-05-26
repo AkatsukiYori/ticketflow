@@ -96,7 +96,6 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     });
 
     function handleSubmit() {
-        console.log("in");
         if(!validate()) return;
         setLoading(true);
         const payload = {

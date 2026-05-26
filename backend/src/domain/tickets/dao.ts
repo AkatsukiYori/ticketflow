@@ -14,6 +14,7 @@ export const GetTicketById = async (id: number) => {
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
                 fk_category_id: { select: { name: true, id: true } },
+                fk_users_id: { select: { username: true } },
                 images: { select: { filename: true } },
                 rating: { select: { score: true } }
             },
@@ -227,7 +228,7 @@ export const CreateTicketDAO = async (data: any, attachment: number) => {
             }
         });
 
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.create({
                 data: {
                     ...filteredData,
@@ -269,7 +270,7 @@ export const UpdateTicketDAO = async (data: Partial<TicketDTO.UpdateTicketInput>
             Object.entries(data).filter(([_, v]) => v !== undefined)
         );
 
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.update({
                 where: { id: id },
                 data: filteredData
@@ -305,7 +306,7 @@ export const UpdateTicketDAO = async (data: Partial<TicketDTO.UpdateTicketInput>
 
 export const DeleteTicketDAO = async (id: number) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const dataImages = await tx.images.findMany({
                 where: { ticket_id: id },
                 select: { 
@@ -349,7 +350,7 @@ export const DeleteTicketDAO = async (id: number) => {
 
 export const AssignTicketDAO = async (ticketNo: string, userId: number, priority: any, point_status?: string, estimate?: Date) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({
                 where: {
                     ticket_no: ticketNo
@@ -387,7 +388,7 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number, priority
 
 export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({
                 where: {
                     ticket_no: ticketNo
@@ -423,7 +424,7 @@ export const RejectTicketDAO = async (ticketNo: string, reason: string) => {
 
 export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: string, make_doc?: boolean, userId?: number) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({
                 where: {
                     ticket_no: ticketNo
@@ -484,7 +485,7 @@ export const TicketFeedbackDAO = async (ticketNo: string, reason: string, role: 
 
 export const ClosedTicketDAO = async (ticketNo: string) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({
                 where: {
                     ticket_no: ticketNo
@@ -520,7 +521,7 @@ export const ClosedTicketDAO = async (ticketNo: string) => {
 
 export const ReOpenTicketDAO = async (ticketNo: string) => {
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({ where: { ticket_no: ticketNo } });
             if(ticket) {
                 await tx.tickets.update({
@@ -554,7 +555,7 @@ export const ReOpenTicketDAO = async (ticketNo: string) => {
 export const RatingDAO = async (data: any) => {
     try {
         const { ticket_no, score, note } = data;
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({
                 where: {
                     ticket_no: ticket_no
@@ -570,6 +571,27 @@ export const RatingDAO = async (data: any) => {
                         created_at: new Date()
                     }
                 });
+            }
+        });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
+export const UpdateStatusPointDAO = async (id: number, statusPoint: string) => {
+    try {
+        return await prisma.$transaction(async (tx: any) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    id: id
+                }
+            });
+
+            if(ticket) {
+                await tx.tickets.update({
+                    where: { id: id },
+                    data: { ikb_status_point: statusPoint }
+                })
             }
         });
     } catch (error: any) {

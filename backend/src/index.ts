@@ -4,7 +4,6 @@ import router from "./routes/main";
 import cors from "cors";
 import http from "http";
 import path from "path";
-import { Server } from "socket.io";
 
 const allowedOrigins = [
     "http://localhost:5173",

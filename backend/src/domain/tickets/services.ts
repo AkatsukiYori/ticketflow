@@ -142,3 +142,12 @@ export const RatingServices = async (data: any) => {
         throw new Error(error.message);
     }
 }
+
+export const UpdateStatusPointServices = async (id: number, statusPoint: string) => {
+    try {
+        await TicketDAO.UpdateStatusPointDAO(id, statusPoint);
+        return ({ message: "Ticket Successfully updated." });
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}

@@ -14,6 +14,7 @@ import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
 import { FeedbackModal } from "../../../components/modals/feedback/FeedbackModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import TicketModal from "../../../components/modals/ticketModal/TicketModal";
 
 export default function TicketIKB() {
     const { callApi } = useApi();
@@ -25,6 +26,7 @@ export default function TicketIKB() {
     const [reassignOpen, setReassignOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [reOpenModal, setReOpenModal] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
 
     // Mode
     const [mode, setMode] = useState("");
@@ -120,7 +122,12 @@ export default function TicketIKB() {
         setTicketId(id);
     }
 
-    const handleSubmitMutation = useMutation({
+    function handleModalEditOpen(id: number) {
+        setEditOpen(true);
+        setTicketId(id);
+    }
+
+    const handleSubmitReOpenMutation = useMutation({
         mutationFn: async () => {
             return await callApi("put", `/tickets/re-open/${ticketNo}`);
         },
@@ -133,12 +140,33 @@ export default function TicketIKB() {
             });
         },
         onError: (_error: any) => {
-            Notifications({ message: "", variantType: "error", persist: false });
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     })
 
-    async function handleSubmit() {
-        handleSubmitMutation.mutate();
+    async function handleSubmitOpenTicket() {
+        handleSubmitReOpenMutation.mutate();
+    }
+
+    const handleSubmitEditMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            return await callApi("put", `/tickets/status-point/${ticketId}`, payload);
+        },
+        onSuccess: (_res) => {
+            Notifications({ message: "Ticket Successfully Updated.", variantType: "success", persist: false });
+            setEditOpen(false);
+
+            queryClient.invalidateQueries({
+                queryKey: ['ticket']
+            });
+        },
+        onError: (_error: any) => {
+            Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
+        }
+    });
+
+    async function handleSubmitEdit(data: any) {
+        handleSubmitEditMutation.mutate(data);
     }
 
     const getColumns = useMemo(() => columns(
@@ -147,6 +175,7 @@ export default function TicketIKB() {
         handleFeedback,
         handleModalConfirm,
         handleModalReopen,
+        handleModalEditOpen,
         userRole
     ), [userRole]);
 
@@ -234,7 +263,8 @@ export default function TicketIKB() {
             <ConfirmModal open={confirmOpen} onClose={() => setConfirmOpen(false)} isTicket={true} isAssign={isAssign} data={ticketDetail} label="Are you sure?" btnCancel="Cancel" btnYes="Yes" />
             <ReassignModal open={reassignOpen} onClose={() => setReassignOpen(false)} data={ticketDetail} isReassign={isReassign} userId={userId} />
             <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} userRole={userRole} />
-            <ReopenModal open={reOpenModal} onClose={() => setReOpenModal(false)} data={ticketDetail} onClick={handleSubmit} />
+            <ReopenModal open={reOpenModal} onClose={() => setReOpenModal(false)} data={ticketDetail} onClick={handleSubmitOpenTicket} />
+            <TicketModal open={editOpen} onClose={() => setEditOpen(false)} onSubmit={handleSubmitEdit} />
         </>
     );
 }

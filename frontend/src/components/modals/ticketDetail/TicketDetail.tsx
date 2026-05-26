@@ -135,6 +135,10 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                                     <td>Category</td>
                                     <td>{data?.fk_category_id?.name}</td>
                                 </tr>
+                                <tr>
+                                    <td>PIC</td>
+                                    <td>{data?.fk_users_id?.username || "-"}</td>
+                                </tr>
                                 {(data?.fk_category_id?.name == "IKB" || data?.fk_category_id?.name == "ikb")  && (
                                     <>
                                         <tr>

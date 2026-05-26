@@ -34,6 +34,7 @@ export const columns = (
     onFeedback: (id: number, mode: string) => void,
     onRemove: (id: number) => void,
     onReopen: (id: number) => void,
+    onEdit: (id: number) => void,
     userRole: string
 ) => [
     columnHelper.display({
@@ -151,6 +152,7 @@ export const columns = (
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
+                        onEdit={() => onEdit(data.id)}
                     />
                 </div>
                 : 
@@ -165,6 +167,7 @@ export const columns = (
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
+                        onEdit={() => onEdit(data.id)}
                     />
                 </div>
             );

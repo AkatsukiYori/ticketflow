@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Styles from "./actions.module.css";
-import { MoreVertical, CheckCircle, XCircle, UserCheck, Trash2, LucideLockOpen } from "lucide-react";
+import { MoreVertical, CheckCircle, XCircle, UserCheck, Trash2, LucideLockOpen, Pencil } from "lucide-react";
 
 type Props = {
     onAssign: () => void;
@@ -8,12 +8,13 @@ type Props = {
     onComplete: () => void;
     onRemove: () => void;
     onReopen: () => void;
+    onEdit: () => void;
     isClosed: boolean;
     isAssign: boolean;
     userRole?: string;
 }
 
-export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, isClosed, isAssign, userRole }: Props) => {
+export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, onEdit, isClosed, isAssign, userRole }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,6 +58,7 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                                     )}
                                 </>
                             )}
+                            <button onClick={onEdit} title="Edit Ticket"><Pencil size={15} /> Edit</button>
                             <button onClick={onRemove} title="Delete"><Trash2 size={15} color="red" /> <span style={{ color: "red" }}>Remove</span></button>
                         </>
                     ) : (

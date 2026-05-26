@@ -20,5 +20,6 @@ routerTicket.put("/reject-ticket/:ticket_no", Controller.RejectTicketController)
 routerTicket.put("/feedback/:ticket_no", Controller.TicketFeedbackController);
 routerTicket.put("/close-ticket/:ticket_no", Controller.ClosedTicketController);
 routerTicket.put("/re-open/:ticket_no", Controller.ReOpenTicketController);
+routerTicket.put("/status-point/:id", Controller.UpdateStatusPointController);
 
 export default routerTicket;

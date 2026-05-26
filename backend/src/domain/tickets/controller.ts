@@ -171,3 +171,16 @@ export const RatingController = async (req: any, res: Response) => {
         res.status(500).json({ message: "Terjadi kesalahan : " + error.message });
     }
 }
+
+export const UpdateStatusPointController = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const statusPoint = req.body.status_point;
+
+        const result = await TicketServices.UpdateStatusPointServices(id, statusPoint);
+
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Something went wrong : " + error.message });
+    }
+}

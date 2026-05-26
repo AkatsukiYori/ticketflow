@@ -50,6 +50,11 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
                 borderColor: '#d1d1d1'
             }
         }),
+        menuPortal: (provided: any) => ({
+            ...provided,
+            fontSize: "12px",
+            zIndex: 9999
+        }),
         valueContainer: (provided: any) => ({
             ...provided,
             height: '42px',
@@ -65,7 +70,7 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
         indicatorsContainer: (provided: any) => ({
             ...provided,
             height: '42px',
-        }),
+        })
     };
 
     return (
@@ -78,6 +83,9 @@ export function SelectOptions({ value, options, name, id, onChangeSelect, classN
             onChange={onChangeSelect}
             placeholder={placeholder}
             options={options}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
+            menuShouldScrollIntoView={false}
             styles={customStyles}
         />
     );
