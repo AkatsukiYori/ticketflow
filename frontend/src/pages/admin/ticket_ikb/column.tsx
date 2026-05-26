@@ -111,8 +111,9 @@ export const columns = (
             const getStatusPoint = () => {
                 return data.ikb_status_point === "additional" ?
                     <span style={{ ...statusPointStyle, backgroundColor:"#BBF7D0" }}>Additional</span>
-                :
+                : data.ikb_status_point === "bugs" ?
                     <span style={{ ...statusPointStyle, backgroundColor:"#a1c6eb" }}>Bugs</span>
+                : <span style={{ ...statusPointStyle, backgroundColor: "#F3F4F6", color: "#4B5563" }}>Not Assigned</span>
             }
             return (
                 <>
