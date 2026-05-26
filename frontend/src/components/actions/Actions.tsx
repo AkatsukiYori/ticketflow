@@ -8,7 +8,7 @@ type Props = {
     onComplete: () => void;
     onRemove: () => void;
     onReopen: () => void;
-    onEdit: () => void;
+    onEdit?: () => void;
     isClosed: boolean;
     isAssign: boolean;
     userRole?: string;
