@@ -17,16 +17,18 @@
 
 /* Menu Dropdown */
 .menu {
-    position: fixed;
-    right: 40px;
-    top: auto;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 6px;
+
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.04); /* Border super transparan */
     border-radius: 12px; /* Lebih rounded */
     box-shadow: 
         0 4px 6px -1px rgba(0, 0, 0, 0.05),
         0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Layered shadow halus */
-    z-index: 100;
+        
     width: 170px;
     padding: 6px; /* Padding dalam agar item punya napas */
     display: flex;

@@ -22,6 +22,9 @@
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .data-th:first-child, .data-td:first-child {
