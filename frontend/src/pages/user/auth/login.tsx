@@ -6,10 +6,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Notifications } from "../../../components/notifications/notification";
 import { AdminLogin } from "../../../api/authApi";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isVisible, setIsVisible] = useState(false);
 
     const navigate = useNavigate();
 
@@ -40,6 +42,10 @@ export default function Login() {
         }
     }
 
+    const toggleVisible = () => {
+        setIsVisible(!isVisible);
+    }
+
     return (
         <main className={StylesAuth['main-content']}>
             <section className={StylesAuth.header}>
@@ -59,9 +65,16 @@ export default function Login() {
                             <label htmlFor="">Username</label>
                             <InputText type="text" placeholder="Masukkan username" id="username" value={username} onChangeInput={(e) => setUsername(e.target.value)} style={{ width: "100%" }} /> 
                         </div>
-                        <div className={StylesAuth['form-input']}>
+                        <div className={`${StylesAuth['form-input']} ${StylesAuth['form-input-password']}`}>
                             <label htmlFor="">Password</label>
-                            <InputText type="password" placeholder="Masukkan password" id="password" value={password} onChangeInput={(e) => setPassword(e.target.value)} style={{ width: "100%" }} />
+                            <InputText type={isVisible ? "text" : "password"} placeholder="Masukkan password" id="password" value={password} onChangeInput={(e) => setPassword(e.target.value)} style={{ width: "100%" }} />
+                            <span className={StylesAuth['toggle-password']} onClick={toggleVisible}>
+                                {
+                                    isVisible ? 
+                                    <EyeOff />
+                                    : <Eye />
+                                }
+                            </span>
                         </div>
                         <div className={StylesAuth['content-footer']}>
                             <button type="submit">Masuk</button>

@@ -82,6 +82,24 @@ body {
     background-color: rgba(27, 73, 157, 0.9);
 }
 
+.content-body > .form-input-password {
+    position: relative;
+}
+
+.content-body > .form-input-password > .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 3%;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #1b1b1b;
+    opacity: 0.5;
+}
+
 @media (max-width: 768px) {
     .section-body {
         flex-direction: column;
