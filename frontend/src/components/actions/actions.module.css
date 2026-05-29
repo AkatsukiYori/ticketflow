@@ -17,11 +17,6 @@
 
 /* Menu Dropdown */
 .menu {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 6px;
-
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.04); /* Border super transparan */
     border-radius: 12px; /* Lebih rounded */
@@ -33,7 +28,6 @@
     padding: 6px; /* Padding dalam agar item punya napas */
     display: flex;
     flex-direction: column;
-    z-index: 9999;
 }
 
 /* Item di dalam Menu */

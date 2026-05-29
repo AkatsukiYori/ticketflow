@@ -46,8 +46,9 @@ export default function Documentation() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ['documentation'],
         queryFn: fetchDocumentation,
-        staleTime: Infinity,
-        refetchOnWindowFocus: true 
+        staleTime: 0,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true
     });
 
     const handleSubmitMutation = useMutation({

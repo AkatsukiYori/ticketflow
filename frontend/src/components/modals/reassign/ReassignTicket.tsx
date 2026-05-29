@@ -26,6 +26,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
     const [error, setError] = useState<{ pic?: string, priority?: any, estimate?: string, pointStatus?: string }>({});
     
     const validate = () => {
+        const isIKBCategory = data?.fk_category_id.name.toLowerCase() === "ikb";
         const newError: {pic?: string, priority?: any, estimate?: string, pointStatus?: string} = {};
         if(!pic && isReassign) {
             newError.pic = "PIC cannot be empty.";
@@ -39,7 +40,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             newError.estimate = "Estimate cannot be empty.";
         }
 
-        if(!pointStatus) {
+        if(isIKBCategory && !pointStatus) {
             newError.pointStatus = "Point status cannot be empty.";
         }
 
@@ -63,7 +64,8 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
         queryKey: ['user'],
         queryFn: fetchUser,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     })
 
     useEffect(() => {
@@ -78,6 +80,7 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             return await callApi("put", `/tickets/assign/${data?.ticket_no}`, payload);
         },
         onSuccess: (res) => {
+            console.log(res);
             Notifications({ message: res.message, variantType: "success", persist: false });
             handleClear();
             onClose();
@@ -90,7 +93,8 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
                 queryKey: ['ticket-detail', data?.id]
             });
         },
-        onError: () => {
+        onError: (_error: any) => {
+            console.log(_error);
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     });

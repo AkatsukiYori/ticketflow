@@ -1,42 +1,39 @@
 .table {
-    overflow-x: auto;
+    width: 100%;
+    position: relative;
 }
 
 .data-table {
     width: 100%;
-    display: table;
-    vertical-align: middle;
+    min-width: 100%;
     border-collapse: collapse;
-    overflow: hidden;
+    table-layout: auto;
 }
 
-.data-table > thead, .data-table > tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
+.data-table tbody,
+.data-table tr,
+.data-table td {
+    overflow: unset;
 }
 
 .data-table > tbody {
-    display: block;
-    max-height: 700px;
-    overflow-y: auto;
-    overflow-x: hidden;
     width: 100%;
+}
 
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+.data-td {
+    position: relative;
+}
+
+.table-scroll {
+    width: 100%;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .data-th:first-child, .data-td:first-child {
     text-align: center;
     vertical-align: middle;
-    /* width: 40px; */
 }
-
-/* .data-th:last-child, .data-td:last-child {
-    width: 100px;
-    text-align: center;
-} */
 
 .cell-label {
     display: none;
@@ -45,6 +42,8 @@
 .data-th, .data-td {
     border: 1px solid #f1f1f1;
     padding: 14px 16px;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .data-th {

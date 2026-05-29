@@ -32,7 +32,8 @@ export default function ConfirmModal({ open, onConfirm, onClose, isTicket, data,
         queryKey: ["user", username],
         queryFn: fetchUser,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!username
     });
 

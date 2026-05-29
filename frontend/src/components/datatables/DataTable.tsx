@@ -12,69 +12,70 @@ export default function DataTables({ table, style }: Props) {
     return (
         <section>
             <section className={Styles['table']}>
-                <table className={Styles['data-table']}>
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup: any) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header: any, _index: number) => {
-                                    return (
-                                        <th
-                                            key={header.id}
-                                            className={Styles['data-th']}
-                                            style={{
-                                                textAlign: "center",
-                                                width: header.getSize()
-                                            }}
-                                        >
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                        </th>
-                                    )
-                                })}
-                            </tr>
-                        ))}
-                    </thead>
-
-                    <tbody style={style}>
-                        {table.getRowModel().rows.length === 0 ? (
-                            <tr>
-                                <td colSpan={table.getAllColumns().length} style={{ textAlign: "center", padding: "20px" }}>
-                                    No records found
-                                </td>
-                            </tr>
-                        ) : (
-                            table.getRowModel().rows.map((row: any) => (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map((cell: any, _index: number) => {
+                <section className={Styles['table-scroll']}>
+                    <table className={Styles['data-table']}>
+                        <thead>
+                            {table.getHeaderGroups().map((headerGroup: any) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header: any, _index: number) => {
                                         return (
-                                            <td
-                                                data-label={cell.column.columnDef.header}
-                                                key={cell.id}
-                                                className={Styles['data-td']}
+                                            <th
+                                                key={header.id}
+                                                className={Styles['data-th']}
                                                 style={{
                                                     textAlign: "center",
-                                                    width: cell.column.getSize()
+                                                    width: header.getSize()
                                                 }}
                                             >
-                                                <div key={cell.id} className={Styles['cell-row']}>
-                                                    <span className={Styles['cell-label']}>
-                                                        {typeof cell.column.columnDef.header === "string"
-                                                            ? cell.column.columnDef.header
-                                                            : cell.column.id}
-                                                    </span>
-
-                                                    <span className={Styles['cell-value']}>
-                                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        );
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                            </th>
+                                        )
                                     })}
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ))}
+                        </thead>
 
+                        <tbody style={style}>
+                            {table.getRowModel().rows.length === 0 ? (
+                                <tr>
+                                    <td colSpan={table.getAllColumns().length} style={{ textAlign: "center", padding: "20px" }}>
+                                        No records found
+                                    </td>
+                                </tr>
+                            ) : (
+                                table.getRowModel().rows.map((row: any) => (
+                                    <tr key={row.id}>
+                                        {row.getVisibleCells().map((cell: any, _index: number) => {
+                                            return (
+                                                <td
+                                                    data-label={cell.column.columnDef.header}
+                                                    key={cell.id}
+                                                    className={Styles['data-td']}
+                                                    style={{
+                                                        textAlign: "center",
+                                                        width: cell.column.getSize()
+                                                    }}
+                                                >
+                                                    <div key={cell.id} className={Styles['cell-row']}>
+                                                        <span className={Styles['cell-label']}>
+                                                            {typeof cell.column.columnDef.header === "string"
+                                                                ? cell.column.columnDef.header
+                                                                : cell.column.id}
+                                                        </span>
+
+                                                        <span className={Styles['cell-value']}>
+                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </section>
                 {/* Fungsi pagination */}
                 <div className={Styles.paginationContainer}>
                     <div className={Styles.paginationInfo}>

@@ -154,6 +154,7 @@ export const columns = (
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
                         onEdit={() => onEdit(data.id)}
+                        isIKB={true}
                     />
                 </div>
                 : 
@@ -169,6 +170,7 @@ export const columns = (
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
                         onEdit={() => onEdit(data.id)}
+                        isIKB={true}
                     />
                 </div>
             );

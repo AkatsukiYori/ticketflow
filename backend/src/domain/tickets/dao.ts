@@ -119,7 +119,7 @@ export const GetAllIKBTicketDAO = async () => {
 }
 
 export const FilterTicketDAO = async (filterData: any) => {
-    const { startMonth, endMonth, no, user } = filterData;
+    const { startMonth, endMonth, no, user, title, status } = filterData;
 
     const whereClause: any = {
         deleted_at: null,
@@ -135,6 +135,10 @@ export const FilterTicketDAO = async (filterData: any) => {
                 contains: user
             },
         };
+    }
+
+    if(title) {
+        whereClause.ticket_title = { contains: title }
     }
 
     if(startMonth || endMonth) {
@@ -155,6 +159,18 @@ export const FilterTicketDAO = async (filterData: any) => {
         }
 
         whereClause.report_date = dateFilter;
+    }
+
+
+    if(status) {
+        if(status === 'closed') {
+            whereClause.closed_at = {
+                not: null
+            };
+        } else {
+            whereClause.status = status;
+            whereClause.closed_at = null;
+        }
     }
 
     try {

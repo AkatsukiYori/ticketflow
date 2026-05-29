@@ -44,7 +44,8 @@ export default function Members() {
         queryKey: ['users'],
         queryFn: fetchUsers,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     function handleModalCreate() {

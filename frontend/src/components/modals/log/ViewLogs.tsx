@@ -28,7 +28,8 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
         queryKey: ['logs', ticketId],
         queryFn: fetchLogs,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!ticketId
     });
 
@@ -36,7 +37,8 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
         queryKey: ['ticket', ticketId],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!ticketId
     });
 

@@ -68,7 +68,8 @@ export default function Ticket() {
         queryKey: ['ticket', role],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!role
     });
 
@@ -76,7 +77,8 @@ export default function Ticket() {
         queryKey: ['users'],
         queryFn: fetchUser,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!username
     });
 
@@ -84,7 +86,8 @@ export default function Ticket() {
         queryKey: ['ticket-detail', ticketId],
         queryFn: fetchTicketById,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!ticketId
     });
 

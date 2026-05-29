@@ -44,21 +44,24 @@ export default function NewTicket() {
         queryKey: ['department'],
         queryFn: fetchDepartment,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     const { data: members = [] } = useQuery({
         queryKey: ['members'],
         queryFn: fetchMembers,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     const { data: category = [] } = useQuery({
         queryKey: ['category'],
         queryFn: fetchCategory,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     const initialForm = {

@@ -70,7 +70,8 @@ export default function TicketIKB() {
         queryKey: ['ticket'],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!role
     });
 
@@ -78,7 +79,8 @@ export default function TicketIKB() {
         queryKey: ['users'],
         queryFn: fetchUser,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!username
     });
 
@@ -86,7 +88,8 @@ export default function TicketIKB() {
         queryKey: ['ticket-detail', ticketId],
         queryFn: fetchTicketById,
         refetchOnWindowFocus: true,
-        staleTime: Infinity,
+        refetchOnMount: true,
+        staleTime: 0,
         enabled: !!ticketId
     });
 

@@ -47,8 +47,9 @@ export default function Category() {
     const { data = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ["category"],
         queryFn: fetchCategories,
-        staleTime: Infinity,
-        refetchOnWindowFocus: true
+        staleTime: 0,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true
     });
 
     const handleSubmitMutation = useMutation({

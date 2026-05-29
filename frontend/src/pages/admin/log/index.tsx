@@ -31,7 +31,8 @@ export default function Log() {
         queryKey: ['ticket-logs'],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     function handleLogs(id: number) {

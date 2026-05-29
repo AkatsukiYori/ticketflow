@@ -30,6 +30,7 @@ export default function RatingModal({ open, ticketNo, onClose, onClick } : Props
                     <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
                 <div className={Styles['modal-body']}>
+                    <p style={{ margin: "0 0 5px 0" }}>Berikan penilaian terhadap penanganan kasus Anda.</p>
                     <div className={Styles['rating']}>
                         <label htmlFor="">Point</label>
                         <div className={Styles['rating-point']}>

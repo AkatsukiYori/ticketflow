@@ -1,7 +1,7 @@
 import Card from "../../components/card/Card";
 import { Notifications } from "../../components/notifications/notification";
 import { useState } from "react";
-import { InputText } from "../../components/inputs/Input";
+import { InputText, SelectOptions } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
 import { useApi } from "../../hooks/useApi";
 
@@ -36,16 +36,24 @@ export default function CheckTicketStatus() {
 
     const [ticketNo, setTicketNo] = useState("");
     const [ticketSearch, setTicketSearch] = useState("");
+    const [ticketTitleSearch, setTicketTitleSearch] = useState("");
     const [userSearch, setUserSearch] = useState("");
+    const [ticketStatus, setTicketStatus] = useState("");
     const [startMonth, setStartMonth] = useState(getFirstDayOfMonth());
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
 
     const fetchTicket = async () => {
-        const isFiltering = ticketSearch || userSearch || startMonth || endMonth;
+        const isFiltering = 
+            ticketSearch || 
+            userSearch || 
+            startMonth ||
+            endMonth || 
+            ticketTitleSearch || 
+            ticketStatus;
 
         const url = isFiltering ?
-            `tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}` :
+            `tickets/filter-ticket?startMonth=${startMonth}&endMonth=${endMonth}&no=${ticketSearch}&user=${userSearch}&title=${ticketTitleSearch}&status=${ticketStatus}` :
             `tickets/get-all-ticket?status=${false}`;
 
 
@@ -54,10 +62,19 @@ export default function CheckTicketStatus() {
     };
 
     const { data = [] } = useQuery({
-        queryKey: ['ticket', startMonth, endMonth, ticketSearch, userSearch],
+        queryKey: [
+            'ticket',
+            startMonth,
+            endMonth,
+            ticketSearch,
+            userSearch,
+            ticketTitleSearch,
+            ticketStatus
+        ],
         queryFn: fetchTicket,
         refetchOnWindowFocus: true,
-        staleTime: Infinity
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     const handleModalResponse = (ticketNo: string) => {
@@ -191,7 +208,24 @@ export default function CheckTicketStatus() {
 
                 <div className={Styles['filter']}>
                     <InputText type="text" placeholder="Cari nomor tiket..." value={ticketSearch} onChangeInput={(e) => setTicketSearch(e.target.value)} />
+                    <InputText type="text" placeholder="Cari tiket" value={ticketTitleSearch} onChangeInput={(e) => setTicketTitleSearch(e.target.value)} />
                     <InputText type="text" placeholder="Cari nama pengguna..." value={userSearch} onChangeInput={(e) => setUserSearch(e.target.value)} />
+                    <SelectOptions
+                        name="filterStatus"
+                        id="filterStatus"
+                        placeholder="Filter Status"
+                        searchAble={false}
+                        value={ticketStatus}
+                        options={[
+                            { label: "Semua Status", value: "" },
+                            { label: "Pending", value: "pending" },
+                            { label: "On Progress", value: "on_progress" },
+                            { label: "Feedback", value: "completed" },
+                            { label: "Closed", value: "closed" },
+                            { label: "Reject", value: "reject" }
+                        ]}
+                        onChangeSelect={(e) => setTicketStatus(e ? e.value : "")}
+                    />
                     <InputText type="date" value={startMonth} onChangeInput={(e) => setStartMonth(e.target.value)} />
                     <InputText type="date" value={endMonth} onChangeInput={(e) => setEndMonth(e.target.value)} />
                 </div>
