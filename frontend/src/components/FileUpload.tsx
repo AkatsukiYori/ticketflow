@@ -37,7 +37,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
                     options: {
                         type: "local",
                         metadata: {
-                            poster: `${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/${module}/${fileName}`
+                            poster: `${import.meta.env.VITE_API_URL}/uploads/${module}/${fileName}`
                         }
                     }
                 }
@@ -67,7 +67,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onUploadSuccess, onRever
             imagePreviewHeight={170}
             server={{
                 load: async (source: any, load: any, error: any) => {
-                    const url = `${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/${module}/${source}`;
+                    const url = `${import.meta.env.VITE_API_URL}/uploads/${module}/${source}`;
                     try {
                         const res = await fetch(url);
                         const blob = await res.blob();

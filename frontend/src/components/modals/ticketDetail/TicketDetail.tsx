@@ -170,7 +170,7 @@ export default function TicketDetailModal({ open, data, onClose }: Props) {
                             <>
                                 <Zoom>
                                     <img
-                                        src={`${import.meta.env.VITE_API_URL.replace("/api", "")}/uploads/tickets/${data?.images?.filename}`}
+                                        src={`${import.meta.env.VITE_API_URL}/uploads/tickets/${data?.images?.filename}`}
                                         alt="Attachment"
                                         width="100%"
                                         height={400}
