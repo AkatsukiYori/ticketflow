@@ -192,7 +192,7 @@ export const FilterTicketDAO = async (filterData: any) => {
                         user_id: true
                     },
                     orderBy: {
-                        ldockog_date: "desc"
+                        log_date: "desc"
                     },
                     take: 1
                 }
