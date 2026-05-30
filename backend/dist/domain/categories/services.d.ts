@@ -1,5 +1,11 @@
 import * as CategoriesBodyDTO from "../../dtos/categories/categories_dto";
-export declare const GetAllCategoriesServices: () => Promise<any>;
+export declare const GetAllCategoriesServices: () => Promise<{
+    name: string;
+    id: number;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
+}[]>;
 export declare const CreateCategoriesServices: (data: CategoriesBodyDTO.CreateCategoriesInput) => Promise<{
     message: string;
 }>;

@@ -9,10 +9,17 @@ export declare const CreateTicketSchema: z.ZodObject<{
     problem: z.ZodString;
     report_date: z.ZodOptional<z.ZodCoercedDate<unknown>>;
     location: z.ZodString;
-    priority: z.ZodUnion<[z.ZodNullable<z.ZodOptional<z.ZodEnum<any>>>, z.ZodPipe<z.ZodLiteral<"">, z.ZodTransform<null, "">>]>;
+    priority: z.ZodUnion<[z.ZodNullable<z.ZodOptional<z.ZodEnum<{
+        high: "high";
+        mid: "mid";
+        low: "low";
+    }>>>, z.ZodPipe<z.ZodLiteral<"">, z.ZodTransform<null, "">>]>;
     note: z.ZodOptional<z.ZodString>;
     status: z.ZodEnum<{
-        [x: string]: any;
+        pending: "pending";
+        on_progress: "on_progress";
+        completed: "completed";
+        reject: "reject";
     }>;
     status_reason: z.ZodOptional<z.ZodString>;
     closed_at: z.ZodOptional<z.ZodCoercedDate<unknown>>;
@@ -35,11 +42,16 @@ export declare const UpdateTicketSchema: z.ZodObject<{
     report_date: z.ZodOptional<z.ZodCoercedDate<unknown>>;
     location: z.ZodOptional<z.ZodString>;
     priority: z.ZodOptional<z.ZodEnum<{
-        [x: string]: any;
+        high: "high";
+        mid: "mid";
+        low: "low";
     }>>;
     note: z.ZodOptional<z.ZodString>;
     status: z.ZodOptional<z.ZodEnum<{
-        [x: string]: any;
+        pending: "pending";
+        on_progress: "on_progress";
+        completed: "completed";
+        reject: "reject";
     }>>;
     status_reason: z.ZodOptional<z.ZodString>;
     closed_at: z.ZodOptional<z.ZodCoercedDate<unknown>>;

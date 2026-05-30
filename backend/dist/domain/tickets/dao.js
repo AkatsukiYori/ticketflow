@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
+exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const promises_1 = __importDefault(require("fs/promises"));
 function MakeDate() {
@@ -16,6 +16,7 @@ const GetTicketById = async (id) => {
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
                 fk_category_id: { select: { name: true, id: true } },
+                fk_users_id: { select: { username: true } },
                 images: { select: { filename: true } },
                 rating: { select: { score: true } }
             },
@@ -117,7 +118,7 @@ const GetAllIKBTicketDAO = async () => {
 };
 exports.GetAllIKBTicketDAO = GetAllIKBTicketDAO;
 const FilterTicketDAO = async (filterData) => {
-    const { startMonth, endMonth, no, user } = filterData;
+    const { startMonth, endMonth, no, user, title, status } = filterData;
     const whereClause = {
         deleted_at: null,
     };
@@ -130,6 +131,9 @@ const FilterTicketDAO = async (filterData) => {
                 contains: user
             },
         };
+    }
+    if (title) {
+        whereClause.ticket_title = { contains: title };
     }
     if (startMonth || endMonth) {
         const dateFilter = {};
@@ -145,13 +149,39 @@ const FilterTicketDAO = async (filterData) => {
         }
         whereClause.report_date = dateFilter;
     }
+    if (status) {
+        if (status === 'closed') {
+            whereClause.closed_at = {
+                not: null
+            };
+        }
+        else {
+            whereClause.status = status;
+            whereClause.closed_at = null;
+        }
+    }
     try {
         return await prisma_1.default.tickets.findMany({
             include: {
                 rating: true,
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
-                fk_category_id: { select: { name: true } }
+                fk_category_id: { select: { name: true } },
+                fk_users_id: { select: { username: true } },
+                log: {
+                    select: {
+                        auto_closed: true,
+                        closed_by: true,
+                        description: true,
+                        log_date: true,
+                        status: true,
+                        user_id: true
+                    },
+                    orderBy: {
+                        log_date: "desc"
+                    },
+                    take: 1
+                }
             },
             where: whereClause,
             orderBy: {
@@ -323,7 +353,7 @@ const DeleteTicketDAO = async (id) => {
     }
 };
 exports.DeleteTicketDAO = DeleteTicketDAO;
-const AssignTicketDAO = async (ticketNo, userId, priority, estimate) => {
+const AssignTicketDAO = async (ticketNo, userId, priority, point_status, estimate) => {
     try {
         await prisma_1.default.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({
@@ -338,13 +368,14 @@ const AssignTicketDAO = async (ticketNo, userId, priority, estimate) => {
                         estimate: estimate ? new Date(estimate) : null,
                         assign_to: userId,
                         status: "on_progress",
-                        priority: priority
+                        priority: priority,
+                        ikb_status_point: point_status ? point_status : null
                     }
                 });
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: userId,
                         status: "on_progress",
                         action_type: "assign",
                         log_date: MakeDate(),
@@ -472,7 +503,7 @@ const ClosedTicketDAO = async (ticketNo) => {
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: null,
                         status: "closed",
                         action_type: "closed",
                         log_date: MakeDate(),
@@ -492,6 +523,9 @@ const ReOpenTicketDAO = async (ticketNo) => {
         await prisma_1.default.$transaction(async (tx) => {
             const ticket = await tx.tickets.findFirst({ where: { ticket_no: ticketNo } });
             if (ticket) {
+                await tx.rating.deleteMany({
+                    where: { ticket_id: ticket.id }
+                });
                 await tx.tickets.update({
                     where: {
                         id: ticket.id
@@ -505,7 +539,7 @@ const ReOpenTicketDAO = async (ticketNo) => {
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: null,
                         status: "reopen",
                         action_type: "open_ticket",
                         log_date: MakeDate(),
@@ -538,6 +572,16 @@ const RatingDAO = async (data) => {
                         created_at: new Date()
                     }
                 });
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket?.id,
+                        user_id: null,
+                        status: "rating",
+                        action_type: "rating",
+                        log_date: MakeDate(),
+                        description: `User memberikan rating ${score} untuk penanganan ticket ini.`
+                    }
+                });
             }
         });
     }
@@ -546,4 +590,25 @@ const RatingDAO = async (data) => {
     }
 };
 exports.RatingDAO = RatingDAO;
+const UpdateStatusPointDAO = async (id, statusPoint) => {
+    try {
+        return await prisma_1.default.$transaction(async (tx) => {
+            const ticket = await tx.tickets.findFirst({
+                where: {
+                    id: id
+                }
+            });
+            if (ticket) {
+                await tx.tickets.update({
+                    where: { id: id },
+                    data: { ikb_status_point: statusPoint }
+                });
+            }
+        });
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+exports.UpdateStatusPointDAO = UpdateStatusPointDAO;
 //# sourceMappingURL=dao.js.map

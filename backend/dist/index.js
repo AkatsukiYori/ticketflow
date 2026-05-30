@@ -9,6 +9,7 @@ const main_1 = __importDefault(require("./routes/main"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const path_1 = __importDefault(require("path"));
+require("./scheduler/index");
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -22,9 +23,9 @@ app.use((0, cors_1.default)({
     allowedHeaders: "Content-Type, Authorization"
 }));
 app.use(express_1.default.json());
-app.use("/api", main_1.default);
-app.use("/uploads", express_1.default.static(path_1.default.join(process.cwd(), "uploads")));
-server.listen(3002, '0.0.0.0', () => {
-    console.log(`Server running on port 3000`);
+app.use("/api-ticketflow", main_1.default);
+app.use("/api-ticketflow/uploads", express_1.default.static(path_1.default.join(process.cwd(), "uploads")));
+server.listen(8001, '0.0.0.0', () => {
+    console.log(`Server running on port 8001`);
 });
 //# sourceMappingURL=index.js.map

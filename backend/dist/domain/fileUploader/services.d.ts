@@ -5,5 +5,5 @@ export declare const FileUploaderServices: (file: Express.Multer.File, module: s
     savedFile: any;
     message?: never;
 }>;
-export declare const FileRevertServices: (document: number, module: string) => Promise<any>;
+export declare const FileRevertServices: (document: number, module: string) => Promise<null | undefined>;
 //# sourceMappingURL=services.d.ts.map

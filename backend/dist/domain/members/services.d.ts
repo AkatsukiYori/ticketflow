@@ -1,5 +1,9 @@
 import * as MembersDTO from "../../dtos/members/members_dto";
-export declare const GetAllMembersServices: () => Promise<any>;
+export declare const GetAllMembersServices: () => Promise<{
+    id: number;
+    username: string;
+    active_status: boolean;
+}[]>;
 export declare const CreateMembersServices: (data: MembersDTO.CreateMembersInput) => Promise<{
     message: string;
 }>;

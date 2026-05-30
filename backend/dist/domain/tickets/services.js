@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
+exports.UpdateStatusPointServices = exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
 const TicketDAO = __importStar(require("./dao"));
 const getTicketById = async (id) => {
     try {
@@ -120,9 +120,9 @@ const DeleteTicketServices = async (id) => {
     }
 };
 exports.DeleteTicketServices = DeleteTicketServices;
-const AssignTicketServices = async (ticketNo, userId, priority, estimate) => {
+const AssignTicketServices = async (ticketNo, userId, priority, estimate, point_status) => {
     try {
-        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority, estimate);
+        await TicketDAO.AssignTicketDAO(ticketNo, userId, priority, point_status, estimate);
         return ({ message: "Ticket Successful Assigned." });
     }
     catch (error) {
@@ -180,4 +180,14 @@ const RatingServices = async (data) => {
     }
 };
 exports.RatingServices = RatingServices;
+const UpdateStatusPointServices = async (id, statusPoint) => {
+    try {
+        await TicketDAO.UpdateStatusPointDAO(id, statusPoint);
+        return ({ message: "Ticket Successfully updated." });
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+exports.UpdateStatusPointServices = UpdateStatusPointServices;
 //# sourceMappingURL=services.js.map

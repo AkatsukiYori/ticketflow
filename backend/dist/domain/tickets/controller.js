@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
+exports.UpdateStatusPointController = exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
 const TicketServices = __importStar(require("./services"));
 const GetTicketByIdController = async (req, res) => {
     const id = Number(req.params.id);
@@ -92,7 +92,7 @@ exports.GetAllIKBTicketController = GetAllIKBTicketController;
 const CreateTicketController = async (req, res) => {
     const { attachment, ...datas } = req.body;
     try {
-        const { message, ticketNo, logStat } = await TicketServices.CreateTicketServices(datas, Number(attachment));
+        const { message, ticketNo } = await TicketServices.CreateTicketServices(datas, Number(attachment));
         res.status(201).json({ message, ticketNo });
     }
     catch (error) {
@@ -135,8 +135,8 @@ exports.DeleteTicketController = DeleteTicketController;
 const AssignTicketController = async (req, res) => {
     try {
         const ticketNo = req.params.ticket_no;
-        const { user_id, priority, estimate } = req.body;
-        const result = await TicketServices.AssignTicketServices(ticketNo, Number(user_id), priority, estimate);
+        const { user_id, priority, estimate, point_status } = req.body;
+        const result = await TicketServices.AssignTicketServices(ticketNo, Number(user_id), priority, estimate, point_status);
         res.status(201).json(result);
     }
     catch (error) {
@@ -203,4 +203,16 @@ const RatingController = async (req, res) => {
     }
 };
 exports.RatingController = RatingController;
+const UpdateStatusPointController = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const statusPoint = req.body.status_point;
+        const result = await TicketServices.UpdateStatusPointServices(id, statusPoint);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Something went wrong : " + error.message });
+    }
+};
+exports.UpdateStatusPointController = UpdateStatusPointController;
 //# sourceMappingURL=controller.js.map

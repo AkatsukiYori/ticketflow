@@ -10,8 +10,8 @@ export declare const LoginServices: (userData: LoginInput) => Promise<{
     status: string;
     message: string;
     token: string;
-    username: any;
-    location: any;
-    role: any;
+    username: string;
+    location: import("@prisma/client").$Enums.Location;
+    role: import("@prisma/client").$Enums.RoleUsers;
 }>;
 //# sourceMappingURL=services.d.ts.map
