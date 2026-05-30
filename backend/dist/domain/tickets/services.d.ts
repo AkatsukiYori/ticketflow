@@ -136,35 +136,7 @@ export declare const GetAllIKBTicketServices: () => Promise<({
     department_id: number | null;
     member_id: number | null;
 })[]>;
-export declare const FilterTicketServices: (filterData: any) => Promise<({
-    log: {
-        description: string | null;
-        status: string;
-        log_date: Date;
-        auto_closed: boolean | null;
-        closed_by: string | null;
-        user_id: number | null;
-    }[];
-    rating: {
-        id: number;
-        created_at: Date;
-        note: string | null;
-        ticket_id: number;
-        score: number;
-    } | null;
-    fk_category_id: {
-        name: string;
-    };
-    fk_users_id: {
-        username: string;
-    } | null;
-    fk_department: {
-        name: string;
-    } | null;
-    fk_member: {
-        username: string;
-    } | null;
-} & {
+export declare const FilterTicketServices: (filterData: any) => Promise<{
     id: number;
     created_at: Date;
     updated_at: Date;
@@ -191,7 +163,7 @@ export declare const FilterTicketServices: (filterData: any) => Promise<({
     assign_to: number | null;
     department_id: number | null;
     member_id: number | null;
-})[]>;
+}[]>;
 export declare const GetAllTicketLogs: () => Promise<({
     rating: {
         score: number;
