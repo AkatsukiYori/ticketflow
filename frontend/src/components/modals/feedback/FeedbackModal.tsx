@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { InputText, CustomCheckbox } from "../../inputs/Input";
 import { useApi } from "../../../hooks/useApi";
 import { Notifications } from "../../notifications/notification";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
     open: boolean;
@@ -22,7 +22,7 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
     const [error, setError] = useState<{ reason?: string; estimate?: string; }>({});
     const [isDoc, setIsDoc] = useState<boolean>(false);
 
-    const username = localStorage.getItem("username") || "";
+    // const username = localStorage.getItem("username") || "";
 
     const validate = () => {
         const newError: { reason?: string; estimate?: string } = {};
@@ -40,17 +40,17 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         setIsDoc(false);
     }
 
-    const fetchUser = async () => {
-        return await callApi("get", `/users/get-user/${username}`);
-    }
+    // const fetchUser = async () => {
+    //     return await callApi("get", `/users/get-user/${username}`);
+    // }
 
-    const { data: userData } = useQuery({
-        queryKey: ['user'],
-        queryFn: fetchUser,
-        refetchOnWindowFocus: true,
-        refetchOnMount: true,
-        staleTime: 0,
-    })
+    // const { data: userData } = useQuery({
+    //     queryKey: ['user'],
+    //     queryFn: fetchUser,
+    //     refetchOnWindowFocus: true,
+    //     refetchOnMount: true,
+    //     staleTime: 0,
+    // })
 
     const handleSubmitMutation = useMutation({
         mutationFn: async (payload: any) => {
@@ -88,7 +88,7 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
         const payloadFeedback = {
             reason: reason,
             role: "admin",
-            user_id: userData?.id,
+            user_id: ticket.assign_to,
             make_doc: isDoc
         }
 
@@ -106,6 +106,8 @@ export const FeedbackModal = ({ open, onClose, mode, ticket, userRole }: Props) 
     }, [open]);
 
     if(!open) return null;
+
+    console.log(ticket);
 
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>

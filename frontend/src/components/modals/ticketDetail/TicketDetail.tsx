@@ -13,6 +13,7 @@ type Props = {
 
 export default function TicketDetailModal({ open, data, onClose }: Props) {
     if(!open) return null;
+    console.log(data);
 
     return (
         <div className={`${Styles['modal-overlay']} ${open ? Styles['modal-overlay-show'] : "hide"}`}>

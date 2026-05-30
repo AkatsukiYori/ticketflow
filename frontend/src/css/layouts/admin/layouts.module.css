@@ -126,6 +126,7 @@
 .main-content > .content-body {
     flex: 5;
     width: 100%;
+    display: flex;
 }
 
 .main-content > .content-body > .content-body-left {

@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../../prisma";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 import fs from "fs/promises";
+import { includes } from "zod";
 
 function MakeDate() {
     return new Date();
@@ -179,7 +180,22 @@ export const FilterTicketDAO = async (filterData: any) => {
                 rating: true,
                 fk_member: { select: { username: true } },
                 fk_department: { select: { name: true } },
-                fk_category_id: { select: { name: true } }
+                fk_category_id: { select: { name: true } },
+                fk_users_id: { select: { username: true } },
+                log: {
+                    select: {
+                        auto_closed: true,
+                        closed_by: true,
+                        description: true,
+                        log_date: true,
+                        status: true,
+                        user_id: true
+                    },
+                    orderBy: {
+                        log_date: "desc"
+                    },
+                    take: 1
+                }
             },
             where: whereClause,
             orderBy: {
@@ -388,7 +404,7 @@ export const AssignTicketDAO = async (ticketNo: string, userId: number, priority
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: userId,
                         status: "on_progress",
                         action_type: "assign",
                         log_date: MakeDate(),
@@ -521,7 +537,7 @@ export const ClosedTicketDAO = async (ticketNo: string) => {
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: null,
                         status: "closed",
                         action_type: "closed",
                         log_date: MakeDate(),
@@ -540,6 +556,10 @@ export const ReOpenTicketDAO = async (ticketNo: string) => {
         await prisma.$transaction(async (tx: any) => {
             const ticket = await tx.tickets.findFirst({ where: { ticket_no: ticketNo } });
             if(ticket) {
+                await tx.rating.deleteMany({
+                    where: { ticket_id: ticket.id }
+                });
+
                 await tx.tickets.update({
                     where: {
                         id: ticket.id
@@ -554,7 +574,7 @@ export const ReOpenTicketDAO = async (ticketNo: string) => {
                 await tx.log.create({
                     data: {
                         ticket_id: ticket.id,
-                        user_id: ticket.assign_to,
+                        user_id: null,
                         status: "reopen",
                         action_type: "open_ticket",
                         log_date: MakeDate(),
@@ -587,6 +607,17 @@ export const RatingDAO = async (data: any) => {
                         created_at: new Date()
                     }
                 });
+
+                await tx.log.create({
+                    data: {
+                        ticket_id: ticket?.id,
+                        user_id: null,
+                        status: "rating",
+                        action_type: "rating",
+                        log_date: MakeDate(),
+                        description: `User memberikan rating ${score} untuk penanganan ticket ini.`
+                    }
+                })
             }
         });
     } catch (error: any) {

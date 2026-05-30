@@ -4,6 +4,7 @@ import router from "./routes/main";
 import cors from "cors";
 import http from "http";
 import path from "path";
+import "./scheduler/index";
 
 const allowedOrigins = [
     "http://localhost:5173",

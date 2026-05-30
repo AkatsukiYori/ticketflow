@@ -15,6 +15,20 @@ type Props = {
 export default function Card({ data, onClickClosed, onClickResponse, onClickOpenTicket, onClickLogs, onClickRating }: Props) {
     const [open, setOpen] = useState(false);
 
+    const tombol = {
+        tutup: <button type="button" className={Styles['btn-closed']} onClick={() => onClickClosed(data.ticket_no)}><X size={18} /> Tutup Tiket</button>,
+        respon: <button type="button" className={Styles['btn-respon']} onClick={() => onClickResponse(data.ticket_no)}><MessageCircleMore size={18} /> Respon</button>,
+        buka: <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><LockOpenIcon size={18} /> Buka Ticket</button>,
+        rating: <button type="button" className={Styles['btn-rating']} onClick={() => onClickRating(data.ticket_no)}><Star size={18} /> Rating</button>,
+        log: <button type="button" className={Styles['btn-logs']} onClick={() => onClickLogs(data.id)}><LogsIcon size={18} /> Logs</button>
+    };
+
+    const latestLogs = data?.log?.[0];
+    const isFeedback = latestLogs?.status === "feedback" && !latestLogs?.auto_closed && latestLogs?.user_id !== null;
+    const isExpired = data?.expired_at !== null;
+    const isClosed = latestLogs?.status === "closed";
+    const hasRating = !!data?.rating;
+
     return (
         <>
             <div className={Styles['card']} style={{ width: "100%" }}>
@@ -56,23 +70,33 @@ export default function Card({ data, onClickClosed, onClickResponse, onClickOpen
                             <p style={{ margin: 0 }}>{data.problem}</p>
                         </div>
                         <div className={Styles['card-footer']}>
-                            {data.closed_at && data.status === "completed" ?
+                            {isFeedback && (
                                 <>
-                                    <button type="button" className={Styles['btn-open-ticket']} onClick={() => onClickOpenTicket(data.ticket_no)}><LockOpenIcon size={18} /> Buka Ticket</button>
-                                    {!data.rating ? (
-                                        <button type="button" className={Styles['btn-rating']} onClick={() => onClickRating(data.ticket_no)}><Star size={18} /> Rating</button>
-                                    ) : (
-                                        <></>
-                                    )}
+                                    {tombol.tutup}
+                                    {tombol.respon}
                                 </>
-                            : !data.closed_at && data.status === "completed" ?
+                            )}
+
+                            {!isClosed && hasRating && !isExpired && (
                                 <>
-                                    <button type="button" className={Styles['btn-closed']} onClick={() => onClickClosed(data.ticket_no)}><X size={18} /> Tutup Tiket</button>
-                                    <button type="button" className={Styles['btn-respon']} onClick={() => onClickResponse(data.ticket_no)}><MessageCircleMore size={18} /> Respon</button>
+                                    {tombol.buka}
                                 </>
-                            : <></>
-                            }
-                            <button type="button" className={Styles['btn-logs']} onClick={() => onClickLogs(data.id)}><LogsIcon size={18} /> Logs</button>
+                            )}
+
+                            {isClosed && !hasRating && !isExpired && (
+                                <>
+                                    {tombol.buka}
+                                    {tombol.rating}
+                                </>
+                            )}
+
+                            {!isClosed && !hasRating && isExpired && (
+                                <>
+                                    {tombol.rating}
+                                </>
+                            )}
+
+                            {tombol.log}
                         </div>
                     </div>
                     <div className={Styles['card-content-right']}>

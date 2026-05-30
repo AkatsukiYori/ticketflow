@@ -54,7 +54,7 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
                     </div>
                     <Buttons label="X" func="header-close" btnTitle="Close" onClick={onClose} />
                 </div>
-                <div className={Styles['modal-body']}>
+                <div className={`${Styles['modal-body']} ${Styles['scrollable']}`}>
                     <div className={Styles['modal-body-content']}>
                         {logsData.length > 0 ? (
                             <>
@@ -63,7 +63,7 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
                                         <span className={Styles['circle-logs']}></span>
                                         <div className={Styles['time-line-content']}>
                                             <p>
-                                                <span>{value.action_type.charAt(0).toUpperCase() + value.action_type.slice(1).replaceAll("_", " ")}</span> By {value.user_id ? value.fk_user_id?.username : ticketData?.fk_member?.username} {new Date(value.fk_ticket_id?.report_date).toLocaleDateString("en-US", {
+                                                <span>{value.action_type.charAt(0).toUpperCase() + value.action_type.slice(1).replaceAll("_", " ")}</span> By {value.user_id ? value.fk_user_id?.username : value.closed_by !== null ? value.closed_by : ticketData?.fk_member?.username} {new Date(value.fk_ticket_id?.report_date).toLocaleDateString("en-US", {
                                                     day: "2-digit",
                                                     month: "long",
                                                     year: "numeric",
@@ -72,7 +72,13 @@ export default function LogsModal({ open, ticketId, onClose }: Props) {
                                                     timeZone: "Asia/Jakarta"
                                                 }).replaceAll(/\./g, ":")}
                                             </p>
-                                            {(value.action_type === "feedback" || value.action_type === "reject") && (
+                                            {
+                                                (value.action_type === "feedback" ||
+                                                    value.action_type === "reject" || 
+                                                    value.action_type === "closed" || 
+                                                    value.action_type === "expired" ||
+                                                    value.action_type === "rating"
+                                                ) && (
                                                 <p>{value.description}</p>
                                             )}
                                         </div>

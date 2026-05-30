@@ -61,6 +61,7 @@ model Tickets {
   reopened_at       DateTime?
   no_wa             String?          @db.VarChar(20)
   ikb_status_point  String?          @db.VarChar(20)
+  expired_at        DateTime?
   images            Images?
   log               Log[]
   rating            Rating?
@@ -114,6 +115,8 @@ model Log {
   action_type  String   @db.VarChar(100)
   log_date     DateTime @default(now())
   description  String?  @db.VarChar(255)
+  auto_closed  Boolean? @default(false)
+  closed_by    String?  @db.VarChar(50)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
   fk_ticket_id Tickets  @relation(fields: [ticket_id], references: [id])
