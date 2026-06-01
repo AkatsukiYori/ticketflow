@@ -93,6 +93,7 @@ export default function Documentation() {
                 ...rest,
                 attachmentID
             }
+
             return await callApi("put", `/documentation/update-documentation/${id}`, payload);
         },
         onSuccess: (res) => {

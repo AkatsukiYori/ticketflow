@@ -153,6 +153,53 @@
 }
 /* End New Ticket */
 
+/* Start Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.paginationControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.paginationControls > .button-enabled {
+    background-color: transparent;
+    color: black;
+    border: none;
+    font-size: 1.2em;
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: background-color 0.3s;
+}
+
+.paginationControls > .button-disabled {
+    color: #969696;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2em;
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: background-color 0.3s;
+}
+
+.paginationControls > .button-enabled:hover {
+    background-color: #f5f5f5;
+}
+
+.total-pages select {
+    background-color: transparent;
+    color: black;
+    border: 1px solid #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+/* End Pagination */
+
 @media (max-width: 767px) {
     /* Start Index */
     .main-content {

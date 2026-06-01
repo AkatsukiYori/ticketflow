@@ -71,6 +71,36 @@ export const UpdateDocumentationDAO = async (id: number, data: Partial<Documenta
         ) as unknown as Prisma.DocumentationUpdateInput;
 
         await prisma.$transaction(async (tx) => {
+            if(fileData) {
+                const file = await tx.documentation_files.findUnique({
+                    where: {
+                        document_id: id
+                    }
+                });
+
+                if(file) {
+                    const filePath = path.join(
+                        process.cwd(),
+                        "uploads",
+                        "documentation",
+                        file.filename
+                    );
+
+                    if(fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                    }
+                }
+
+                await tx.documentation_files.update({
+                    where: {
+                        id: fileData
+                    },
+                    data: {
+                        document_id: id
+                    }
+                });
+            }
+
             await tx.documentation.update({
                 where: { id: id },
                 data: filteredData

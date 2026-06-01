@@ -45,10 +45,10 @@ export const CreateDocumentationController = async (req: any, res: Response) => 
 
 export const UpdateDocumentationController = async (req: any, res: Response) => {
     const id = Number(req.params.id);
-    const { attachment, ...datas } = req.body as DocumentationDTO.UpdateDocumentationInput;
+    const { attachmentID, ...datas } = req.body as DocumentationDTO.UpdateDocumentationInput;
 
     try {
-        const result = await Services.UpdateDocumentationServices(id, datas, Number(attachment));
+        const result = await Services.UpdateDocumentationServices(id, datas, Number(attachmentID));
 
         res.status(201).json(result);
     } catch (error: any) {

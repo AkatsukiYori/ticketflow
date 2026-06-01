@@ -30,7 +30,7 @@ export default function Login() {
                 localStorage.setItem("expire", expireTime.toString());
 
                 if(username === "ikb" || username === "IKB") {
-                    navigate("/admin/ticket");
+                    navigate("/admin/ticket-ikb");
                 } else {
                     navigate("/admin/dashboard");
                 }

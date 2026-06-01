@@ -99,7 +99,7 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                             {isIKB && (
                                 <>
                                     <button onClick={() => {
-                                        onEdit;
+                                        onEdit?.();
                                         setIsOpen(!isOpen);
                                     }} title="Edit Ticket"><Pencil size={15} /> Edit</button>
                                 </>

@@ -1,6 +1,6 @@
 import Card from "../../components/card/Card";
 import { Notifications } from "../../components/notifications/notification";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { InputText, SelectOptions } from "../../components/inputs/Input";
 import Styles from "../../css/layouts/user/home.module.css";
 import { useApi } from "../../hooks/useApi";
@@ -42,6 +42,9 @@ export default function CheckTicketStatus() {
     const [startMonth, setStartMonth] = useState(getFirstDayOfMonth());
     const [endMonth, setEndMonth] = useState(getToday());
     const [ticketId, setTicketId] = useState(0);
+
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     const fetchTicket = async () => {
         const isFiltering = 
@@ -200,6 +203,18 @@ export default function CheckTicketStatus() {
 
     const selectedTicket = data?.find((t: any) => t.ticket_no === ticketNo);
 
+    const totalPage = Math.max(1, Math.ceil(data.length / pageSize));
+    const paginationData = useMemo(() => {
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+
+        return data.slice(start, end);
+    }, [data, page, pageSize]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [ticketSearch, ticketTitleSearch, userSearch, ticketStatus, startMonth, endMonth]);
+
     return (
         <main className={Styles['main-content-status']}>
             <section className={Styles['content-header']}>
@@ -233,8 +248,8 @@ export default function CheckTicketStatus() {
             <section className={Styles['content-body']}>
                 {data.length > 0 ? (
                     <>
-                        {data.map((ticket: any, index: number) => (
-                            <Card key={index} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
+                        {paginationData.map((ticket: any, _index: number) => (
+                            <Card key={ticket.id} data={ticket} onClickClosed={handleModalClosed} onClickResponse={handleModalResponse} onClickOpenTicket={handleModalOpenTicket} onClickLogs={handleModalLogs} onClickRating={handleModalRating} />
                         ))}
                     </>
                 ) : (
@@ -242,6 +257,64 @@ export default function CheckTicketStatus() {
                         <p style={{ textAlign: "center" }}>Belum ada ticket.</p>
                     </>
                 )}
+            </section>
+            <section className={Styles.pagination}>
+                <section>
+                    Showing {paginationData.length} of {data.length} entries 
+                </section>
+
+                <section className={Styles.paginationControls}>
+                    <button
+                        className={page <= 1 ? `${Styles['button-disabled']}` : Styles['button-enabled']}
+                        disabled={page <= 1}
+                        onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                    >
+                        {"<<"}
+                    </button>
+
+                    <button
+                        className={page <= 1 ? `${Styles['button-disabled']}` : Styles['button-enabled']}
+                        disabled={page <= 1}
+                        onClick={() => setPage(page - 1)}
+                    >
+                        {"<"}
+                    </button>
+
+                    <span>
+                        Page {page} of {totalPage}
+                    </span>
+
+                    <button
+                        className={page >= totalPage ? `${Styles['button-disabled']}` : Styles['button-enabled']}
+                        disabled={page >= totalPage}
+                        onClick={() => setPage(prev => Math.min(prev + 1, totalPage))}
+                    >
+                        {">"}
+                    </button>
+
+                    <button
+                        className={page >= totalPage ? `${Styles['button-disabled']}` : Styles['button-enabled']}
+                        disabled={page >= totalPage}
+                        onClick={() => setPage(totalPage)}
+                    >
+                        {">>"}
+                    </button>
+                </section>
+                <section className={Styles['total-pages']}>
+                    <span>Showing </span>
+                    <select
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setPage(1);
+                        }}
+                    >
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                    </select>
+                </section>
             </section>
 
             <ResponseModal open={open} onClose={() => setOpen(false)} onClick={handleResponTicket} />

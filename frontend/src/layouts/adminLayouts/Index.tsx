@@ -36,16 +36,6 @@ export default function AdminLayout() {
     }, [fetchUser]);
 
     useEffect(() => {
-        // const checkExpiredToken = () => {
-        //     const expire = localStorage.getItem("expire");
-        //     if(expire && Date.now() > parseInt(expire)) {
-        //         localStorage.clear();
-        //         ErrorNotification({ message: "Your session has expired. Please login again.", variantType: "info" });
-        //         navigate("/admin-login", { replace: true });
-        //     }
-        // };
-        // const interval = setInterval(checkExpiredToken, 30000);
-
         const handleResize = () => {
             if(window.innerWidth > 768) {
                 setIsOpen(true);

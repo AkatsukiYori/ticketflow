@@ -99,7 +99,7 @@ export default function DocumentationModal({ open, mode, data, onClose, onSubmit
             title: title,
             description: description,
             category_id: category,
-            attachment: attachment
+            attachment: attachment?.id
         };
 
         if(mode === "create") {
