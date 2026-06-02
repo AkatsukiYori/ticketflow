@@ -2,37 +2,41 @@ import prisma from "../prisma";
 
 export async function autoExpiredFunction() {
     const now = new Date();
+    const expiredTime = new Date(now.getTime() - 5 * 60 * 1000);
 
     const tickets = await prisma.tickets.findMany({
         where: {
             status: "completed",
             closed_at: {
                 not: null,
-                lt: new Date(now.getTime() - 15 * 60 * 1000)
+                lt: expiredTime
             },
             expired_at: null
-        }
+        },
+        select: { id: true }
     });
 
-    for (const ticket of tickets) {
-        await prisma.tickets.update({
-            where: { id: ticket.id },
-            data: { expired_at: now }
-        });
-
-        await prisma.log.create({
-            data: {
-                ticket_id: ticket.id,
-                user_id: null,
-                status: "expired",
-                action_type: "expired",
-                log_date: new Date(),
-                description: "Ticket expired.",
-                created_at: new Date(),
-                updated_at: new Date(),
-                auto_closed: false,
-                closed_by: "system"
+    await prisma.tickets.updateMany({
+        where: {
+            id: {
+                in: tickets.map(t => t.id)
             }
-        });
-    }
+        },
+        data: { expired_at: now }
+    });
+
+    await prisma.log.createMany({
+        data: tickets.map(e => ({
+            ticket_id: e.id,
+            user_id: null,
+            status: "expired",
+            action_type: "expired",
+            log_date: now,
+            description: "Ticket expired.",
+            created_at: now,
+            updated_at: now,
+            auto_closed: false,
+            closed_by: "system"
+        }))
+    });
 }
