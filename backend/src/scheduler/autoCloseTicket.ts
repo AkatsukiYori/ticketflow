@@ -2,7 +2,7 @@ import prisma from "../prisma";
 
 export async function autoClosedFunction() {
     const now = new Date();
-    const sevenDaysAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const tickets = await prisma.tickets.findMany({
         where: {

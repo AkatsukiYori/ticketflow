@@ -267,7 +267,7 @@ export default function CheckTicketStatus() {
                     <button
                         className={page <= 1 ? `${Styles['button-disabled']}` : Styles['button-enabled']}
                         disabled={page <= 1}
-                        onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                        onClick={() => setPage(1)}
                     >
                         {"<<"}
                     </button>

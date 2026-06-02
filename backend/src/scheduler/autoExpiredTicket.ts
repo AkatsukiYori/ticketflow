@@ -2,7 +2,7 @@ import prisma from "../prisma";
 
 export async function autoExpiredFunction() {
     const now = new Date();
-    const expiredTime = new Date(now.getTime() - 5 * 60 * 1000);
+    const expiredTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const tickets = await prisma.tickets.findMany({
         where: {
