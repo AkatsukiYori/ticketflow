@@ -145,6 +145,9 @@ export declare const FilterTicketDAO: (filterData: any) => Promise<({
         closed_by: string | null;
         user_id: number | null;
     }[];
+    images: {
+        filename: string;
+    } | null;
     rating: {
         id: number;
         created_at: Date;

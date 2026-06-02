@@ -15,6 +15,6 @@ exports.UpdateDocumentationSchema = zod_1.default.object({
     category_id: zod_1.default.coerce.number().min(1, "Category cannot be empty.").optional(),
     title: zod_1.default.string().min(1, "Title cannot be empty.").optional(),
     description: zod_1.default.string().min(1, "Description cannot be empty.").optional(),
-    attachment: zod_1.default.coerce.number().nullable().optional()
+    attachmentID: zod_1.default.coerce.number().nullable().optional()
 });
 //# sourceMappingURL=documentation_dto.js.map

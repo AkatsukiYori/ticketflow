@@ -78,9 +78,9 @@ const CreateDocumentationController = async (req, res) => {
 exports.CreateDocumentationController = CreateDocumentationController;
 const UpdateDocumentationController = async (req, res) => {
     const id = Number(req.params.id);
-    const { attachment, ...datas } = req.body;
+    const { attachmentID, ...datas } = req.body;
     try {
-        const result = await Services.UpdateDocumentationServices(id, datas, Number(attachment));
+        const result = await Services.UpdateDocumentationServices(id, datas, Number(attachmentID));
         res.status(201).json(result);
     }
     catch (error) {

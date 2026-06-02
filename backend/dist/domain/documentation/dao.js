@@ -70,6 +70,27 @@ const UpdateDocumentationDAO = async (id, data, fileData) => {
     try {
         const filteredData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
         await prisma_1.default.$transaction(async (tx) => {
+            if (fileData) {
+                const file = await tx.documentation_files.findUnique({
+                    where: {
+                        document_id: id
+                    }
+                });
+                if (file) {
+                    const filePath = path_1.default.join(process.cwd(), "uploads", "documentation", file.filename);
+                    if (fs_1.default.existsSync(filePath)) {
+                        fs_1.default.unlinkSync(filePath);
+                    }
+                }
+                await tx.documentation_files.update({
+                    where: {
+                        id: fileData
+                    },
+                    data: {
+                        document_id: id
+                    }
+                });
+            }
             await tx.documentation.update({
                 where: { id: id },
                 data: filteredData

@@ -104,7 +104,8 @@ const GetAllIKBTicketDAO = async () => {
                     name: {
                         equals: "IKB"
                     }
-                }
+                },
+                deleted_at: null
             },
             orderBy: {
                 report_date: "desc"
@@ -168,6 +169,7 @@ const FilterTicketDAO = async (filterData) => {
                 fk_department: { select: { name: true } },
                 fk_category_id: { select: { name: true } },
                 fk_users_id: { select: { username: true } },
+                images: { select: { filename: true } },
                 log: {
                     select: {
                         auto_closed: true,
@@ -285,6 +287,21 @@ const UpdateTicketDAO = async (data, id, fileData) => {
                 data: filteredData
             });
             if (fileData) {
+                const dataImages = await tx.images.findMany({
+                    where: { ticket_id: id },
+                    select: {
+                        id: true,
+                        file_path: true
+                    }
+                });
+                for (const image of dataImages) {
+                    if (image.file_path) {
+                        await promises_1.default.unlink(image.file_path).catch(() => { });
+                    }
+                    await tx.images.delete({
+                        where: { id: image.id }
+                    });
+                }
                 await tx.images.updateMany({
                     where: { ticket_id: id },
                     data: {
