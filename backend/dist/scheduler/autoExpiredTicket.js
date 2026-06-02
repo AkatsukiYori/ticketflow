@@ -12,7 +12,7 @@ async function autoExpiredFunction() {
             status: "completed",
             closed_at: {
                 not: null,
-                lt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+                lt: new Date(now.getTime() - 15 * 60 * 1000)
             },
             expired_at: null
         }
