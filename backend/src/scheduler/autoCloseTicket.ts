@@ -26,7 +26,7 @@ export async function autoClosedFunction() {
         }
     });
 
-    await prisma.log.updateMany({
+    await prisma.log.createMany({
         data: tickets.map(e => ({
             ticket_id: e.id,
             user_id: null,

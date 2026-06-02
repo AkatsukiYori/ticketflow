@@ -92,9 +92,9 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             queryClient.invalidateQueries({
                 queryKey: ['ticket-detail', data?.id]
             });
+            setLoading(false);
         },
         onError: (_error: any) => {
-            console.log(_error);
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     });
