@@ -24,6 +24,8 @@ type Ticket = {
     }
     closed_at: Date;
     ikb_status_point: string;
+    modul: string;
+    sub_modul: string;
 }
 
 const columnHelper = createColumnHelper<Ticket>();
@@ -57,10 +59,10 @@ export const columns = (
             });
         }
     }),
-    columnHelper.accessor("ticket_no", {
-        header: "Ticket No",
-        size: 100
-    }),
+    // columnHelper.accessor("ticket_no", {
+    //     header: "Ticket No",
+    //     size: 100
+    // }),
     columnHelper.accessor("ticket_title", {
         header: "Ticket Title",
         size: 100
@@ -121,6 +123,14 @@ export const columns = (
                 </>
             );
         }
+    }),
+    columnHelper.accessor("modul", {
+        header: "Modul",
+        size: 100
+    }),
+    columnHelper.accessor("sub_modul", {
+        header: "Sub Modul",
+        size: 100
     }),
     columnHelper.accessor("problem", {
         header: "Problem",
