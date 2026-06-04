@@ -7,7 +7,7 @@ exports.autoClosedFunction = autoClosedFunction;
 const prisma_1 = __importDefault(require("../prisma"));
 async function autoClosedFunction() {
     const now = new Date();
-    const sevenDaysAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const tickets = await prisma_1.default.tickets.findMany({
         where: {
             status: "completed",
