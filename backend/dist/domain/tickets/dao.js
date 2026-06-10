@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const promises_1 = __importDefault(require("fs/promises"));
+const ticketNotification_service_1 = require("../../services/ticketNotification.service");
 function MakeDate() {
     return new Date();
 }
@@ -270,6 +271,7 @@ const CreateTicketDAO = async (data, attachment) => {
                     description: null,
                 }
             });
+            await (0, ticketNotification_service_1.notifyNewTicket)(ticket.ticket_no);
             return { ticketNo, logStatus: !!logs };
         });
     }

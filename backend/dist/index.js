@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const main_1 = __importDefault(require("./routes/main"));
+const push_route_1 = __importDefault(require("./routes/push.route"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const path_1 = __importDefault(require("path"));
@@ -25,6 +26,7 @@ app.use((0, cors_1.default)({
 app.use(express_1.default.json());
 app.use("/api-ticketflow", main_1.default);
 app.use("/api-ticketflow/uploads", express_1.default.static(path_1.default.join(process.cwd(), "uploads")));
+app.use("/api-ticketflow/push", push_route_1.default);
 server.listen(8001, '0.0.0.0', () => {
     console.log(`Server running on port 8001`);
 });
