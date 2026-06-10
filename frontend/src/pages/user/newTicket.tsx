@@ -7,6 +7,8 @@ import { SelectOptions } from "../../components/inputs/Input";
 
 import { FileUpload } from "../../components/FileUpload";
 import { useQuery } from "@tanstack/react-query";
+import { registerSW } from "../../services/serviceWorker";
+import { subscribePush } from "../../services/pushNotification";
 
 export default function NewTicket() {
     const { callApi } = useApi();
@@ -109,6 +111,10 @@ export default function NewTicket() {
             }
 
             const res = await callApi("post", `/tickets/new-ticket`, payload);
+
+            await registerSW();
+            await subscribePush();
+
             Notifications({ message: `${res.message} ${res.ticketNo}`, variantType: "success", persist: true });
             setForm(initialForm);
             setFieldError({});

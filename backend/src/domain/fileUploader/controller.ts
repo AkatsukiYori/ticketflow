@@ -15,7 +15,6 @@ export const FileUploaderController = async (req: Request, res: Response) => {
 
         res.status(201).json(resultFilter);
     } catch (error: any) {
-        console.log(error);
         res.status(500).json({ message: "Something went wrong." });
     }
 }

@@ -3,6 +3,7 @@ import prisma from "../../prisma";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 import fs from "fs/promises";
 import { includes } from "zod";
+import { notifyNewTicket } from "../../services/ticketNotification.service";
 
 function MakeDate() {
     return new Date();
@@ -290,6 +291,8 @@ export const CreateTicketDAO = async (data: any, attachment: number) => {
                     description: null,
                 }
             });
+
+            await notifyNewTicket(ticket.ticket_no);
 
             return { ticketNo, logStatus: !!logs };
         });

@@ -50,7 +50,6 @@ export const GetAllIKBTicketController = async (req: Request, res: Response) => 
 
         res.status(200).json(result);
     } catch (error: any) {
-        console.log(error);
         res.status(500).json({ message: "Something went wrong." });
     }
 }

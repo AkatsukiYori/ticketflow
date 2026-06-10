@@ -80,7 +80,6 @@ export default function ReassignModal({ open, onClose, data, isReassign, userId 
             return await callApi("put", `/tickets/assign/${data?.ticket_no}`, payload);
         },
         onSuccess: (res) => {
-            console.log(res);
             Notifications({ message: res.message, variantType: "success", persist: false });
             handleClear();
             onClose();

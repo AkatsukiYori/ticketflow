@@ -215,8 +215,6 @@ export default function TicketIKB() {
         { label: "Bugs", value: "bugs" }
     ];
 
-    // console.log(data);
-
     return (
         <>
             <section className={Styles['main-content']}>

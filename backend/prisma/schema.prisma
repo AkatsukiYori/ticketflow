@@ -7,18 +7,18 @@ datasource db {
 }
 
 model Users {
-  id              Int              @id @default(autoincrement())
-  username        String           @unique @db.VarChar(150)
-  password        String           @db.VarChar(100)
-  location        Location         @default(pontianak)
-  isActive        Boolean
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  deleted_at      DateTime?
-  role            RoleUsers        @default(admin)
-  log             Log[]
-  ticket_feedback TicketFeedback[]
-  tickets         Tickets[]
+  id                Int              @id @default(autoincrement())
+  username          String           @unique @db.VarChar(150)
+  password          String           @db.VarChar(100)
+  location          Location         @default(pontianak)
+  isActive          Boolean
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  deleted_at        DateTime?
+  role              RoleUsers        @default(admin)
+  log               Log[]
+  ticket_feedback   TicketFeedback[]
+  tickets           Tickets[]
 
   @@map("users")
 }
@@ -185,6 +185,16 @@ model Department {
   tickets    Tickets[]
 
   @@map("department")
+}
+
+model PushSubscription {
+  id              Int       @id @default(autoincrement())
+  subscription    Json
+  endpoint        String    @db.Text
+  endpointHash    String    @unique
+  created_at      DateTime  @default(now())
+
+  @@map("push_notification")
 }
 
 enum Location {

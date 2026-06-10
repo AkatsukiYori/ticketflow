@@ -1,6 +1,7 @@
 import "dotenv/config";
 import Express, { Request, Response } from "express";
 import router from "./routes/main";
+import routerPushNotification from "./routes/push.route";
 import cors from "cors";
 import http from "http";
 import path from "path";
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(Express.json());
 app.use("/api-ticketflow", router);
 app.use("/api-ticketflow/uploads", Express.static(path.join(process.cwd(), "uploads")));
+app.use("/api-ticketflow/push", routerPushNotification);
 
 server.listen(8001, '0.0.0.0', () => {
     console.log(`Server running on port 8001`);
