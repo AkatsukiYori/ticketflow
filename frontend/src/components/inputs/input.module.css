@@ -103,6 +103,11 @@
     color: #334155;
     font-weight: 500;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
 /* End: Checkbox */
 @media (max-width: 768px) {
     .text-input {
