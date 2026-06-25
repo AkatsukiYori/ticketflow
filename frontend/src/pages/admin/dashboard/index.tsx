@@ -116,17 +116,30 @@ export default function Dashboard() {
                     // End Status Ticket
 
                     // Start Rating
-                    if(Array.isArray(ticket.rating)) {
-                        ticket.rating.forEach((rate: any) => {
+                    if(ticket.rating) {
+                        const score = Number(ticket.rating.score);
+
+                        if(score >= 1 && score <= 5) {
                             rating.total++;
-                            switch (Number(rate.score)) {
-                                case 1 : rating.score_1++; break;
-                                case 2 : rating.score_2++; break;
-                                case 3 : rating.score_3++; break;
-                                case 4 : rating.score_4++; break;
-                                case 5 : rating.score_5++; break;
+
+                            switch(score) {
+                                case 1:
+                                    rating.score_1++;
+                                    break;
+                                case 2:
+                                    rating.score_2++;
+                                    break;
+                                case 3:
+                                    rating.score_3++;
+                                    break;
+                                case 4:
+                                    rating.score_4++;
+                                    break;
+                                case 5:
+                                    rating.score_5++;
+                                    break;
                             }
-                        });
+                        }
                     }
                     // End Rating
 
