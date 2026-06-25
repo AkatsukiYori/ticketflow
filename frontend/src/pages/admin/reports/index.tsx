@@ -150,15 +150,16 @@ export default function Report() {
                 // Start Rating
                 let currentRatingSum = 0;
                 let currentRatingCount = 0;
-                if(Array.isArray(ticket.rating)) {
-                    ticket.rating.forEach((rate: any) => {
-                        const score = Number(rate.score);
+                if(ticket.rating) {
+                    const score = Number(ticket.rating.score);
+
+                    if(score >= 1 && score <= 5) {
                         rating.total++;
                         rating[`score_${score}` as keyof typeof rating]++;
 
                         currentRatingSum += score;
                         currentRatingCount++;
-                    });
+                    }
                 }
                 // End Rating
 
