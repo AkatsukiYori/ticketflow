@@ -178,6 +178,13 @@ export default function Report() {
                 if(userStateMap[user_id]) {
                     const user = userStateMap[user_id];
 
+                    if(ticket.rating) {
+                        const score = Number(ticket.rating.score);
+
+                        if(score >= 1 && score <= 5) {
+                            user[`score_${score}`]++;
+                        }
+                    }
                     if(Array.isArray(ticket.rating)) {
                         ticket.rating.forEach((rate: any) => {
                             const score = Number(rate.score);
