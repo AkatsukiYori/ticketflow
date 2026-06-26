@@ -1,6 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Buttons } from "../../../components/buttons/Button";
 import { ActionDropdown } from "../../../components/actions/Actions";
+import { hasPermission } from "../../../permissions";
+import { Permission } from "../../../permissions/permission";
+import type { UserRole } from "../../../permissions/role";
 
 type Ticket = {
     id: number;

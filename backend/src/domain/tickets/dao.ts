@@ -35,11 +35,19 @@ export const GetTicketById = async (id: number) => {
 }
 
 export const GetAllTicketDAO = async (filter: any) => {
-    const { status } = filter;
+    const { status, role } = filter;
 
     const whereClause: any[] = [
         { deleted_at: null }
     ]
+
+    if(role === 'ga') {
+        whereClause.push({
+            fk_category_id: {
+                name: 'hardware'
+            }
+        })
+    }
 
     const isAdmin = String(status) === "true";
 

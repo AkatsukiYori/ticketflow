@@ -218,4 +218,5 @@ enum TicketStatus {
 enum RoleUsers {
   admin
   ikb
+  ga
 }
