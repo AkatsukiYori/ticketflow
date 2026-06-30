@@ -6,9 +6,5 @@ export const hasPermission = (
     role: UserRole,
     permission: PermissionType
 ) => {
-    console.log("Role = ", role);
-    console.log("RolePermission = ", RolePermission);
-    console.log("RolePermission[role] = ", RolePermission[role]);
-
     return RolePermission[role]?.includes(permission) ?? false;
 }
