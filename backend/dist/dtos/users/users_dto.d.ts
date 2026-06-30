@@ -10,6 +10,7 @@ export declare const CreateUserSchema: z.ZodObject<{
     role: z.ZodEnum<{
         admin: "admin";
         ikb: "ikb";
+        ga: "ga";
     }>;
 }, z.core.$strip>;
 export type CreateUserInput = z.infer<typeof CreateUserSchema>;
@@ -24,6 +25,7 @@ export declare const UpdateUserSchema: z.ZodObject<{
     role: z.ZodOptional<z.ZodEnum<{
         admin: "admin";
         ikb: "ikb";
+        ga: "ga";
     }>>;
 }, z.core.$strip>;
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;

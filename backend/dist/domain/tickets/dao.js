@@ -37,10 +37,17 @@ const GetTicketById = async (id) => {
 };
 exports.GetTicketById = GetTicketById;
 const GetAllTicketDAO = async (filter) => {
-    const { status } = filter;
+    const { status, role } = filter;
     const whereClause = [
         { deleted_at: null }
     ];
+    if (role === 'ga') {
+        whereClause.push({
+            fk_category_id: {
+                name: 'hardware'
+            }
+        });
+    }
     const isAdmin = String(status) === "true";
     if (!isAdmin) {
         whereClause.push({
