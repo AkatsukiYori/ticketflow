@@ -129,6 +129,20 @@ export const GetAllIKBTicketDAO = async () => {
     }
 }
 
+export const GetFeedbackTicketDAO = async (ticketNo: string) => {
+    try {
+        const data = await prisma.ticketFeedback.findMany({
+            include: {
+                fk_admin_id: { select: { username: true } }
+            },
+            where: { fk_ticket_id: { ticket_no: ticketNo } }
+        });
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const FilterTicketDAO = async (filterData: any) => {
     const { startMonth, endMonth, no, user, title, status } = filterData;
 

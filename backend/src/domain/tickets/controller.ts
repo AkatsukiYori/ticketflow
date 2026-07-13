@@ -23,6 +23,16 @@ export const GetAllTicketController = async (req: Request, res: Response) => {
     }
 }
 
+export const GetFeedbackTicketController = async (req: Request, res: Response) => {
+    const ticketNo = String(req.params.ticket_no);
+    try {
+        const result = await TicketServices.GetFeecbackTicketServices(ticketNo);
+        res.status(201).json(result);
+    } catch (error: any) {
+        res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
+    }
+}
+
 export const FilterTicketController = async (req: Request, res: Response) => {
     const filterData = req.query;
     try {

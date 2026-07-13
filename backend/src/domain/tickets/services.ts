@@ -31,6 +31,16 @@ export const GetAllIKBTicketServices = async () => {
     }
 }
 
+export const GetFeecbackTicketServices = async (ticketNo: string) => {
+    try {
+        const data = await TicketDAO.GetFeedbackTicketDAO(ticketNo);
+
+        return data;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+}
+
 export const FilterTicketServices = async (filterData: any) => {
     try {
         const data = await TicketDAO.FilterTicketDAO(filterData);

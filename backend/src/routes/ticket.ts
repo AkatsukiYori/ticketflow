@@ -9,6 +9,7 @@ routerTicket.get("/get-ticket/:id", Middleware.FetchTicketMiddleware, Controller
 routerTicket.get("/filter-ticket", Controller.FilterTicketController);
 routerTicket.get("/get-all-ticket-logs", Controller.GetAllTicketLogs);
 routerTicket.get("/get-all-ticket-ikb", Controller.GetAllIKBTicketController);
+routerTicket.get('/get-feedback-tickets/:ticket_no', Controller.GetFeedbackTicketController);
 
 routerTicket.post("/new-ticket", Middleware.CreateTicketMiddleware, Controller.CreateTicketController);
 routerTicket.post("/rating/:ticket_no", Controller.RatingController);
