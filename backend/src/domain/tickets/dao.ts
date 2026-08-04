@@ -2,7 +2,6 @@ import { Prisma } from "@prisma/client";
 import prisma from "../../prisma";
 import * as TicketDTO from "../../dtos/tickets/tickets_dto";
 import fs from "fs/promises";
-import { includes } from "zod";
 import { notifyNewTicket } from "../../services/ticketNotification.service";
 
 function MakeDate() {
