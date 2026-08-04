@@ -136,6 +136,18 @@ export declare const GetAllIKBTicketServices: () => Promise<({
     department_id: number | null;
     member_id: number | null;
 })[]>;
+export declare const GetFeecbackTicketServices: (ticketNo: string) => Promise<({
+    fk_admin_id: {
+        username: string;
+    } | null;
+} & {
+    message: string;
+    id: number;
+    created_at: Date;
+    role: string;
+    ticket_id: number;
+    user_id: number | null;
+})[]>;
 export declare const FilterTicketServices: (filterData: any) => Promise<({
     log: {
         description: string | null;

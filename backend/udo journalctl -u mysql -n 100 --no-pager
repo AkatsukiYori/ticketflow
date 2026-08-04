@@ -1,0 +1,13 @@
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: activating (start) since Fri 2026-07-10 09:55:26 WIB; 295ms ago
+    Process: 82446 ExecStartPre=/usr/share/mysql/mysql-systemd-start pre (code=exited, status=0/SUCCESS)
+Cntrl PID: 82485 (mysqld)
+      Tasks: 3 (limit: 9405)
+     Memory: 134.5M
+        CPU: 286ms
+     CGroup: /system.slice/mysql.service
+             ├─82485 /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid
+             └─82487 /usr/sbin/mysqld --daemonize --pid-file=/var/run/mysqld/mysqld.pid
+
+Jul 10 09:55:26 app.papasari.com systemd[1]: Starting MySQL Community Server...

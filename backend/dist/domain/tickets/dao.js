@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
+exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetFeedbackTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const promises_1 = __importDefault(require("fs/promises"));
 const ticketNotification_service_1 = require("../../services/ticketNotification.service");
@@ -126,6 +126,21 @@ const GetAllIKBTicketDAO = async () => {
     }
 };
 exports.GetAllIKBTicketDAO = GetAllIKBTicketDAO;
+const GetFeedbackTicketDAO = async (ticketNo) => {
+    try {
+        const data = await prisma_1.default.ticketFeedback.findMany({
+            include: {
+                fk_admin_id: { select: { username: true } }
+            },
+            where: { fk_ticket_id: { ticket_no: ticketNo } }
+        });
+        return data;
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+exports.GetFeedbackTicketDAO = GetFeedbackTicketDAO;
 const FilterTicketDAO = async (filterData) => {
     const { startMonth, endMonth, no, user, title, status } = filterData;
     const whereClause = {

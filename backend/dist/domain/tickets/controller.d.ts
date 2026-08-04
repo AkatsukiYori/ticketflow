@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 export declare const GetTicketByIdController: (req: Request, res: Response) => Promise<void>;
 export declare const GetAllTicketController: (req: Request, res: Response) => Promise<void>;
+export declare const GetFeedbackTicketController: (req: Request, res: Response) => Promise<void>;
 export declare const FilterTicketController: (req: Request, res: Response) => Promise<void>;
 export declare const GetAllTicketLogs: (req: Request, res: Response) => Promise<void>;
 export declare const GetAllIKBTicketController: (req: Request, res: Response) => Promise<void>;

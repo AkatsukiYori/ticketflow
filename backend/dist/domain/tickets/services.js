@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointServices = exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
+exports.UpdateStatusPointServices = exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetFeecbackTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
 const TicketDAO = __importStar(require("./dao"));
 const getTicketById = async (id) => {
     try {
@@ -65,6 +65,16 @@ const GetAllIKBTicketServices = async () => {
     }
 };
 exports.GetAllIKBTicketServices = GetAllIKBTicketServices;
+const GetFeecbackTicketServices = async (ticketNo) => {
+    try {
+        const data = await TicketDAO.GetFeedbackTicketDAO(ticketNo);
+        return data;
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+exports.GetFeecbackTicketServices = GetFeecbackTicketServices;
 const FilterTicketServices = async (filterData) => {
     try {
         const data = await TicketDAO.FilterTicketDAO(filterData);

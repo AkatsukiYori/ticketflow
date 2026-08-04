@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointController = exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
+exports.UpdateStatusPointController = exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetFeedbackTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
 const TicketServices = __importStar(require("./services"));
 const GetTicketByIdController = async (req, res) => {
     const id = Number(req.params.id);
@@ -57,6 +57,17 @@ const GetAllTicketController = async (req, res) => {
     }
 };
 exports.GetAllTicketController = GetAllTicketController;
+const GetFeedbackTicketController = async (req, res) => {
+    const ticketNo = String(req.params.ticket_no);
+    try {
+        const result = await TicketServices.GetFeecbackTicketServices(ticketNo);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Terjadi Kesalahan : " + error.message });
+    }
+};
+exports.GetFeedbackTicketController = GetFeedbackTicketController;
 const FilterTicketController = async (req, res) => {
     const filterData = req.query;
     try {
