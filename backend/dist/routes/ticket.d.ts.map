@@ -1,1 +1,1 @@
-{"version":3,"file":"ticket.d.ts","sourceRoot":"","sources":["../../src/routes/ticket.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAIjC,QAAA,MAAM,YAAY,EAAE,MAAiB,CAAC;AAqBtC,eAAe,YAAY,CAAC"}
+{"version":3,"file":"ticket.d.ts","sourceRoot":"","sources":["../../src/routes/ticket.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAIjC,QAAA,MAAM,YAAY,EAAE,MAAiB,CAAC;AAsBtC,eAAe,YAAY,CAAC"}

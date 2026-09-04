@@ -30,7 +30,8 @@ exports.CreateTicketSchema = zod_1.default.object({
     sub_modul: zod_1.default.string().min(1, "Sub modul tidak boleh kosong.").optional(),
     reopened_at: zod_1.default.coerce.date().optional(),
     no_wa: zod_1.default.string().min(1, "No whatsapp tidak boleh kosong.").optional(),
-    attachment: zod_1.default.coerce.number().nullable().optional()
+    attachment: zod_1.default.coerce.number().nullable().optional(),
+    programmer: zod_1.default.string().optional()
 });
 exports.UpdateTicketSchema = zod_1.default.object({
     assign_to: zod_1.default.coerce.number().min(1).optional(),
@@ -60,6 +61,7 @@ exports.UpdateTicketSchema = zod_1.default.object({
     sub_modul: zod_1.default.string().min(1, "Sub modul tidak boleh kosong.").optional(),
     reopened_at: zod_1.default.coerce.date().optional(),
     no_wa: zod_1.default.string().min(1, "No whatsapp tidak boleh kosong.").optional(),
-    attachment: zod_1.default.coerce.number().nullable().optional()
+    attachment: zod_1.default.coerce.number().nullable().optional(),
+    programmer: zod_1.default.string().optional()
 });
 //# sourceMappingURL=tickets_dto.js.map

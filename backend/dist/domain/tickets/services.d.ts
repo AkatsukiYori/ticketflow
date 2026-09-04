@@ -283,4 +283,7 @@ export declare const RatingServices: (data: any) => Promise<{
 export declare const UpdateStatusPointServices: (id: number, statusPoint: string) => Promise<{
     message: string;
 }>;
+export declare const AssignProgrammerServices: (ticketNo: string, userId: number, programmer: string) => Promise<{
+    message: string;
+}>;
 //# sourceMappingURL=services.d.ts.map

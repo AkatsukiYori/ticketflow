@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointController = exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetFeedbackTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
+exports.AssignProgrammerController = exports.UpdateStatusPointController = exports.RatingController = exports.ReOpenTicketController = exports.ClosedTicketController = exports.TicketFeedbackController = exports.RejectTicketController = exports.AssignTicketController = exports.DeleteTicketController = exports.UpdateTicketController = exports.CreateTicketController = exports.GetAllIKBTicketController = exports.GetAllTicketLogs = exports.FilterTicketController = exports.GetFeedbackTicketController = exports.GetAllTicketController = exports.GetTicketByIdController = void 0;
 const TicketServices = __importStar(require("./services"));
 const GetTicketByIdController = async (req, res) => {
     const id = Number(req.params.id);
@@ -225,4 +225,18 @@ const UpdateStatusPointController = async (req, res) => {
     }
 };
 exports.UpdateStatusPointController = UpdateStatusPointController;
+const AssignProgrammerController = async (req, res) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const { user_id, programmer } = req.body;
+        const result = await TicketServices.AssignProgrammerServices(ticketNo, Number(user_id), programmer);
+        return res.status(201).json(result);
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong : " + error.message
+        });
+    }
+};
+exports.AssignProgrammerController = AssignProgrammerController;
 //# sourceMappingURL=controller.js.map

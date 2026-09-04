@@ -29,6 +29,7 @@ export declare const CreateTicketSchema: z.ZodObject<{
     reopened_at: z.ZodOptional<z.ZodCoercedDate<unknown>>;
     no_wa: z.ZodOptional<z.ZodString>;
     attachment: z.ZodOptional<z.ZodNullable<z.ZodCoercedNumber<unknown>>>;
+    programmer: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type CreateTicketInput = z.infer<typeof CreateTicketSchema>;
 export declare const UpdateTicketSchema: z.ZodObject<{
@@ -61,6 +62,7 @@ export declare const UpdateTicketSchema: z.ZodObject<{
     reopened_at: z.ZodOptional<z.ZodCoercedDate<unknown>>;
     no_wa: z.ZodOptional<z.ZodString>;
     attachment: z.ZodOptional<z.ZodNullable<z.ZodCoercedNumber<unknown>>>;
+    programmer: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type UpdateTicketInput = z.infer<typeof UpdateTicketSchema>;
 //# sourceMappingURL=tickets_dto.d.ts.map

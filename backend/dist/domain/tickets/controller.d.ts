@@ -15,4 +15,5 @@ export declare const ClosedTicketController: (req: any, res: Response) => Promis
 export declare const ReOpenTicketController: (req: any, res: Response) => Promise<void>;
 export declare const RatingController: (req: any, res: Response) => Promise<void>;
 export declare const UpdateStatusPointController: (req: Request, res: Response) => Promise<void>;
+export declare const AssignProgrammerController: (req: any, res: Response) => Promise<Response<any, Record<string, any>>>;
 //# sourceMappingURL=controller.d.ts.map

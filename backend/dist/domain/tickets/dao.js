@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetFeedbackTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
+exports.AssignProgrammerDAO = exports.UpdateStatusPointDAO = exports.RatingDAO = exports.ReOpenTicketDAO = exports.ClosedTicketDAO = exports.TicketFeedbackDAO = exports.RejectTicketDAO = exports.AssignTicketDAO = exports.DeleteTicketDAO = exports.UpdateTicketDAO = exports.CreateTicketDAO = exports.GetAllTicketLogs = exports.FilterTicketDAO = exports.GetFeedbackTicketDAO = exports.GetAllIKBTicketDAO = exports.GetAllTicketDAO = exports.GetTicketById = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const promises_1 = __importDefault(require("fs/promises"));
 const ticketNotification_service_1 = require("../../services/ticketNotification.service");
@@ -652,4 +652,32 @@ const UpdateStatusPointDAO = async (id, statusPoint) => {
     }
 };
 exports.UpdateStatusPointDAO = UpdateStatusPointDAO;
+const AssignProgrammerDAO = async (ticketNo, userId, programmer) => {
+    await prisma_1.default.$transaction(async (tx) => {
+        const ticket = await tx.tickets.findFirst({
+            where: {
+                ticket_no: ticketNo
+            }
+        });
+        if (ticket) {
+            await tx.tickets.update({
+                where: { id: ticket.id },
+                data: {
+                    programmer: programmer
+                }
+            });
+            await tx.log.create({
+                data: {
+                    ticket_id: ticket.id,
+                    user_id: userId,
+                    status: 'on_progress',
+                    action_type: 'assign',
+                    log_date: MakeDate(),
+                    description: `Programmer ${programmer} is working on this ticket.`
+                }
+            });
+        }
+    });
+};
+exports.AssignProgrammerDAO = AssignProgrammerDAO;
 //# sourceMappingURL=dao.js.map

@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStatusPointServices = exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetFeecbackTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
+exports.AssignProgrammerServices = exports.UpdateStatusPointServices = exports.RatingServices = exports.ReOpenTicketServices = exports.ClosedTicketServices = exports.TicketFeedbackServices = exports.RejectTicketServices = exports.AssignTicketServices = exports.DeleteTicketServices = exports.UpdateTicketServices = exports.CreateTicketServices = exports.GetAllTicketLogs = exports.FilterTicketServices = exports.GetFeecbackTicketServices = exports.GetAllIKBTicketServices = exports.GetAllTicketServices = exports.getTicketById = void 0;
 const TicketDAO = __importStar(require("./dao"));
 const getTicketById = async (id) => {
     try {
@@ -200,4 +200,9 @@ const UpdateStatusPointServices = async (id, statusPoint) => {
     }
 };
 exports.UpdateStatusPointServices = UpdateStatusPointServices;
+const AssignProgrammerServices = async (ticketNo, userId, programmer) => {
+    await TicketDAO.AssignProgrammerDAO(ticketNo, userId, programmer);
+    return ({ message: "Programmer Successful Assigned." });
+};
+exports.AssignProgrammerServices = AssignProgrammerServices;
 //# sourceMappingURL=services.js.map

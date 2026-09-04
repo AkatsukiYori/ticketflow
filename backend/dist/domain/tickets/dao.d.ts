@@ -264,4 +264,5 @@ export declare const ClosedTicketDAO: (ticketNo: string) => Promise<void>;
 export declare const ReOpenTicketDAO: (ticketNo: string) => Promise<void>;
 export declare const RatingDAO: (data: any) => Promise<void>;
 export declare const UpdateStatusPointDAO: (id: number, statusPoint: string) => Promise<void>;
+export declare const AssignProgrammerDAO: (ticketNo: string, userId: number, programmer: string) => Promise<void>;
 //# sourceMappingURL=dao.d.ts.map
