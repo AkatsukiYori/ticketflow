@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Next.js
+.next/
+frontend/.next/
+
+# Build
+dist/
+backend/dist/
+frontend/dist/
+
+# Environment
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
+
+# Prisma generated
+src/generated/prisma/
+backend/src/generated/prisma/
+
+# Uploads
+uploads/
+backend/uploads/
+
+# Logs
+logs/
+*.log
+
+# Editor
+.vscode/
+.idea/
+.DS_Store

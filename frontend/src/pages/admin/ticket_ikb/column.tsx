@@ -26,6 +26,7 @@ type Ticket = {
     ikb_status_point: string;
     modul: string;
     sub_modul: string;
+    programmer: string;
 }
 
 const columnHelper = createColumnHelper<Ticket>();
@@ -37,6 +38,7 @@ export const columns = (
     onRemove: (id: number) => void,
     onReopen: (id: number) => void,
     onEdit: (id: number) => void,
+    onProgrammer: (id: number) => void,
     userRole: string
 ) => [
     columnHelper.display({
@@ -144,6 +146,18 @@ export const columns = (
             )
         }
     }),
+    columnHelper.accessor("programmer", {
+        header: "Programmer",
+        size: 50,
+        cell: ({ row }) => {
+            const data = row.original.programmer;
+            return (
+                <>
+                    <span>{data ?? '-'}</span>
+                </>
+            )
+        }
+    }),
     columnHelper.display({
         id: "actions",
         header: "Actions",
@@ -160,11 +174,12 @@ export const columns = (
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}
                         onReopen={() => onReopen(data.id)}
+                        onAssignProgrammer={() => onProgrammer(data.id)}
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}
                         onEdit={() => onEdit(data.id)}
-                        isIKB={true}
+                        isIKB={false}
                     />
                 </div>
                 : 
@@ -176,6 +191,7 @@ export const columns = (
                         onComplete={() => onFeedback(data.id, "feedback")}
                         onRemove={() => onRemove(data.id)}
                         onReopen={() => onReopen(data.id)}
+                        onAssignProgrammer={() => onProgrammer(data.id)}
                         isClosed={data.closed_at ? true : false}
                         isAssign={data.assign_to ? true : false}
                         userRole={userRole}

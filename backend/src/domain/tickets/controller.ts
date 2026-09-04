@@ -193,3 +193,18 @@ export const UpdateStatusPointController = async (req: Request, res: Response) =
         res.status(500).json({ message: "Something went wrong : " + error.message });
     }
 }
+
+export const AssignProgrammerController = async (req: any, res: Response) => {
+    try {
+        const ticketNo = req.params.ticket_no;
+        const { user_id, programmer } = req.body;
+
+        const result = await TicketServices.AssignProgrammerServices(ticketNo, Number(user_id), programmer);
+
+        return res.status(201).json(result);
+    } catch (error: any) {
+        return res.status(500).json({
+            message: "Something went wrong : " + error.message
+        });
+    }
+}

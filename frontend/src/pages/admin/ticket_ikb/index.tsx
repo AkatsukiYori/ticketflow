@@ -15,6 +15,7 @@ import { useApi } from "../../../hooks/useApi";
 import { FeedbackModal } from "../../../components/modals/feedback/FeedbackModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TicketModal from "../../../components/modals/ticketModal/TicketModal";
+import AssignProgrammerModal from "../../../components/modals/assignProgrammer/assignProgrammer";
 
 export default function TicketIKB() {
     const { callApi } = useApi();
@@ -27,6 +28,7 @@ export default function TicketIKB() {
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [reOpenModal, setReOpenModal] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
+    const [assignProgrammerOpen, setAssignProgrammerOpen] = useState(false);
 
     // Mode
     const [mode, setMode] = useState("");
@@ -130,6 +132,11 @@ export default function TicketIKB() {
         setTicketId(id);
     }
 
+    function handleModalAssignProgrammer(id: number) {
+        setAssignProgrammerOpen(true);
+        setTicketId(id);
+    }
+
     const handleSubmitReOpenMutation = useMutation({
         mutationFn: async () => {
             return await callApi("put", `/tickets/re-open/${ticketNo}`);
@@ -179,6 +186,7 @@ export default function TicketIKB() {
         handleModalConfirm,
         handleModalReopen,
         handleModalEditOpen,
+        handleModalAssignProgrammer,
         userRole
     ), [userRole]);
 
@@ -266,6 +274,7 @@ export default function TicketIKB() {
             <FeedbackModal open={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} mode={mode} ticket={ticketDetail} userRole={userRole} />
             <ReopenModal open={reOpenModal} onClose={() => setReOpenModal(false)} data={ticketDetail} onClick={handleSubmitOpenTicket} />
             <TicketModal open={editOpen} onClose={() => setEditOpen(false)} onSubmit={handleSubmitEdit} />
+            <AssignProgrammerModal open={assignProgrammerOpen} onClose={() => setAssignProgrammerOpen(false)} data={ticketDetail} userId={userId} />
         </>
     );
 }

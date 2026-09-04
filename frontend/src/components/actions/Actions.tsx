@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Styles from "./actions.module.css";
-import { MoreVertical, CheckCircle, XCircle, UserCheck, Trash2, LucideLockOpen, Pencil } from "lucide-react";
+import { MoreVertical, CheckCircle, XCircle, UserCheck, Trash2, LucideLockOpen, Pencil, UserStar } from "lucide-react";
 import { createPortal } from "react-dom";
 import type { UserRole } from "../../permissions/role";
 import { hasPermission } from "../../permissions";
@@ -13,18 +13,20 @@ type Props = {
     onRemove: () => void;
     onReopen: () => void;
     onEdit?: () => void;
+    onAssignProgrammer: () => void;
     isClosed: boolean;
     isAssign: boolean;
     userRole?: string;
     isIKB?: boolean;
 }
 
-export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, onEdit, isClosed, isAssign, userRole, isIKB }: Props) => {
+export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReopen, onEdit, onAssignProgrammer, isClosed, isAssign, userRole, isIKB }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [position, setPosition] = useState({
         top: 0,
         left: 0
     });
+
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -36,6 +38,7 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
     const canRemove = hasPermission(role, Permission.REMOVE);
     const canReOpen = hasPermission(role, Permission.REOPEN);
     const canEdit = hasPermission(role, Permission.EDIT);
+    const canAssignProgrammer = hasPermission(role, Permission.ASSIGNPROGRAMMER);
 
     const handleClick = (callback: () => void) => {
         callback();
@@ -83,7 +86,14 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                     left: position.left,
                     zIndex: 9999
                 }}>
-                    {!isClosed &&  canAssign && (
+                    {canAssignProgrammer && (
+                        <button onClick={() => handleClick(onAssignProgrammer)}>
+                            <UserStar size={15} />
+                            Assign Programmer
+                        </button>
+                    )}
+
+                    {!isClosed && canAssign && (
                         <button onClick={() => handleClick(onAssign)}>
                             <UserCheck size={15} />
                             Assign
@@ -129,7 +139,7 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                         <p>Ticket has Closed.</p>
                     )}
 
-                    {isIKB && !isClosed && !isAssign && (
+                    {isIKB && !isClosed && !isAssign && (role === "ikb") && (
                         <p>Ticket not assigned yet.</p>
                     )}
                 </div>,

@@ -14,6 +14,8 @@ export const Permission = {
     DOCUMENTATION: 'menu.documentation',
     REPORT: 'menu.report',
     LOGS: 'menu.logs',
+
+    ASSIGNPROGRAMMER: 'ticket.assign_programmer',
 } as const;
 
 export type PermissionType = typeof Permission[keyof typeof Permission];

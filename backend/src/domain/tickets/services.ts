@@ -161,3 +161,8 @@ export const UpdateStatusPointServices = async (id: number, statusPoint: string)
         throw new Error(error.message);
     }
 }
+
+export const AssignProgrammerServices = async (ticketNo: string, userId: number, programmer: string) => {
+    await TicketDAO.AssignProgrammerDAO(ticketNo, userId, programmer);
+    return ({ message: "Programmer Successful Assigned." });
+}

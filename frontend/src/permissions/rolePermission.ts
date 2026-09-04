@@ -30,6 +30,7 @@ export const RolePermission: Record<UserRole, string[]> = {
     ],
     ikb: [
         Permission.FEEDBACK,
+        Permission.ASSIGNPROGRAMMER,
 
         Permission.IKB
     ]

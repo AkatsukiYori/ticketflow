@@ -689,3 +689,33 @@ export const UpdateStatusPointDAO = async (id: number, statusPoint: string) => {
         throw new Error(error.message);
     }
 }
+
+export const AssignProgrammerDAO = async (ticketNo: string, userId: number, programmer: string) => {
+    await prisma.$transaction(async (tx: any) => {
+        const ticket = await tx.tickets.findFirst({
+            where: {
+                ticket_no: ticketNo
+            }
+        });
+
+        if(ticket) {
+            await tx.tickets.update({
+                where: { id: ticket.id },
+                data: {
+                    programmer: programmer
+                }
+            });
+
+            await tx.log.create({
+                data: {
+                    ticket_id: ticket.id,
+                    user_id: userId,
+                    status: 'on_progress',
+                    action_type: 'assign',
+                    log_date: MakeDate(),
+                    description: `Programmer ${programmer} is working on this ticket.`
+                }
+            });
+        }
+    });
+}
