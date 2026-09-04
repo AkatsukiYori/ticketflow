@@ -86,8 +86,8 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                     left: position.left,
                     zIndex: 9999
                 }}>
-                    {canAssignProgrammer && (
-                        <button onClick={() => handleClick(() => onAssignProgrammer)}>
+                    {canAssignProgrammer && onAssignProgrammer && (
+                        <button onClick={() => handleClick(onAssignProgrammer)}>
                             <UserStar size={15} />
                             Assign Programmer
                         </button>
