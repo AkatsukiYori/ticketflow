@@ -13,7 +13,7 @@ type Props = {
     onRemove: () => void;
     onReopen: () => void;
     onEdit?: () => void;
-    onAssignProgrammer: () => void;
+    onAssignProgrammer?: () => void;
     isClosed: boolean;
     isAssign: boolean;
     userRole?: string;
@@ -87,7 +87,7 @@ export const ActionDropdown = ({ onAssign, onReject, onComplete, onRemove, onReo
                     zIndex: 9999
                 }}>
                     {canAssignProgrammer && (
-                        <button onClick={() => handleClick(onAssignProgrammer)}>
+                        <button onClick={() => handleClick(() => onAssignProgrammer)}>
                             <UserStar size={15} />
                             Assign Programmer
                         </button>
