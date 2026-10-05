@@ -20,7 +20,7 @@ type kpi = {
 const columnHelper = createColumnHelper<kpi>();
 
 export const kpiColumns = (
-    onUpdate: (id: number, data: any) => void,
+    onUpdate: (data: any) => void,
     onDelete: (id: number) => void,
     onDetail: (id: number) => void
 ) => [
@@ -104,7 +104,7 @@ export const kpiColumns = (
 
             return (
                 <>
-                    <Buttons btnTitle="Edit" func="edit" onClick={() => onUpdate(kpi.id, data)}></Buttons>
+                    <Buttons btnTitle="Edit" func="edit" onClick={() => onUpdate(data)}></Buttons>
                     <Buttons btnTitle="Delete" func="delete" onClick={() => onDelete(kpi.id)}></Buttons>
                     <Buttons btnTitle="Detail" func="detail" onClick={() => onDetail(kpi.id)}></Buttons>
                 </>

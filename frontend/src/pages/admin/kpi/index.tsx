@@ -159,7 +159,7 @@ export default function KPI() {
     function handleModalUpdate(data: any) {
         setOpen(true);
         setMode("edit");
-        setSelected(data)
+        setSelected(data);
     }
 
     function handleModalDelete(id: number) {
