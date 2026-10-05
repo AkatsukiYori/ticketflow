@@ -1,6 +1,6 @@
 import SidebarItem from "../../components/sidebar/SidebarItem";
 import Styles from "../../css/layouts/admin/layouts.module.css";
-import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, LogOut, Users2, TicketsIcon } from "lucide-react";
+import { Blocks, LayoutDashboardIcon, Ticket, FileExclamationPointIcon, ChartArea, Logs, LogOut, Users2, TicketsIcon, CircleGaugeIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../components/modals/confirmModal/ConfirmModal";
@@ -29,6 +29,7 @@ export default function Sidebar({ isSidebarOpen, closeSidebar, user } : Props) {
             { icon: FileExclamationPointIcon, label: 'Documentation', to: '/admin/documentation' },
             { icon: ChartArea, label: 'Report & Statistic', to: '/admin/report' },
             { icon: Logs, label: 'Logs', to: '/admin/logs' },
+            { icon: CircleGaugeIcon, label: 'KPI', to: '/admin/kpi' },
         ],
         ga: [
             { icon: LayoutDashboardIcon, label: 'Dashboard', to: '/admin/dashboard' },

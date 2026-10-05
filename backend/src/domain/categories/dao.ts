@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import * as CategoriesDTO from "../../dtos/categories/categories_dto";
 import prisma from "../../prisma";
-import { unknown } from "zod";
 
 
 export const GetAllCategoriesDAO = async () => {

@@ -214,6 +214,73 @@
     background-color: #1B499D15;
 }
 
+.btn-register {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: rgba(27, 73, 157, 0.9);
+    color: white;
+    border: 1px solid #1B499D;
+    transition: background-color 0.3s;
+}
+
+.btn-register:hover {
+    background-color: rgba(27, 73, 157, 1);
+}
+
+.btn-unregister {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: 1px solid rgba(239, 68, 68, 0.1);
+    transition: background-color 0.3s;
+}
+
+.btn-unregister:hover {
+    background-color: rgba(239, 68, 68, 1);
+}
+
+.btn-add-more {
+    background-color: rgba(27, 73, 157, 0.9);
+    border: none;
+    transition: 0.3s;
+    padding: 4px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.btn-add-more:hover {
+    background-color: rgba(27, 73, 157, 1);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-remove-desc {
+    background-color: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    transition: 0.3s;
+    padding: 4px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.btn-remove-desc:hover {
+    background-color: rgba(239, 68, 68, 1);
+    border: none;
+    transition: 0.3s;
+}
+
 @media (max-width: 768px) {
     .btn_add_mobile {
         display: flex;

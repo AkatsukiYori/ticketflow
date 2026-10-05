@@ -9,6 +9,7 @@ import AdminLayout from "../layouts/adminLayouts/Index";
 import ProtectedRouter from "./ProtectedRouter";
 import Members from "../pages/admin/members/index";
 import TicketIKB from "../pages/admin/ticket_ikb/index";
+import KPI from "../pages/admin/kpi";
 
 export default function AdminRouter() {
     const routes = useRoutes([
@@ -29,6 +30,7 @@ export default function AdminRouter() {
                 { path: "documentation", element: <Documentation /> },
                 { path: "report", element: <Report /> },
                 { path: "logs", element: <Logs /> },
+                { path: "kpi", element: <KPI /> },
             ],
         },
     ]);

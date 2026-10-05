@@ -1,4 +1,4 @@
-import { Plus, Trash, Pencil, RefreshCcw, Info, Home } from "lucide-react";
+import { Plus, Trash, Pencil, RefreshCcw, Info, Home, CircleCheckBig, CircleX, X, DiscAlbum } from "lucide-react";
 import "../../components/buttons/button.css";
 
 type Props = {
@@ -7,9 +7,11 @@ type Props = {
     onClick?: () => void;
     onClose?: () => void;
     btnTitle?: string;
+    style?: React.CSSProperties;
+    isDisabled?: boolean;
 }
 
-export function Buttons({ label, func, onClick, btnTitle }: Props) {
+export function Buttons({ label, func, onClick, btnTitle, style, isDisabled }: Props) {
     const renderIcon = () => {
         switch (func) {
             case "add-desktop":
@@ -24,14 +26,20 @@ export function Buttons({ label, func, onClick, btnTitle }: Props) {
                 return <Info />;
             case "home":
                 return <Home />;
+            case "register":
+                return <CircleCheckBig />;
+            case "unregister":
+                return <CircleX />;
+            case "add-more":
+                return <Plus />
+            case "remove-desc":
+                return <X />
             default:
                 return null;
-            // case "new-ticket":
-            //     return 
         }
     }
 
     return (
-        <button type="button" className={`btn-${func}`} onClick={onClick} title={btnTitle}>{renderIcon()} {label}</button>
+        <button type="button" className={`btn-${func}`} onClick={onClick} title={btnTitle} style={style} disabled={isDisabled}>{renderIcon()} {label}</button>
     );
 }

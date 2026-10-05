@@ -8,6 +8,7 @@ import routerLogs from "./logs";
 import routerMembers from "./members";
 import routerDepartment from "./department";
 import routerFileUpload from "./fileUpload";
+import routerKPI from "./kpi";
 
 const router: Router = Router();
 
@@ -20,5 +21,6 @@ router.use("/logs", routerLogs);
 router.use("/members", routerMembers);
 router.use("/department", routerDepartment);
 router.use("/upload", routerFileUpload);
+router.use("/kpi", routerKPI);
 
 export default router;

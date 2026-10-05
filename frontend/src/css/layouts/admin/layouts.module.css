@@ -127,6 +127,7 @@
     flex: 5;
     width: 100%;
     display: flex;
+    flex-direction: column;
 }
 
 .main-content > .content-body > .content-body-left {

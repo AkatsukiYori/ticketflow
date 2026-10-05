@@ -1,0 +1,87 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    opacity: 0;
+    transform: scale(1);
+    pointer-events: none;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.modal-popup {
+    width: 600px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-overlay-show,
+.modal-popup-show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    margin: 20px 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.input-group {
+    display: grid;
+    grid-template-columns: 1fr 45px;
+    gap: 4px;
+}
+
+.input-group > div:first-child {
+    flex: 1;
+}
+
+.input-group > div:last-child {
+    display: grid;
+    place-items: center;
+    border: 1px solid #C4C4C4;
+    border-radius: 8px;
+    color: #B5B5B5;
+}
+
+/* Chrome, Edge, Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+@media (max-width: 768px) {
+    .modal-popup {
+        width: 300px;
+    }
+}

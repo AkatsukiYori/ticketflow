@@ -121,6 +121,48 @@ tbody tr:hover {
 }
 /* End Pagination */
 
+.checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border: 2px solid #9ca3af;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.checkbox:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.description-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.description-item {
+    padding: 8px 0;
+}
+
+.description-item:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
 @media (max-width: 768px) {
     .table {
         max-height: 60dvh;

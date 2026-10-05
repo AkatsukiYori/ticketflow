@@ -1,0 +1,15 @@
+-- CreateTable
+CREATE TABLE `KPI` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `ticket_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `KPI` ADD CONSTRAINT `KPI_ticket_id_fkey` FOREIGN KEY (`ticket_id`) REFERENCES `tickets`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `KPI` ADD CONSTRAINT `KPI_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
