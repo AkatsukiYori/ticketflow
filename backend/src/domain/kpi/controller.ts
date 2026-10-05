@@ -15,9 +15,10 @@ export const GetAllKpiController =  async (req: Request, res: Response) => {
 
 export const CheckTicketController = async (req: Request, res: Response) => {
     const userId = Number(req.params.userId);
+    const { ticketTitle } = req.query;
 
     try {
-        const result = await Services.CheckTicketServices(userId);
+        const result = await Services.CheckTicketServices(userId, ticketTitle as string);
         return res.status(200).json(result);
     } catch (error: any) {
         return res.status(500).json({
@@ -28,9 +29,10 @@ export const CheckTicketController = async (req: Request, res: Response) => {
 
 export const CheckTicketHasKpiController = async (req: Request, res: Response) => {
     const kpiId = Number(req.params.kpiId);
-    
+    const { ticketTitle } = req.query;
+     
     try {
-        const result = await Services.CheckTicketHasKpiServices(kpiId)
+        const result = await Services.CheckTicketHasKpiServices(kpiId, ticketTitle as string)
         return res.status(200).json(result);
     } catch (error: any) {
         return res.status(500).json({

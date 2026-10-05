@@ -6,13 +6,13 @@ export const GetAllKpiServices = async () => {
     return data;
 }
 
-export const CheckTicketServices = async (user: number) => {
-    const data = await DAO.CheckTicketDAO(user);
+export const CheckTicketServices = async (user: number, ticketTitle: string) => {
+    const data = await DAO.CheckTicketDAO(user, ticketTitle);
     return data;
 }
 
-export const CheckTicketHasKpiServices = async (kpiId: number) => {
-    const data = await DAO.CheckTicketHasKpiDAO(kpiId);
+export const CheckTicketHasKpiServices = async (kpiId: number, ticketTitle: string) => {
+    const data = await DAO.CheckTicketHasKpiDAO(kpiId, ticketTitle);
     return data;
 }
 

@@ -2,7 +2,7 @@ import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedR
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Notifications } from "../../../components/notifications/notification";
 import DataTables from "../../../components/datatables/DataTable";
 import { kpiColumns } from "./columns";
@@ -31,6 +31,9 @@ export default function KPI() {
     const [globalFilter, setGlobalFilter] = useState("");
     const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
     const [selectedID, setSelectedID] = useState<number>(0);
+    const [ticketSearch, setTicketSearch] = useState("");
+
+    const [debouncedSearch, setDebouncedSearch] = useState("");
 
     const [deleteID, setDeletedID] = useState<number | null>(null);
 
@@ -42,17 +45,17 @@ export default function KPI() {
         }
     }, [callApi]);
 
-    const fetchCheckTicket = useCallback(async (userId: number) => {
+    const fetchCheckTicket = useCallback(async (userId: number, ticketTitle?: string) => {
         try {
-            return await callApi("get", `/kpi/check-tickets/${userId}`);
+            return await callApi("get", `/kpi/check-tickets/${userId}?ticketTitle=${encodeURIComponent(ticketTitle ?? "")}`);
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
     }, [callApi]);
 
-    const fetchTicketHasKpi = useCallback(async (kpiId: number) => {
+    const fetchTicketHasKpi = useCallback(async (kpiId: number, ticketTitle?: string) => {
         try {
-            return await callApi("get", `/kpi/check-ticket-has-kpi/${kpiId}`)
+            return await callApi("get", `/kpi/check-ticket-has-kpi/${kpiId}?ticketTitle=${encodeURIComponent(ticketTitle ?? "")}`)
         } catch (error: any) {
            Notifications({ message: "Failed to detch data.", variantType: "error", persist: false }); 
         }
@@ -86,8 +89,8 @@ export default function KPI() {
     });
 
     const { data: unregisteredTickets = [] } = useQuery({
-        queryKey: ["kpi", "unregistered-tickets", user?.id],
-        queryFn: () => fetchCheckTicket(user.id),
+        queryKey: ["kpi", "unregistered-tickets", user?.id, debouncedSearch],
+        queryFn: () => fetchCheckTicket(user.id, debouncedSearch),
         enabled: detailOpen && !!user?.id,
         refetchOnWindowFocus: true,
         refetchOnMount: true,
@@ -95,8 +98,8 @@ export default function KPI() {
     });
 
     const { data: registeredTickets = [] } = useQuery({
-        queryKey: ["kpi", "registered-tickets", selectedID],
-        queryFn: () => fetchTicketHasKpi(selectedID),
+        queryKey: ["kpi", "registered-tickets", selectedID, debouncedSearch],
+        queryFn: () => fetchTicketHasKpi(selectedID, debouncedSearch),
         enabled: !!selectedID,
         refetchOnWindowFocus: true,
         refetchOnMount: true,
@@ -181,6 +184,10 @@ export default function KPI() {
 
     function handleUnregister(kpi_id: any) {
         handleUnregisterMutation.mutate(kpi_id);
+    }
+
+    function handleTicketSearch(ticketTitle: string) {
+        setTicketSearch(ticketTitle);
     }
 
     const getColumns = useMemo(() => kpiColumns(handleModalUpdate, handleModalDelete, handleModalDetail), [handleModalUpdate, handleModalDelete, handleModalDetail]);
@@ -296,6 +303,14 @@ export default function KPI() {
         handleDeleteMutation.mutate(id);
     }
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setDebouncedSearch(ticketSearch);
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [ticketSearch]);
+
     return (
         <>
             <section className={Styles['main-content']}>
@@ -352,6 +367,7 @@ export default function KPI() {
                 registerTickets={registeredTickets}
                 onRegister={handleRegister}
                 onUnregister={handleUnregister}
+                onSearch={handleTicketSearch}
             />
         </>
     );

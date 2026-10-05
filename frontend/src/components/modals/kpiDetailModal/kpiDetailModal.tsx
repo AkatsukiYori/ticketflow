@@ -19,9 +19,10 @@ type Props = {
     onClose: () => void;
     onUnregister: (kpi_id: number) => void;
     onRegister: (tickets: number[]) => void;
+    onSearch: (ticketTitle: string) => void;
 }
 
-export default function KpiDetailModal({ open, unregisterTickets = [], registerTickets = [], onClose, onRegister, onUnregister, kpiId } : Props) {
+export default function KpiDetailModal({ open, unregisterTickets = [], registerTickets = [], onClose, onRegister, onUnregister, kpiId, onSearch } : Props) {
     const truncateText = (text: string, maxLength: number) => {
         return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
     }
@@ -69,6 +70,7 @@ export default function KpiDetailModal({ open, unregisterTickets = [], registerT
                                     name=""
                                     id=""
                                     placeholder="Search ticket..."
+                                    onChange={(e) => onSearch(e.target.value)}
                                 />
                             </div>
                             <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "auto", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "400px" }}>
@@ -132,6 +134,7 @@ export default function KpiDetailModal({ open, unregisterTickets = [], registerT
                                     name=""
                                     id=""
                                     placeholder="Search ticket..."
+                                    onChange={(e) => onSearch(e.target.value)}
                                 />
                             </div>
                             <div style={{ flex: 1, overflowY: "auto", scrollbarWidth: "auto", display: "flex", flexDirection: "column", gap: "8px", maxHeight: "400px" }}>

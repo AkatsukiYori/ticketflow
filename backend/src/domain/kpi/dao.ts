@@ -23,7 +23,7 @@ export const GetAllKpiDAO = async () => {
     return data;
 }
 
-export const CheckTicketDAO = async (user: number) => {
+export const CheckTicketDAO = async (user: number, ticketTitle: string) => {
     const data = await prisma.tickets.findMany({
         select: {
             id: true,
@@ -37,6 +37,11 @@ export const CheckTicketDAO = async (user: number) => {
             closed_at: {
                 not: null
             },
+            ...(ticketTitle && {
+                ticket_title: {
+                    contains: ticketTitle
+                }
+            }),
             OR: [
                 {
                     kpi_detail: {
@@ -60,7 +65,7 @@ export const CheckTicketDAO = async (user: number) => {
     return data;
 }
 
-export const CheckTicketHasKpiDAO = async (kpiID: number) => {
+export const CheckTicketHasKpiDAO = async (kpiID: number, ticketTitle: string) => {
     const data = await prisma.tickets.findMany({
         select: {
             id: true,
@@ -80,6 +85,11 @@ export const CheckTicketHasKpiDAO = async (kpiID: number) => {
             closed_at: {
                 not: null
             },
+            ...(ticketTitle && {
+                ticket_title: {
+                    contains: ticketTitle
+                }
+            }),
             kpi_detail: {
                 is: {
                     kpi_id: kpiID,
