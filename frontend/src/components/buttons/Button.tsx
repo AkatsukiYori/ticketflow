@@ -1,4 +1,4 @@
-import { Plus, Trash, Pencil, RefreshCcw, Info, Home, CircleCheckBig, CircleX, X, DiscAlbum } from "lucide-react";
+import { Plus, Trash, Pencil, RefreshCcw, Info, Home, CircleCheckBig, CircleX, X } from "lucide-react";
 import "../../components/buttons/button.css";
 
 type Props = {

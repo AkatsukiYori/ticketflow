@@ -286,7 +286,7 @@ export default function KPI() {
 
             setConfirmOpen(false);
         },
-        onError: (error: any) => {
+        onError: (_error: any) => {
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
     });
