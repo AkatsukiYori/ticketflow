@@ -1,4 +1,4 @@
-import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowExpanding, useReactTable } from "@tanstack/react-table";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
