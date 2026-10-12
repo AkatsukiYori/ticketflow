@@ -171,7 +171,7 @@ export default function NewTicket() {
                                 type="text"
                                 name="no_wa"
                                 id="no_wa"
-                                placeholder="Masukkan nama pengguna"
+                                placeholder="Masukkan nomor pengguna"
                                 value={form.no_wa}
                                 onChange={(e) => {
                                     setForm({ ...form, no_wa: e.target.value });
@@ -212,7 +212,7 @@ export default function NewTicket() {
                                 type="text"
                                 name="location"
                                 id="location"
-                                placeholder="Masukkan lokasi"
+                                placeholder="Masukkan lokasi pengajuan"
                                 value={form.location}
                                 onChange={(e) => {
                                     setForm({ ...form, location: e.target.value });
@@ -344,7 +344,7 @@ export default function NewTicket() {
                             <textarea
                                 name="problem"
                                 id="problem"
-                                placeholder="Jelaskan masalah anda"
+                                placeholder="Jelaskan secara rinci masalah anda"
                                 value={form.problem}
                                 onChange={(e) => {
                                     setForm({ ...form, problem: e.target.value });

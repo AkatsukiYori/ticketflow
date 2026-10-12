@@ -1,4 +1,4 @@
-import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowExpanding, useReactTable } from "@tanstack/react-table";
 import Styles from "../../../css/layouts/admin/layouts.module.css";
 import { useApi } from "../../../hooks/useApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,6 +11,9 @@ import { Buttons } from "../../../components/buttons/Button";
 import KpiModal from "../../../components/modals/kpi/KpiModal";
 import ConfirmModal from "../../../components/modals/confirmModal/ConfirmModal";
 import KpiDetailModal from "../../../components/modals/kpiDetailModal/kpiDetailModal";
+
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 type RegisterPayload = {
     tickets: number[];
@@ -32,10 +35,24 @@ export default function KPI() {
     const [fieldError, setFieldError] = useState<{ [key: string]: string }>({});
     const [selectedID, setSelectedID] = useState<number>(0);
     const [ticketSearch, setTicketSearch] = useState("");
+    const [deleteID, setDeletedID] = useState<number | null>(null);
 
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const [deleteID, setDeletedID] = useState<number | null>(null);
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ];
 
     const fetchKPI = useCallback(async () => {
         try {
@@ -67,6 +84,14 @@ export default function KPI() {
             if(!username) return;
 
             return await callApi("get", `/users/get-user/${username}`);
+        } catch (error: any) {
+            Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
+        }
+    }, [callApi]);
+    
+    const fetchUsers = useCallback(async () => {
+        try {
+            return await callApi("get", '/users/get-all-user');
         } catch (error: any) {
             Notifications({ message: "Failed to fetch data.", variantType: "error", persist: false });
         }
@@ -148,6 +173,14 @@ export default function KPI() {
         onError: (_error: any) => {
             Notifications({ message: "Something went wrong.", variantType: "error", persist: false });
         }
+    });
+
+    const { data: users } = useQuery({
+        queryKey: ["users"],
+        queryFn: fetchUsers,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
+        staleTime: 0
     });
 
     function handleModalCreate() {
@@ -303,6 +336,372 @@ export default function KPI() {
         handleDeleteMutation.mutate(id);
     }
 
+    // EXPORT EXCEL
+    const ticketsByMonth = months.map((month, monthIndex) => {
+        const tickets: any[] = [];
+
+        data.forEach((kpi: any) => {
+            kpi.kpi_detail.forEach((detail: any) => {
+                const date = new Date(detail.created_at);
+
+                if (date.getMonth() === monthIndex) {
+                    tickets.push(detail);
+                }
+            });
+        });
+
+        return {
+            month,
+            tickets
+        };
+    });
+
+    const exportKPI = async () : Promise<void> => {
+        const workbook = new ExcelJS.Workbook();
+        const masterSheet = workbook.addWorksheet("KPI POINTS");
+
+        masterSheet.columns = [
+            { key: "no", width: 6 },
+            { key: "key_performance_indicators", width: 50 },
+            { key: "keterangan", width: 60 },
+            { key: "bobot", width: 12 },
+            { key: "target_per_tahun", width: 18 },
+            { key: "formula", width: 25 },
+            { key: "verificator", width: 25 }
+        ];
+
+        masterSheet.mergeCells("A1:G1");
+
+        const columnWidths = [
+            6,
+            50,
+            60,
+            12,
+            18,
+            20,
+            25
+        ];
+
+        columnWidths.forEach((width, index) => {
+            masterSheet.getColumn(index + 1).width = width;
+        });
+
+        // START: KPI POINTS SHEET
+        const ticketCell = masterSheet.getCell("A1");
+        ticketCell.value = "KPI POINTS";
+        ticketCell.font = {
+            size: 16,
+            bold: true,
+            color: {
+                argb: "FFFFFFFF"
+            }
+        };
+        ticketCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+                argb: "FF1B499D"
+            }
+        };
+        ticketCell.alignment = {
+            vertical: "middle",
+            horizontal: "center"
+        };
+        masterSheet.getRow(1).height = 30;
+
+        const headerRow = masterSheet.getRow(3);
+        headerRow.values = [
+            "No",
+            "Key Performance Indicators",
+            "Keterangan",
+            "Bobot",
+            "Target Per Tahun",
+            "Formula",
+            "Verificator"
+        ];
+        headerRow.height = 25;
+        headerRow.eachCell((cell) => {
+            cell.font = {
+                bold: true
+            },
+            cell.border = {
+                top: { style: "thin" },
+                left: { style: "thin" },
+                bottom: { style: "thin" },
+                right: { style: "thin" },
+            },
+            cell.alignment = {
+                vertical: "middle",
+                horizontal: "center",
+                wrapText: true
+            }
+        });
+
+        data.forEach((kpi: any, index: number) => {
+            const isEmptyValue = kpi.value == null || kpi.value === "-";
+
+            const row = masterSheet.addRow({
+                no: index + 1,
+                key_performance_indicators: kpi.name,
+                keterangan: "-",
+                bobot: kpi.weight + "%",
+                target_per_tahun: (kpi.target_status === "qty" ? kpi.year_target : kpi.year_target + "%"),
+                formula: kpi.formula,
+                verificator: kpi.verificator || "-"
+            });
+
+            row.eachCell((cell, colNumber) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                },
+                cell.alignment = {
+                    vertical: "middle",
+                    horizontal: [1, 4, 5, 6, 8].includes(colNumber) || isEmptyValue
+                        ? "center"
+                        : "left",
+                    wrapText: true
+                };
+            });
+        });
+        // END: KPI POINTS SHEET
+
+        // START: USER SHEET
+        let currentRow = 14;
+        users.forEach((user: any) => {
+            const worksheet =  workbook.addWorksheet(user.username);
+
+            worksheet.columns = [
+                { key: "no", width: 6 },
+                { key: "key_performance_indicators", width: 50 },
+                { key: "realisasi_per_tahun", width: 30 },
+                { key: "score", width: 30 },
+                { key: "total_score", width: 15 },
+                { key: "realisasi_januari", width: 15 },
+                { key: "realisasi_februari", width: 15 },
+                { key: "realisasi_maret", width: 15 },
+                { key: "realisasi_april", width: 15 },
+                { key: "realisasi_mei", width: 15 },
+                { key: "realisasi_juni", width: 15 },
+                { key: "realisasi_juli", width: 15 },
+                { key: "realisasi_agustus", width: 15 },
+                { key: "realisasi_september", width: 15 },
+                { key: "realisasi_oktober", width: 15 },
+                { key: "realisasi_november", width: 15 },
+                { key: "realisasi_desember", width: 15 }
+            ];
+
+            // START: ROW REALIZATION
+            worksheet.mergeCells("A1:Q1");
+
+            const titleCell = worksheet.getCell("A1");
+            titleCell.value = `KPI - ${user.username}`;
+            titleCell.font = {
+                size: 16,
+                bold: true,
+                color: {
+                    argb: "FFFFFFFF"
+                }
+            };
+            titleCell.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: {
+                    argb: "FF1B499D"
+                }
+            };
+            titleCell.alignment = {
+                horizontal: "center",
+                vertical: "middle"
+            };
+
+            worksheet.getRow(1).height = 30;
+
+            const headerRow = worksheet.getRow(3);
+            headerRow.values = [
+                "No",
+                "Key Performance Indicators",
+                "Realisasi Per Tahun",
+                "Score",
+                "Total Score",
+                "Realisasi Januari",
+                "Realisasi Februari",
+                "Realisasi Maret",
+                "Realisasi April",
+                "Realisasi Mei",
+                "Realisasi Juni",
+                "Realisasi Juli",
+                "Realisasi Agustus",
+                "Realisasi September",
+                "Realisasi Oktober",
+                "Realisasi November",
+                "Realisasi Desember"
+            ];
+            headerRow.eachCell((cell) => {
+                cell.font = {
+                    bold: true
+                },
+                cell.alignment = {
+                    horizontal: "center",
+                    vertical: "middle",
+                    wrapText: true
+                },
+                cell.border = {
+                    top: { style: "thin" },
+                    left: { style: "thin" },
+                    bottom: { style: "thin" },
+                    right: { style: "thin" }
+                }
+            });
+
+            data.forEach((kpi: any, index: number) => {
+                const row = worksheet.addRow({
+                    no: index + 1,
+                    key_performance_indicators: kpi.name,
+                });
+
+                row.eachCell((cell, colNumber) => {
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    },
+                    cell.alignment = {
+                        vertical: "middle",
+                        horizontal: [1, 4, 5, 6, 8].includes(colNumber)
+                            ? "center"
+                            : "left",
+                        wrapText: true
+                    };
+                });
+            });
+            // END: ROW REALIZATION
+
+            // START: DETAIL TICKET
+            worksheet.mergeCells("A12:D12");
+
+            const titleDetailTicket = worksheet.getCell("A12");
+            titleDetailTicket.value = "Detail Ticket";
+            titleDetailTicket.font = {
+                size: 16,
+                bold: true,
+                color: {
+                    argb: "FFFFFFFF"
+                }
+            };
+            titleDetailTicket.fill = {
+                type: "pattern",
+                pattern: "solid",
+                fgColor: {
+                    argb: "FF1B499D"
+                }
+            };
+            titleDetailTicket.alignment = {
+                horizontal: "center",
+                vertical: "middle"
+            };
+
+            worksheet.getRow(12).height = 30;
+
+            const detailTicketHeaderRow = worksheet.getRow(13);
+            detailTicketHeaderRow.values = [
+                "No",
+                "Periode",
+                "Kode Ticket",
+                "Judul Ticket"
+            ];
+            detailTicketHeaderRow.height = 20;
+            detailTicketHeaderRow.eachCell((cell) => {
+                cell.font = {
+                    bold: true
+                },
+                cell.alignment = {
+                    horizontal: "center",
+                    vertical: "middle",
+                    wrapText: true
+                },
+                cell.border = {
+                    top: { style: "thin" },
+                    left: { style: "thin" },
+                    bottom: { style: "thin" },
+                    right: { style: "thin" }
+                }
+            });
+
+            ticketsByMonth.forEach((group, index) => {
+                const startRow = currentRow;
+
+                if(group.tickets.length === 0) {
+                    const row = worksheet.getRow(currentRow);
+
+                    row.getCell(1).value = index + 1;
+                    row.getCell(2).value = group.month;
+                    row.getCell(3).value = "-";
+                    row.getCell(4).value = "-";
+
+                    currentRow++;
+                } else {
+                    group.tickets.forEach((detail: any) => {
+                        const row = worksheet.getRow(currentRow);
+
+                        row.getCell(3).value = detail.fk_ticket_id.ticket_no;
+                        row.getCell(4).value = detail.fk_ticket_id.ticket_title;
+
+                        currentRow++;
+                    })
+
+                    const endRow = currentRow - 1;
+
+                    if(startRow < endRow) {
+                        worksheet.mergeCells(
+                            `A${startRow}:A${endRow}`
+                        );
+
+                        worksheet.mergeCells(
+                            `B${startRow}:B${endRow}`
+                        );
+                    }
+
+                    worksheet.getCell(`A${startRow}`).value = index + 1;
+                    worksheet.getCell(`B${startRow}`).value = group.month;
+                }
+            });
+
+            
+            for (let rowNumber = 14; rowNumber < currentRow; rowNumber++) {
+                const row = worksheet.getRow(rowNumber);
+                row.height = 30;
+
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    const isEmpty = cell.value == null || cell.value === "-";
+
+                    cell.border = {
+                        top: { style: "thin" },
+                        left: { style: "thin" },
+                        bottom: { style: "thin" },
+                        right: { style: "thin" }
+                    };
+                    cell.alignment = {
+                        vertical: "middle",
+                        horizontal: [1, 2].includes(colNumber) || isEmpty
+                            ? "center"
+                            : "left",
+                        wrapText: true
+                    };
+                });
+            }
+            // END: DETAIL TICKET
+        });
+        // END: USER SHEET
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, `KPI Point-${new Date().getTime()}.xlsx`);
+    }
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setDebouncedSearch(ticketSearch);
@@ -319,7 +718,8 @@ export default function KPI() {
                         <InputText type="text" name="search" id="search" placeholder="Search..." value={globalFilter ?? ""} onChangeInput={(e) => setGlobalFilter(e.target.value)} />
                         <Buttons label="" func="refresh" btnTitle="Refresh" onClick={() => refetch()} />
                     </section>
-                    <section>
+                    <section className={Styles['buttons-section']}>
+                        <Buttons label="Export Excel" func="export-excel" btnTitle="Export Excel" onClick={exportKPI} />
                         <Buttons label="New KPI Point" func="add-desktop" onClick={handleModalCreate} btnTitle="New KPI Point" />
                         <Buttons label="" func="add-mobile" onClick={handleModalCreate} btnTitle="New KPI Point" />
                     </section>

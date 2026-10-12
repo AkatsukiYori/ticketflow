@@ -64,7 +64,7 @@ export default function KpiDetailModal({ open, unregisterTickets = [], registerT
                     <div className={Styles['container-tickets']}>
                         <div className={Styles['unregistered-tickets']}>
                             <div style={{ flex: "0 0 auto" }}>
-                                <h3 style={{ margin: 0, textAlign: "center" }}>Unregistered Tickets</h3>
+                                <h3 style={{ margin: 0, textAlign: "center" }}>List Tickets</h3>
                                 <input
                                     type="text"
                                     name=""

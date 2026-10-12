@@ -4,12 +4,32 @@ import { Prisma } from "@prisma/client";
 
 export const GetAllKpiDAO = async () => {
     const data = await prisma.kpi.findMany({
-        include: {
+        select: {
+            id: true,
+            name: true,
+            weight: true,
+            formula: true,
+            target_status: true,
+            verificator: true,
+            year_target: true,
             kpi_description: {
                 select: {
                     id: true,
-                    kpi_id: true,
                     description: true
+                }
+            },
+            kpi_detail: {
+                where: {
+                    deleted_at: null
+                },
+                select: {
+                    created_at: true,
+                    fk_ticket_id: {
+                        select: {
+                            ticket_no: true,
+                            ticket_title: true
+                        }
+                    }
                 }
             }
         },
@@ -105,12 +125,6 @@ export const CheckTicketHasKpiDAO = async (kpiID: number, ticketTitle: string) =
 export const RegisterTicketDAO = async (tickets: number[], kpi: number, user: number) => {
     await prisma.$transaction(async (tx) => {
         for (const ticketId of tickets) {
-            const existingTicket = await tx.detailKpi.findMany({
-                where: {
-                    ticket_id: ticketId
-                }
-            });
-
             await tx.detailKpi.upsert({
                 where: {
                     ticket_id: ticketId
@@ -118,6 +132,7 @@ export const RegisterTicketDAO = async (tickets: number[], kpi: number, user: nu
                 update: {
                     kpi_id: kpi,
                     user_id: user,
+                    created_at: new Date(),
                     deleted_at: null
                 },
                 create: {

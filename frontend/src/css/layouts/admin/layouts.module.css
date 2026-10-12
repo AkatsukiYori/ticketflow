@@ -281,6 +281,24 @@
 }
 /* End Rating Card */
 
+.buttons-section {
+    display: flex;
+    gap: 8px;
+}
+
+.buttons-section button:first-child {
+    background-color: transparent;
+    color: rgba(27, 73, 157, 1);
+    border: 1px solid rgba(27, 73, 157, 1);
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.buttons-section button:first-child:hover {
+    background-color: rgba(27, 73, 157, 0.1);
+    transition: background-color 0.3s;
+}
+
 @media (max-width: 768px) {
     .overlay {
         display: block;
