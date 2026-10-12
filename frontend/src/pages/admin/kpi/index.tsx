@@ -340,8 +340,8 @@ export default function KPI() {
     const ticketsByMonth = months.map((month, monthIndex) => {
         const tickets: any[] = [];
 
-        data.forEach((kpi: any) => {
-            kpi.kpi_detail.forEach((detail: any) => {
+        (data ?? []).forEach((kpi: any) => {
+            (kpi.kpi_detail ?? []).forEach((detail: any) => {
                 const date = new Date(detail.created_at);
 
                 if (date.getMonth() === monthIndex) {
@@ -437,7 +437,7 @@ export default function KPI() {
             }
         });
 
-        data.forEach((kpi: any, index: number) => {
+        (data ?? []).forEach((kpi: any, index: number) => {
             const isEmptyValue = kpi.value == null || kpi.value === "-";
 
             const row = masterSheet.addRow({
@@ -470,7 +470,7 @@ export default function KPI() {
 
         // START: USER SHEET
         let currentRow = 14;
-        users.forEach((user: any) => {
+        (users ?? []).forEach((user: any) => {
             const worksheet =  workbook.addWorksheet(user.username);
 
             worksheet.columns = [
@@ -556,7 +556,7 @@ export default function KPI() {
                 }
             });
 
-            data.forEach((kpi: any, index: number) => {
+            (data ?? []).forEach((kpi: any, index: number) => {
                 const row = worksheet.addRow({
                     no: index + 1,
                     key_performance_indicators: kpi.name,
@@ -631,7 +631,7 @@ export default function KPI() {
                 }
             });
 
-            ticketsByMonth.forEach((group, index) => {
+            (ticketsByMonth ?? []).forEach((group, index) => {
                 const startRow = currentRow;
 
                 if(group.tickets.length === 0) {
@@ -644,7 +644,7 @@ export default function KPI() {
 
                     currentRow++;
                 } else {
-                    group.tickets.forEach((detail: any) => {
+                    (group.tickets ?? []).forEach((detail: any) => {
                         const row = worksheet.getRow(currentRow);
 
                         row.getCell(3).value = detail.fk_ticket_id.ticket_no;
