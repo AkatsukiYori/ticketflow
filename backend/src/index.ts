@@ -13,6 +13,8 @@ const allowedOrigins = [
     "http://203.194.113.232:5173"
 ];
 
+const APP_PORT = process.env.APP_PORT;
+
 const app = Express();
 const server = http.createServer(app);
 
@@ -26,6 +28,6 @@ app.use("/api-ticketflow", router);
 app.use("/api-ticketflow/uploads", Express.static(path.join(process.cwd(), "uploads")));
 app.use("/api-ticketflow/push", routerPushNotification);
 
-server.listen(8001, '0.0.0.0', () => {
-    console.log(`Server running on port 8001`);
+server.listen(APP_PORT, () => {
+    console.log(`Server running on port ${APP_PORT}`);
 });
