@@ -1,7 +1,13 @@
 import webpush from "web-push";
+import dotenv from "dotenv";
+import path from "node:path";
+
+dotenv.config({
+    path: path.resolve(process.cwd(), ".env")
+});
 
 const publicKey = process.env.VAPID_PUBLIC_KEY;
-const privateKey = process.env.VAPID_PRIVATE_KEY;   
+const privateKey = process.env.VAPID_PRIVATE_KEY;
 
 if(!publicKey || !privateKey) {
     throw new Error("VAPID Key belum terbaca.");
