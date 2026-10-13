@@ -1,9 +1,8 @@
 import webpush from "web-push";
 import dotenv from "dotenv";
-import path from "node:path";
 
 dotenv.config({
-    path: path.resolve(process.cwd(), ".env")
+    path: "/var/www/web_ticketflow/backend/.env"
 });
 
 const publicKey = process.env.VAPID_PUBLIC_KEY;
